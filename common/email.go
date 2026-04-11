@@ -8,6 +8,8 @@ import (
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/resend/resend-go/v3"
 )
 
 func generateMessageID() (string, error) {
@@ -34,6 +36,24 @@ func getSMTPAuth() smtp.Auth {
 }
 
 func SendEmail(subject string, receiver string, content string) error {
+	// 检查是否配置了Resend API Key
+	if ResendAPIKey != "" && ResendFrom != "" {
+		// 使用Resend发送邮件
+		client := resend.NewClient(ResendAPIKey)
+		params := &resend.SendEmailRequest{
+			From:    ResendFrom,
+			To:      []string{receiver},
+			Subject: subject,
+			Html:    content,
+		}
+		_, err := client.Emails.Send(params)
+		if err != nil {
+			SysError(fmt.Sprintf("failed to send email via Resend to %s: %v", receiver, err))
+		}
+		return err
+	}
+
+	// 否则使用SMTP发送邮件
 	if SMTPFrom == "" { // for compatibility
 		SMTPFrom = SMTPAccount
 	}
