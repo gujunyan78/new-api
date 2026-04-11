@@ -30,3 +30,23 @@ export * from './boolean';
 export * from './dashboard';
 export * from './passkey';
 export * from './statusCodeRules';
+
+export const getLogo = () => {
+  const status = JSON.parse(localStorage.getItem('status') || '{}');
+  return status.logo || '';
+};
+
+// 处理 channel 参数的存储和获取
+export const handleChannelParam = () => {
+  // 从 URL 参数获取 channel
+  const urlParams = new URLSearchParams(window.location.search);
+  const channelFromUrl = urlParams.get('channel');
+  
+  if (channelFromUrl) {
+    // 如果 URL 中有 channel 参数，更新 sessionStorage
+    sessionStorage.setItem('channel', channelFromUrl);
+  }
+  
+  // 返回当前的 channel 值
+  return sessionStorage.getItem('channel') || '';
+};

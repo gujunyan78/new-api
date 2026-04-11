@@ -169,12 +169,21 @@ func Register(c *gin.Context) {
 	}
 	affCode := user.AffCode // this code is the inviter's code, not the user's own code
 	inviterId, _ := model.GetUserIdByAffCode(affCode)
+
+	// 获取真实域名
+	domain := c.GetHeader("X-Forwarded-Host")
+	if domain == "" {
+		domain = c.GetHeader("Host")
+	}
+
 	cleanUser := model.User{
 		Username:    user.Username,
 		Password:    user.Password,
 		DisplayName: user.Username,
 		InviterId:   inviterId,
 		Role:        common.RoleCommonUser, // 明确设置角色为普通用户
+		Channel:     user.Channel,
+		Domain:      domain,
 	}
 	if common.EmailVerificationEnabled {
 		cleanUser.Email = user.Email

@@ -31,6 +31,7 @@ import {
   setUserData,
   onDiscordOAuthClicked,
   onCustomOAuthClicked,
+  handleChannelParam,
 } from '../../helpers';
 import Turnstile from 'react-turnstile';
 import {
@@ -118,6 +119,16 @@ const RegisterForm = () => {
   if (affCode) {
     localStorage.setItem('aff', affCode);
   }
+  
+  // 处理 channel 参数
+  useEffect(() => {
+    handleChannelParam();
+  }, []);
+  
+  // 处理 channel 参数
+  useEffect(() => {
+    handleChannelParam();
+  }, []);
 
   const status = useMemo(() => {
     if (statusState?.status) return statusState.status;
@@ -235,6 +246,11 @@ const RegisterForm = () => {
           affCode = localStorage.getItem('aff');
         }
         inputs.aff_code = affCode;
+        // 添加 channel 参数
+        const channel = handleChannelParam();
+        if (channel) {
+          inputs.channel = channel;
+        }
         const res = await API.post(
           `/api/user/register?turnstile=${turnstileToken}`,
           inputs,
