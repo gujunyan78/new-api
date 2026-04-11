@@ -187,7 +187,6 @@ const FooterBar = () => {
             </div>
           </div>
         )}
-
         <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-6'>
           <div className='flex flex-wrap items-center gap-2'>
             <Typography.Text className='text-sm !text-semi-color-text-1'>
@@ -209,6 +208,7 @@ const FooterBar = () => {
             </a>
           </div>
         </div>
+
       </footer>
     ),
     [logo, systemName, t, currentYear, isDemoSiteMode],
