@@ -190,12 +190,15 @@ const FooterBar = () => {
 
         <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-6'>
           <div className='flex flex-wrap items-center gap-2'>
+            {/*
             <Typography.Text className='text-sm !text-semi-color-text-1'>
               © {currentYear} {systemName}. {t('版权所有')}
             </Typography.Text>
+            */}
           </div>
 
           <div className='text-sm'>
+            {/*
             <span className='!text-semi-color-text-1'>
               {t('设计与开发由')}{' '}
             </span>
@@ -207,6 +210,7 @@ const FooterBar = () => {
             >
               New API
             </a>
+            */}
           </div>
         </div>
       </footer>
@@ -228,6 +232,7 @@ const FooterBar = () => {
               dangerouslySetInnerHTML={{ __html: footer }}
             ></div>
             <div className='text-sm flex-shrink-0'>
+              {/*
               <span className='!text-semi-color-text-1'>
                 {t('设计与开发由')}{' '}
               </span>
@@ -237,8 +242,9 @@ const FooterBar = () => {
                 rel='noopener noreferrer'
                 className='!text-semi-color-primary font-medium'
               >
-                New API
+                 New API
               </a>
+              */}
             </div>
           </div>
         </footer>

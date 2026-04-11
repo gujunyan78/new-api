@@ -69,6 +69,8 @@ const SystemSetting = () => {
     SMTPAccount: '',
     SMTPFrom: '',
     SMTPToken: '',
+    ResendAPIKey: '',
+    ResendFrom: '',
     WorkerUrl: '',
     WorkerValidKey: '',
     WorkerAllowHttpImageRequestEnabled: '',
@@ -342,6 +344,21 @@ const SystemSetting = () => {
       inputs.SMTPToken !== ''
     ) {
       options.push({ key: 'SMTPToken', value: inputs.SMTPToken });
+    }
+
+    if (options.length > 0) {
+      await updateOptions(options);
+    }
+  };
+
+  const submitResend = async () => {
+    const options = [];
+
+    if (originInputs['ResendAPIKey'] !== inputs.ResendAPIKey) {
+      options.push({ key: 'ResendAPIKey', value: inputs.ResendAPIKey });
+    }
+    if (originInputs['ResendFrom'] !== inputs.ResendFrom) {
+      options.push({ key: 'ResendFrom', value: inputs.ResendFrom });
     }
 
     if (options.length > 0) {
@@ -1349,6 +1366,32 @@ const SystemSetting = () => {
                     </Col>
                   </Row>
                   <Button onClick={submitSMTP}>{t('保存 SMTP 设置')}</Button>
+                </Form.Section>
+              </Card>
+
+              <Card>
+                <Form.Section text={t('配置 Resend')}>
+                  <Text>{t('用以支持通过 Resend 发送邮件')}</Text>
+                  <Row
+                    gutter={{ xs: 8, sm: 16, md: 24, lg: 24, xl: 24, xxl: 24 }}
+                  >
+                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                      <Form.Input
+                        field='ResendAPIKey'
+                        label={t('Resend API Key')}
+                        type='password'
+                        placeholder='敏感信息不会发送到前端显示'
+                      />
+                    </Col>
+                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+                      <Form.Input
+                        field='ResendFrom'
+                        label={t('Resend 发送者邮箱')}
+                        placeholder='例如：no-reply@example.com'
+                      />
+                    </Col>
+                  </Row>
+                  <Button onClick={submitResend}>{t('保存 Resend 设置')}</Button>
                 </Form.Section>
               </Card>
               <Card>

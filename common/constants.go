@@ -12,7 +12,7 @@ import (
 
 var StartTime = time.Now().Unix() // unit: second
 var Version = "v0.0.0"            // this hard coding will be replaced automatically when building, no need to manually change
-var SystemName = "New API"
+var SystemName = "91Token"
 var Footer = ""
 var Logo = ""
 var TopUpLink = ""
@@ -84,6 +84,9 @@ var SMTPForceAuthLogin = false
 var SMTPAccount = ""
 var SMTPFrom = ""
 var SMTPToken = ""
+
+var ResendAPIKey = ""
+var ResendFrom = ""
 
 var GitHubClientId = ""
 var GitHubClientSecret = ""

@@ -333,6 +333,10 @@ func updateOptionMap(key string, value string) (err error) {
 		common.SMTPFrom = value
 	case "SMTPToken":
 		common.SMTPToken = value
+	case "ResendAPIKey":
+		common.ResendAPIKey = value
+	case "ResendFrom":
+		common.ResendFrom = value
 	case "ServerAddress":
 		system_setting.ServerAddress = value
 	case "WorkerUrl":
