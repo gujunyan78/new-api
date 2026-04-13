@@ -426,17 +426,14 @@ func GetUserTopUps(c *gin.Context) {
 func GetAllTopUps(c *gin.Context) {
 	pageInfo := common.GetPageQuery(c)
 	keyword := c.Query("keyword")
+	orderBy := c.Query("order_by")
 
 	var (
 		topups []*model.TopUp
 		total  int64
 		err    error
 	)
-	if keyword != "" {
-		topups, total, err = model.SearchAllTopUps(keyword, pageInfo)
-	} else {
-		topups, total, err = model.GetAllTopUps(pageInfo)
-	}
+	topups, total, err = model.GetAllTopUps(pageInfo, orderBy, keyword)
 	if err != nil {
 		common.ApiError(c, err)
 		return
@@ -445,6 +442,34 @@ func GetAllTopUps(c *gin.Context) {
 	pageInfo.SetTotal(int(total))
 	pageInfo.SetItems(topups)
 	common.ApiSuccess(c, pageInfo)
+}
+
+type AdminManualTopUpRequest struct {
+	UserId int     `json:"user_id" binding:"required"`
+	Amount float64 `json:"amount"`
+	Remark string  `json:"remark"`
+}
+
+// AdminManualTopUp 管理员手工充值接口
+func AdminManualTopUp(c *gin.Context) {
+	var req AdminManualTopUpRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		common.ApiErrorMsg(c, "参数错误")
+		return
+	}
+	if req.Amount == 0 {
+		common.ApiErrorMsg(c, "充值金额不能为零")
+		return
+	}
+
+	operatorId := c.GetInt("id")
+	operatorName := c.GetString("username")
+
+	if err := model.AdminManualTopUp(req.UserId, req.Amount, operatorId, operatorName, req.Remark); err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, nil)
 }
 
 type AdminCompleteTopupRequest struct {

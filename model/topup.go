@@ -23,6 +23,8 @@ type TopUp struct {
 	CompleteTime  int64   `json:"complete_time"`
 	Status        string  `json:"status"`
 	ExtraInfo     string  `json:"extra_info" gorm:"type:text"`
+	// 用于返回时包含用户信息
+	Username string `json:"username,omitempty" gorm:"-"`
 }
 
 // GetPendingUsdtOrders returns all pending USDT top-up orders.
@@ -175,7 +177,7 @@ func GetUserTopUps(userId int, pageInfo *common.PageInfo) (topups []*TopUp, tota
 }
 
 // GetAllTopUps 获取全平台的充值记录（管理员使用）
-func GetAllTopUps(pageInfo *common.PageInfo) (topups []*TopUp, total int64, err error) {
+func GetAllTopUps(pageInfo *common.PageInfo, orderBy string, keyword string) (topups []*TopUp, total int64, err error) {
 	tx := DB.Begin()
 	if tx.Error != nil {
 		return nil, 0, tx.Error
@@ -186,15 +188,94 @@ func GetAllTopUps(pageInfo *common.PageInfo) (topups []*TopUp, total int64, err 
 		}
 	}()
 
-	if err = tx.Model(&TopUp{}).Count(&total).Error; err != nil {
+	// 首先获取符合条件的 topup ID 列表
+	var topupIds []int
+	countQuery := tx.Model(&TopUp{})
+	idQuery := tx.Model(&TopUp{})
+
+	if keyword != "" {
+		like := "%%" + keyword + "%%"
+		// 同时搜索订单号和用户名
+		countQuery = countQuery.Joins("LEFT JOIN users ON top_ups.user_id = users.id").
+			Where("top_ups.trade_no LIKE ? OR users.username LIKE ?", like, like)
+		idQuery = idQuery.Joins("LEFT JOIN users ON top_ups.user_id = users.id").
+			Where("top_ups.trade_no LIKE ? OR users.username LIKE ?", like, like)
+	}
+
+	// 获取总数
+	if err = countQuery.Count(&total).Error; err != nil {
 		tx.Rollback()
 		return nil, 0, err
 	}
 
-	if err = tx.Order("id desc").Limit(pageInfo.GetPageSize()).Offset(pageInfo.GetStartIdx()).Find(&topups).Error; err != nil {
+	// 排序
+	orderClause := "top_ups.id desc"
+	if orderBy == "create_time_asc" {
+		orderClause = "top_ups.create_time asc"
+	} else if orderBy == "create_time_desc" {
+		orderClause = "top_ups.create_time desc"
+	}
+
+	// 获取符合条件的 topup ID
+	if err = idQuery.Select("top_ups.id").
+		Order(orderClause).
+		Limit(pageInfo.GetPageSize()).
+		Offset(pageInfo.GetStartIdx()).
+		Pluck("id", &topupIds).Error; err != nil {
 		tx.Rollback()
 		return nil, 0, err
 	}
+
+	// 如果没有 ID，直接返回
+	if len(topupIds) == 0 {
+		if err = tx.Commit().Error; err != nil {
+			return nil, 0, err
+		}
+		return []*TopUp{}, total, nil
+	}
+
+	// 根据 ID 获取完整的 topup 数据
+	if err = tx.Where("id IN ?", topupIds).Find(&topups).Error; err != nil {
+		tx.Rollback()
+		return nil, 0, err
+	}
+
+	// 批量获取用户信息并填充 username
+	if len(topups) > 0 {
+		userIds := make([]int, 0, len(topups))
+		userMap := make(map[int]string)
+
+		for _, t := range topups {
+			userIds = append(userIds, t.UserId)
+		}
+
+		var users []User
+		if err = tx.Where("id IN ?", userIds).Find(&users).Error; err == nil {
+			for _, u := range users {
+				userMap[u.Id] = u.Username
+			}
+
+			for i, t := range topups {
+				if username, ok := userMap[t.UserId]; ok {
+					topups[i].Username = username
+				}
+			}
+		}
+	}
+
+	// 按照原始查询的 ID 顺序重新排序
+	topupIdMap := make(map[int]*TopUp)
+	for _, t := range topups {
+		topupIdMap[t.Id] = t
+	}
+
+	sortedTopups := make([]*TopUp, 0, len(topupIds))
+	for _, id := range topupIds {
+		if t, ok := topupIdMap[id]; ok {
+			sortedTopups = append(sortedTopups, t)
+		}
+	}
+	topups = sortedTopups
 
 	if err = tx.Commit().Error; err != nil {
 		return nil, 0, err
@@ -237,38 +318,9 @@ func SearchUserTopUps(userId int, keyword string, pageInfo *common.PageInfo) (to
 	return topups, total, nil
 }
 
-// SearchAllTopUps 按订单号搜索全平台充值记录（管理员使用）
-func SearchAllTopUps(keyword string, pageInfo *common.PageInfo) (topups []*TopUp, total int64, err error) {
-	tx := DB.Begin()
-	if tx.Error != nil {
-		return nil, 0, tx.Error
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	query := tx.Model(&TopUp{})
-	if keyword != "" {
-		like := "%%" + keyword + "%%"
-		query = query.Where("trade_no LIKE ?", like)
-	}
-
-	if err = query.Count(&total).Error; err != nil {
-		tx.Rollback()
-		return nil, 0, err
-	}
-
-	if err = query.Order("id desc").Limit(pageInfo.GetPageSize()).Offset(pageInfo.GetStartIdx()).Find(&topups).Error; err != nil {
-		tx.Rollback()
-		return nil, 0, err
-	}
-
-	if err = tx.Commit().Error; err != nil {
-		return nil, 0, err
-	}
-	return topups, total, nil
+// SearchAllTopUps 按订单号或用户名搜索全平台充值记录（管理员使用）
+func SearchAllTopUps(keyword string, pageInfo *common.PageInfo, orderBy string) (topups []*TopUp, total int64, err error) {
+	return GetAllTopUps(pageInfo, orderBy, keyword)
 }
 
 // ManualCompleteTopUp 管理员手动完成订单并给用户充值
@@ -469,5 +521,65 @@ func RechargeWaffo(tradeNo string) (err error) {
 		RecordLog(topUp.UserId, LogTypeTopup, fmt.Sprintf("Waffo充值成功，充值额度: %v，支付金额: %.2f", logger.FormatQuota(quotaToAdd), topUp.Money))
 	}
 
+	return nil
+}
+
+// AdminManualTopUp creates a new top-up record with status=success and adjusts the target user's quota.
+// Supports both positive (top-up) and negative (red reversal) amounts.
+func AdminManualTopUp(targetUserId int, amount float64, operatorId int, operatorName string, remark string) error {
+	// Build ExtraInfo JSON
+	extraInfoMap := map[string]interface{}{
+		"operator_id":   operatorId,
+		"operator_name": operatorName,
+		"remark":        remark,
+	}
+	extraInfoBytes, err := common.Marshal(extraInfoMap)
+	if err != nil {
+		return errors.New("构建扩展信息失败")
+	}
+
+	now := common.GetTimestamp()
+	tradeNo := fmt.Sprintf("ADMIN%dT%d%s", operatorId, now, common.GetRandomString(6))
+
+	// Quota calculation using shopspring/decimal to avoid floating-point precision issues
+	quotaDelta := int(decimal.NewFromFloat(amount).Mul(decimal.NewFromFloat(common.QuotaPerUnit)).IntPart())
+
+	err = DB.Transaction(func(tx *gorm.DB) error {
+		// Verify target user exists
+		var user User
+		if err := tx.Where("id = ?", targetUserId).First(&user).Error; err != nil {
+			return errors.New("用户不存在")
+		}
+
+		// Create TopUp record
+		topUp := &TopUp{
+			UserId:        targetUserId,
+			Amount:        int64(amount),
+			Money:         amount,
+			TradeNo:       tradeNo,
+			PaymentMethod: "admin_topup",
+			CreateTime:    now,
+			CompleteTime:  now,
+			Status:        common.TopUpStatusSuccess,
+			ExtraInfo:     string(extraInfoBytes),
+		}
+		if err := tx.Create(topUp).Error; err != nil {
+			return err
+		}
+
+		// Update user quota atomically
+		if err := tx.Model(&User{}).Where("id = ?", targetUserId).Update("quota", gorm.Expr("quota + ?", quotaDelta)).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	// Record log outside transaction to avoid blocking
+	RecordLog(targetUserId, LogTypeTopup, fmt.Sprintf("管理员手工充值，操作人: %s，充值金额: %v，备注: %s", operatorName, logger.FormatQuota(quotaDelta), remark))
 	return nil
 }

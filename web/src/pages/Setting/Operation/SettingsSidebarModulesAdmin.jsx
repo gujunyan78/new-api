@@ -67,6 +67,7 @@ export default function SettingsSidebarModulesAdmin(props) {
       user: true,
       subscription: true,
       setting: true,
+      balance: true,
     },
   });
 
@@ -128,6 +129,7 @@ export default function SettingsSidebarModulesAdmin(props) {
         user: true,
         subscription: true,
         setting: true,
+        balance:true,
       },
     };
     setSidebarModulesAdmin(defaultModules);
@@ -197,6 +199,7 @@ export default function SettingsSidebarModulesAdmin(props) {
             user: true,
             subscription: true,
             setting: true,
+            balance:true,
           },
         };
         setSidebarModulesAdmin(defaultModules);
@@ -271,6 +274,11 @@ export default function SettingsSidebarModulesAdmin(props) {
           description: t('兑换码生成管理'),
         },
         { key: 'user', title: t('用户管理'), description: t('用户账户管理') },
+        {
+          key: 'balance',
+          title: t('人工充值'),
+          description: t('人工充值'),
+        },
         {
           key: 'setting',
           title: t('系统设置'),

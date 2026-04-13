@@ -35,6 +35,7 @@ import Channel from './pages/Channel';
 import Token from './pages/Token';
 import Redemption from './pages/Redemption';
 import TopUp from './pages/TopUp';
+import AdminManualTopUpPage from './pages/TopUp/AdminManualTopUpPage';
 import Log from './pages/Log';
 import Chat from './pages/Chat';
 import Chat2Link from './pages/Chat2Link';
@@ -265,6 +266,14 @@ function App() {
                 <PersonalSetting />
               </Suspense>
             </PrivateRoute>
+          }
+        />
+        <Route
+          path='/console/balance'
+          element={
+            <AdminRoute>
+              <AdminManualTopUpPage />
+            </AdminRoute>
           }
         />
         <Route

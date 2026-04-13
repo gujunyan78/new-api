@@ -3533,6 +3533,25 @@
     "复制地址": "Copy Address",
     "请务必转账精确金额，否则系统无法自动确认": "Please transfer the exact amount, otherwise the system cannot confirm automatically",
     "请勿向非本页面显示的地址转账": "Do not transfer to any address other than the one shown on this page",
-    "转账完成后请耐心等待系统确认": "Please wait patiently for system confirmation after transfer"
+    "转账完成后请耐心等待系统确认": "Please wait patiently for system confirmation after transfer",
+    "管理员充值": "Admin Top-Up",
+    "管理员红冲": "Admin Reversal",
+    "管理员手工充值": "Admin Manual Top-Up",
+    "新建手工充值": "New Manual Top-Up",
+    "提交充值": "Submit Top-Up",
+    "充值金额": "Top-Up Amount",
+    "充值成功": "Top-up successful",
+    "充值失败": "Top-up failed",
+    "充值金额不能为零": "Top-up amount cannot be zero",
+    "请输入充值金额": "Please enter top-up amount",
+    "正数充值，负数红冲，不允许为0": "Positive to top up, negative to reverse, zero not allowed",
+    "可选备注信息": "Optional remark",
+    "目标用户": "Target User",
+    "金额": "Amount",
+    "操作人": "Operator",
+    "搜索用户": "Search user",
+    "请选择用户": "Please select a user",
+    "红冲确认": "Reversal Confirmation",
+    "您输入了负数金额，这将执行红冲（冲销）操作，目标用户余额可能变为负数。确认继续？": "You entered a negative amount. This will perform a reversal operation and the target user's balance may become negative. Continue?"
   }
 }
