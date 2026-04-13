@@ -90,6 +90,9 @@ const RechargeCard = ({
   enableWaffoTopUp,
   waffoTopUp,
   waffoPayMethods,
+  enableUsdtTopUp,
+  usdtMinTopUp,
+  onUsdtPay,
   subscriptionLoading = false,
   subscriptionPlans = [],
   billingPreference,
@@ -227,13 +230,13 @@ const RechargeCard = ({
           <div className='py-8 flex justify-center'>
             <Spin size='large' />
           </div>
-        ) : enableOnlineTopUp || enableStripeTopUp || enableCreemTopUp || enableWaffoTopUp ? (
+        ) : enableOnlineTopUp || enableStripeTopUp || enableCreemTopUp || enableWaffoTopUp || enableUsdtTopUp ? (
           <Form
             getFormApi={(api) => (onlineFormApiRef.current = api)}
             initValues={{ topUpCount: topUpCount }}
           >
             <div className='space-y-6'>
-              {(enableOnlineTopUp || enableStripeTopUp || enableWaffoTopUp) && (
+              {(enableOnlineTopUp || enableStripeTopUp || enableWaffoTopUp || enableUsdtTopUp) && (
                 <Row gutter={12}>
                   <Col xs={24} sm={24} md={24} lg={10} xl={10}>
                     <Form.InputNumber
@@ -291,7 +294,7 @@ const RechargeCard = ({
                       style={{ width: '100%' }}
                     />
                   </Col>
-                  {payMethods && payMethods.filter(m => m.type !== 'waffo').length > 0 && (
+                  {(payMethods && payMethods.filter(m => m.type !== 'waffo').length > 0 || enableUsdtTopUp) && (
                   <Col xs={24} sm={24} md={24} lg={14} xl={14}>
                     <Form.Slot label={t('选择支付方式')}>
                         <Space wrap>
@@ -354,6 +357,42 @@ const RechargeCard = ({
                               </React.Fragment>
                             );
                           })}
+                          {enableUsdtTopUp && (() => {
+                            const usdtDisabled = Number(topUpCount || 0) < Number(usdtMinTopUp || 0);
+                            const usdtButtonEl = (
+                              <Button
+                                key='usdt'
+                                theme='outline'
+                                type='tertiary'
+                                onClick={onUsdtPay}
+                                icon={
+                                  <Coins
+                                    size={18}
+                                    color='#26a17b'
+                                  />
+                                }
+                                className='!rounded-lg !px-4 !py-2'
+                              >
+                                USDT
+                              </Button>
+                            );
+                            return usdtDisabled ? (
+                              <Tooltip
+                                content={
+                                  t('此支付方式最低充值金额为') +
+                                  ' ' +
+                                  usdtMinTopUp
+                                }
+                                key='usdt'
+                              >
+                                {usdtButtonEl}
+                              </Tooltip>
+                            ) : (
+                              <React.Fragment key='usdt'>
+                                {usdtButtonEl}
+                              </React.Fragment>
+                            );
+                          })()}
                         </Space>
                     </Form.Slot>
                   </Col>
@@ -548,6 +587,7 @@ const RechargeCard = ({
                   </div>
                 </Form.Slot>
               )}
+
             </div>
           </Form>
         ) : (

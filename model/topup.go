@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
 	"github.com/QuantumNous/new-api/logger"
 
 	"github.com/shopspring/decimal"
@@ -12,15 +13,50 @@ import (
 )
 
 type TopUp struct {
-	Id               int     `json:"id"`
-	UserId           int     `json:"user_id" gorm:"index"`
-	Amount           int64   `json:"amount"`
-	Money            float64 `json:"money"`
-	TradeNo          string  `json:"trade_no" gorm:"unique;type:varchar(255);index"`
-	PaymentMethod    string  `json:"payment_method" gorm:"type:varchar(50)"`
-	CreateTime       int64   `json:"create_time"`
-	CompleteTime     int64   `json:"complete_time"`
-	Status           string  `json:"status"`
+	Id            int     `json:"id"`
+	UserId        int     `json:"user_id" gorm:"index"`
+	Amount        int64   `json:"amount"`
+	Money         float64 `json:"money"`
+	TradeNo       string  `json:"trade_no" gorm:"unique;type:varchar(255);index"`
+	PaymentMethod string  `json:"payment_method" gorm:"type:varchar(50)"`
+	CreateTime    int64   `json:"create_time"`
+	CompleteTime  int64   `json:"complete_time"`
+	Status        string  `json:"status"`
+	ExtraInfo     string  `json:"extra_info" gorm:"type:text"`
+}
+
+// GetPendingUsdtOrders returns all pending USDT top-up orders.
+func GetPendingUsdtOrders() ([]*TopUp, error) {
+	var orders []*TopUp
+	err := DB.Where("payment_method = ? AND status = ?", "usdt", common.TopUpStatusPending).Find(&orders).Error
+	return orders, err
+}
+
+// CountUserPendingUsdtOrders counts the number of pending USDT orders for a user.
+func CountUserPendingUsdtOrders(userId int) (int64, error) {
+	var count int64
+	err := DB.Model(&TopUp{}).Where("user_id = ? AND payment_method = ? AND status = ?", userId, "usdt", common.TopUpStatusPending).Count(&count).Error
+	return count, err
+}
+
+// GetPendingUsdtOrdersByWallet returns all pending USDT orders targeting a specific wallet address.
+// It filters by parsing the extra_info JSON field.
+func GetPendingUsdtOrdersByWallet(walletAddress string) ([]*TopUp, error) {
+	pendingOrders, err := GetPendingUsdtOrders()
+	if err != nil {
+		return nil, err
+	}
+	var matched []*TopUp
+	for _, order := range pendingOrders {
+		var info constant.UsdtExtraInfo
+		if err := common.UnmarshalJsonStr(order.ExtraInfo, &info); err != nil {
+			continue
+		}
+		if info.WalletAddress == walletAddress {
+			matched = append(matched, order)
+		}
+	}
+	return matched, nil
 }
 
 func (topUp *TopUp) Insert() error {

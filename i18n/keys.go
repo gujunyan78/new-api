@@ -305,6 +305,21 @@ const (
 	MsgDistributorInvalidParseModel   = "distributor.invalid_request_parse_model"
 )
 
+// USDT payment related messages
+const (
+	MsgUsdtNotEnabled         = "usdt.not_enabled"
+	MsgUsdtAmountTooLow       = "usdt.amount_too_low"
+	MsgUsdtNoAvailableWallet  = "usdt.no_available_wallet"
+	MsgUsdtAmountGenerateFail = "usdt.amount_generate_fail"
+	MsgUsdtTooManyPending     = "usdt.too_many_pending"
+	MsgUsdtOrderNotFound      = "usdt.order_not_found"
+	MsgUsdtCreateOrderFailed  = "usdt.create_order_failed"
+	MsgUsdtQueryOrderFailed   = "usdt.query_order_failed"
+	MsgUsdtUnsupportedChain   = "usdt.unsupported_chain"
+	MsgUsdtInvalidTronAddress = "usdt.invalid_tron_address"
+	MsgUsdtInvalidEthAddress  = "usdt.invalid_eth_address"
+)
+
 // Custom OAuth provider related messages
 const (
 	MsgCustomOAuthNotFound          = "custom_oauth.not_found"

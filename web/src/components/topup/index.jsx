@@ -39,6 +39,7 @@ import InvitationCard from './InvitationCard';
 import TransferModal from './modals/TransferModal';
 import PaymentConfirmModal from './modals/PaymentConfirmModal';
 import TopupHistoryModal from './modals/TopupHistoryModal';
+import UsdtPaymentModal from './modals/UsdtPaymentModal';
 
 const TopUp = () => {
   const { t } = useTranslation();
@@ -75,6 +76,12 @@ const TopUp = () => {
   const [enableWaffoTopUp, setEnableWaffoTopUp] = useState(false);
   const [waffoPayMethods, setWaffoPayMethods] = useState([]);
   const [waffoMinTopUp, setWaffoMinTopUp] = useState(1);
+
+  // USDT 相关状态
+  const [enableUsdtTopUp, setEnableUsdtTopUp] = useState(false);
+  const [usdtMinTopUp, setUsdtMinTopUp] = useState(1);
+  const [usdtBlockchainTypes, setUsdtBlockchainTypes] = useState([]);
+  const [usdtModalVisible, setUsdtModalVisible] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -495,6 +502,11 @@ const TopUp = () => {
           setEnableWaffoTopUp(enableWaffoTopUp);
           setWaffoPayMethods(data.waffo_pay_methods || []);
           setWaffoMinTopUp(data.waffo_min_topup || 1);
+
+          // USDT 配置
+          setEnableUsdtTopUp(data.enable_usdt_topup || false);
+          setUsdtMinTopUp(data.usdt_min_topup || 1);
+          setUsdtBlockchainTypes(data.usdt_blockchain_types || []);
           setMinTopUp(minTopUpValue);
           setTopUpCount(minTopUpValue);
 
@@ -751,6 +763,18 @@ const TopUp = () => {
         t={t}
       />
 
+      {/* USDT 支付弹窗 */}
+      <UsdtPaymentModal
+        t={t}
+        visible={usdtModalVisible}
+        onClose={(success) => {
+          setUsdtModalVisible(false);
+          if (success) getUserQuota();
+        }}
+        amount={topUpCount}
+        blockchainTypes={usdtBlockchainTypes}
+      />
+
       {/* Creem 充值确认模态框 */}
       <Modal
         title={t('确定要充值 $')}
@@ -791,6 +815,15 @@ const TopUp = () => {
           enableWaffoTopUp={enableWaffoTopUp}
           waffoTopUp={waffoTopUp}
           waffoPayMethods={waffoPayMethods}
+          enableUsdtTopUp={enableUsdtTopUp}
+          usdtMinTopUp={usdtMinTopUp}
+          onUsdtPay={() => {
+            if (topUpCount < usdtMinTopUp) {
+              showError(t('充值数量不能小于') + usdtMinTopUp);
+              return;
+            }
+            setUsdtModalVisible(true);
+          }}
           presetAmounts={presetAmounts}
           selectedPreset={selectedPreset}
           selectPresetAmount={selectPresetAmount}

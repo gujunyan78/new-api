@@ -106,6 +106,11 @@ func InitOptionMap() {
 	common.OptionMap["WaffoUnitPrice"] = strconv.FormatFloat(setting.WaffoUnitPrice, 'f', -1, 64)
 	common.OptionMap["WaffoMinTopUp"] = strconv.Itoa(setting.WaffoMinTopUp)
 	common.OptionMap["WaffoPayMethods"] = setting.WaffoPayMethods2JsonString()
+	common.OptionMap["UsdtEnabled"] = strconv.FormatBool(setting.UsdtEnabled)
+	common.OptionMap["UsdtMinTopUp"] = strconv.Itoa(setting.UsdtMinTopUp)
+	common.OptionMap["UsdtWallets"] = setting.UsdtWallets
+	common.OptionMap["TronGridApiKey"] = setting.TronGridApiKey
+	common.OptionMap["EtherscanApiKey"] = setting.EtherscanApiKey
 	common.OptionMap["TopupGroupRatio"] = common.TopupGroupRatio2JSONString()
 	common.OptionMap["Chats"] = setting.Chats2JsonString()
 	common.OptionMap["AutoGroups"] = setting.AutoGroups2JsonString()
@@ -515,6 +520,16 @@ func updateOptionMap(key string, value string) (err error) {
 		// WaffoPayMethods is read directly from OptionMap via setting.GetWaffoPayMethods().
 		// The value is already stored in OptionMap at the top of this function (line: common.OptionMap[key] = value).
 		// No additional in-memory variable to update.
+	case "UsdtEnabled":
+		setting.UsdtEnabled = value == "true"
+	case "UsdtMinTopUp":
+		setting.UsdtMinTopUp, _ = strconv.Atoi(value)
+	case "UsdtWallets":
+		setting.UsdtWallets = value
+	case "TronGridApiKey":
+		setting.TronGridApiKey = value
+	case "EtherscanApiKey":
+		setting.EtherscanApiKey = value
 	}
 	return err
 }

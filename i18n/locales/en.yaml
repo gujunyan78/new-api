@@ -256,6 +256,19 @@ distributor.no_available_channel: "No available channel for model {{.Model}} und
 distributor.invalid_midjourney_request: "Invalid Midjourney request: {{.Error}}"
 distributor.invalid_request_parse_model: "Invalid request, unable to parse model"
 
+# USDT payment messages
+usdt.not_enabled: "USDT payment is not enabled"
+usdt.amount_too_low: "Top-up amount cannot be less than {{.Min}}"
+usdt.no_available_wallet: "No available receiving wallet address"
+usdt.amount_generate_fail: "Top-up is currently busy, please try again later"
+usdt.too_many_pending: "You have too many pending top-up orders, please wait for existing orders to complete or expire before trying again"
+usdt.order_not_found: "Order not found"
+usdt.create_order_failed: "Failed to create order"
+usdt.query_order_failed: "Failed to query orders"
+usdt.unsupported_chain: "Unsupported blockchain type: {{.Type}}"
+usdt.invalid_tron_address: "Tron address must start with T and be 34 characters long"
+usdt.invalid_eth_address: "Ethereum address must start with 0x and be 42 characters long"
+
 # Custom OAuth provider messages
 custom_oauth.not_found: "Custom OAuth provider not found"
 custom_oauth.slug_empty: "Slug cannot be empty"

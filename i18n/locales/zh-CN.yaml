@@ -257,6 +257,19 @@ distributor.no_available_channel: "分组 {{.Group}} 下模型 {{.Model}} 无可
 distributor.invalid_midjourney_request: "无效的midjourney请求，{{.Error}}"
 distributor.invalid_request_parse_model: "无效的请求，无法解析模型"
 
+# USDT payment messages
+usdt.not_enabled: "USDT 支付未启用"
+usdt.amount_too_low: "充值数量不能小于 {{.Min}}"
+usdt.no_available_wallet: "当前无可用的收款钱包地址"
+usdt.amount_generate_fail: "当前充值繁忙，请稍后重试"
+usdt.too_many_pending: "您有过多未完成的充值订单，请等待现有订单完成或过期后再试"
+usdt.order_not_found: "订单不存在"
+usdt.create_order_failed: "创建订单失败"
+usdt.query_order_failed: "查询订单失败"
+usdt.unsupported_chain: "不支持的区块链类型: {{.Type}}"
+usdt.invalid_tron_address: "Tron 地址必须以 T 开头且长度为 34 个字符"
+usdt.invalid_eth_address: "Ethereum 地址必须以 0x 开头且长度为 42 个字符"
+
 # Custom OAuth provider messages
 custom_oauth.not_found: "自定义 OAuth 提供商不存在"
 custom_oauth.slug_empty: "标识符不能为空"

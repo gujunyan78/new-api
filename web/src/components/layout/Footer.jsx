@@ -187,7 +187,7 @@ const FooterBar = () => {
             </div>
           </div>
         )}
-
+        {/*
         <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-6'>
           <div className='flex flex-wrap items-center gap-2'>
             <Typography.Text className='text-sm !text-semi-color-text-1'>
@@ -208,7 +208,7 @@ const FooterBar = () => {
               New API
             </a>
           </div>
-        </div>
+        </div>*/}
       </footer>
     ),
     [logo, systemName, t, currentYear, isDemoSiteMode],
@@ -221,6 +221,7 @@ const FooterBar = () => {
   return (
     <div className='w-full'>
       {footer ? (
+              {/*
         <footer className='relative h-auto py-4 px-6 md:px-24 w-full flex items-center justify-center overflow-hidden'>
           <div className='flex flex-col md:flex-row items-center justify-between w-full max-w-[1110px] gap-4'>
             <div
@@ -241,7 +242,7 @@ const FooterBar = () => {
               </a>
             </div>
           </div>
-        </footer>
+        </footer>*/}
       ) : (
         customFooter
       )}

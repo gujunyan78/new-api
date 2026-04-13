@@ -54,6 +54,27 @@ const PAYMENT_METHOD_MAP = {
   waffo: 'Waffo',
   alipay: '支付宝',
   wxpay: '微信',
+  usdt: 'USDT',
+};
+
+// 区块链类型显示名称
+const BLOCKCHAIN_TYPE_MAP = {
+  tron: 'TRC-20',
+  ethereum: 'ERC-20',
+};
+
+// 解析 USDT 订单的 extra_info
+const parseUsdtExtraInfo = (extraInfo) => {
+  if (!extraInfo) return null;
+  try {
+    const info = JSON.parse(extraInfo);
+    if (info.blockchain_type && info.usdt_amount) {
+      return info;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 };
 
 const TopupHistoryModal = ({ visible, onCancel, t }) => {
@@ -146,8 +167,22 @@ const TopupHistoryModal = ({ visible, onCancel, t }) => {
   };
 
   // 渲染支付方式
-  const renderPaymentMethod = (pm) => {
+  const renderPaymentMethod = (pm, record) => {
     const displayName = PAYMENT_METHOD_MAP[pm];
+    if (pm === 'usdt') {
+      const extraInfo = parseUsdtExtraInfo(record?.extra_info);
+      const blockchainLabel = extraInfo
+        ? BLOCKCHAIN_TYPE_MAP[extraInfo.blockchain_type] || extraInfo.blockchain_type
+        : null;
+      return (
+        <span className='flex items-center gap-1'>
+          <Text>{t('USDT')}</Text>
+          {blockchainLabel && (
+            <Tag size='small' color='blue'>{blockchainLabel}</Tag>
+          )}
+        </span>
+      );
+    }
     return <Text>{displayName ? t(displayName) : pm || '-'}</Text>;
   };
 
@@ -171,7 +206,7 @@ const TopupHistoryModal = ({ visible, onCancel, t }) => {
         title: t('支付方式'),
         dataIndex: 'payment_method',
         key: 'payment_method',
-        render: renderPaymentMethod,
+        render: (pm, record) => renderPaymentMethod(pm, record),
       },
       {
         title: t('充值额度'),
@@ -197,7 +232,15 @@ const TopupHistoryModal = ({ visible, onCancel, t }) => {
         title: t('支付金额'),
         dataIndex: 'money',
         key: 'money',
-        render: (money) => <Text type='danger'>¥{money.toFixed(2)}</Text>,
+        render: (money, record) => {
+          if (record.payment_method === 'usdt') {
+            const extraInfo = parseUsdtExtraInfo(record?.extra_info);
+            if (extraInfo?.usdt_amount) {
+              return <Text type='danger'>{extraInfo.usdt_amount} USDT</Text>;
+            }
+          }
+          return <Text type='danger'>¥{money.toFixed(2)}</Text>;
+        },
       },
       {
         title: t('状态'),
