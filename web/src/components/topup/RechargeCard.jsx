@@ -283,12 +283,14 @@ const RechargeCard = ({
                             />
                           }
                         >
+                        {/* 
                           <Text type='secondary' className='text-red-600'>
                             {t('实付金额：')}
                             <span style={{ color: 'red' }}>
                               {renderAmount()}
                             </span>
                           </Text>
+                          充值金额 */}
                         </Skeleton>
                       }
                       style={{ width: '100%' }}

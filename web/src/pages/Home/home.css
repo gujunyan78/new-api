@@ -1,0 +1,285 @@
+/* ==================== 模型汇聚设计系统 - 首页 CSS ==================== */
+
+/* ==================== 1. 全局间距与最大宽度规范 ==================== */
+.pages-home-container {
+  --spacing-unit: 8px;
+  --max-content-width: 1280px;
+}
+
+/* Hero 区域容器 */
+.pages-home-container .w-full.border-b {
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.pages-home-container .flex.items-center.justify-center.h-full > div {
+  max-width: var(--max-content-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ==================== 2. 背景网格线与动态光晕 ==================== */
+/* 网格线背景 */
+.pages-home-container .w-full.border-b::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  z-index: 0;
+  pointer-events: none;
+  animation: gridPulse 20s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* 动态光晕 - 蓝色紫 */
+.pages-home-container .w-full.border-b::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+  filter: blur(80px);
+  top: -10%;
+  left: -10%;
+  animation: orb1Move 25s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes orb1Move {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(20%, 10%) scale(1.1); }
+  50% { transform: translate(10%, 20%) scale(0.9); }
+  75% { transform: translate(-10%, 10%) scale(1.05); }
+}
+
+/* 第二个动态光晕 - 紫蓝色 */
+.pages-home-container .blur-ball {
+  display: none !important;
+}
+
+.pages-home-container .w-full.border-b > .blur-ball-indigo,
+.pages-home-container .w-full.border-b > .blur-ball-teal {
+  display: none !important;
+}
+
+.pages-home-container .w-full.border-b::before,
+.pages-home-container .w-full.border-b::after {
+  display: block;
+}
+
+/* 第三个光晕 */
+.pages-home-container .w-full.border-b > :first-child::before {
+  content: '';
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%);
+  filter: blur(80px);
+  bottom: -5%;
+  right: -5%;
+  animation: orb2Move 30s ease-in-out infinite reverse;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes orb2Move {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-15%, -10%) scale(1.15); }
+  66% { transform: translate(-5%, -20%) scale(0.85); }
+}
+
+/* ==================== 3. 大模型卡片悬停渐变描边 ==================== */
+.pages-home-container .flex.flex-wrap.items-center.justify-center.gap-3 > div {
+  position: relative;
+  padding: 8px;
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+}
+
+.pages-home-container .flex.flex-wrap.items-center.justify-center.gap-3 > div::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0), rgba(6, 182, 212, 0), rgba(236, 72, 153, 0));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+
+.pages-home-container .flex.flex-wrap.items-center.justify-center.gap-3 > div:hover::before {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(6, 182, 212, 0.8), rgba(236, 72, 153, 0.8));
+}
+
+.pages-home-container .flex.flex-wrap.items-center.justify-center.gap-3 > div:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(139, 92, 246, 0.25);
+}
+
+/* ==================== 4. 按钮统一 - 圆角巨大与流动渐变色 ==================== */
+.pages-home-container .flex.flex-row.gap-4.justify-center.items-center button,
+.pages-home-container .flex.flex-row.gap-4.justify-center.items-center .semi-button {
+  border-radius: 9999px !important;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.pages-home-container .flex.flex-row.gap-4.justify-center.items-center .semi-button-primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #06b6d4, #6366f1);
+  background-size: 200% 200%;
+  animation: gradientFlow 4s ease infinite;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s ease;
+}
+
+.pages-home-container .flex.flex-row.gap-4.justify-center.items-center .semi-button-primary:hover {
+  background-position: 100% 0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 次要按钮也有渐变效果 */
+.pages-home-container .flex.flex-row.gap-4.justify-center.items-center .semi-button:not(.semi-button-primary) {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  transition: all 0.3s ease;
+}
+
+.pages-home-container .flex.flex-row.gap-4.justify-center.items-center .semi-button:not(.semi-button-primary):hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.2));
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-2px);
+}
+
+/* ==================== 5. 输入框圆角 */
+.pages-home-container .flex.flex-col.md\:flex-row.items-center.justify-center.gap-4.w-full .semi-input-wrapper {
+  border-radius: 9999px !important;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.pages-home-container .flex.flex-col.md\:flex-row.items-center.justify-center.gap-4.w-full .semi-input-wrapper:hover,
+.pages-home-container .flex.flex-col.md\:flex-row.items-center.justify-center.gap-4.w-full .semi-input-wrapper:focus-within {
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.pages-home-container .flex.flex-col.md\:flex-row.items-center.justify-center.gap-4.w-full .semi-input-wrapper .semi-button {
+  border-radius: 9999px !important;
+}
+
+/* ==================== 6. 强调信息 - 浅绿色 Badge 包裹"开户简单，免原厂审查" */
+.pages-home-container p.text-base.md\:text-lg.lg\:text-xl {
+  position: relative;
+}
+
+/* 使用属性选择器或父类限定来找到特定文本 */
+.pages-home-container p.text-base.md\:text-lg.lg\:text-xl::after {
+  content: '';
+  display: block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 9999px;
+  color: #16a34a;
+  font-weight: 500;
+  font-size: 0.875rem;
+  max-width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  backdrop-filter: blur(8px);
+}
+
+/* 中文环境下的特定文本 Badge */
+.pages-home-container:has(h1 span.shine-text) + div p.text-base.md\:text-lg.lg\:text-xl::after,
+.pages-home-container p.text-base.md\:text-lg.lg\:text-xl:has(~ div .shine-text)::after {
+  content: '开户简单，免原厂审查';
+}
+
+/* ==================== 7. 框架兼容性图标区域优化 ==================== */
+.pages-home-container .mt-12.md\:mt-16.lg\:mt-20.w-full {
+  position: relative;
+  padding: 32px 0;
+}
+
+.pages-home-container .mt-12.md\:mt-16.lg\:mt-20.w-full::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+}
+
+/* ==================== 8. 标题文字优化 ==================== */
+.pages-home-container .shine-text {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 25%, #06b6d4 50%, #8b5cf6 75%, #6366f1 100%);
+  background-size: 200% 100%;
+  animation: shineText 6s ease-in-out infinite;
+}
+
+@keyframes shineText {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 200% 50%; }
+}
+
+/* ==================== 9. 整体响应式优化 ==================== */
+@media (max-width: 768px) {
+  .pages-home-container .w-full.border-b::after {
+    width: 400px;
+    height: 400px;
+    filter: blur(60px);
+  }
+  
+  .pages-home-container .w-full.border-b > :first-child::before {
+    width: 350px;
+    height: 350px;
+    filter: blur(60px);
+  }
+  
+  .pages-home-container .flex.flex-wrap.items-center.justify-center.gap-3 > div {
+    padding: 6px;
+  }
+}
+
+/* ==================== 10. 暗黑模式适配 ==================== */
+html.dark .pages-home-container .w-full.border-b::before {
+  background-image:
+    linear-gradient(to right, rgba(139, 92, 246, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+}
+
+html.dark .pages-home-container .flex.flex-wrap.items-center.justify-center.gap-3 > div:hover {
+  box-shadow: 0 20px 40px -12px rgba(139, 92, 246, 0.35);
+}
+
+html.dark .pages-home-container p.text-base.md\:text-lg.lg\:text-xl::after {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.15));
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+}

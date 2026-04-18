@@ -78,14 +78,6 @@ export const getTopupsColumns = ({ t }) => {
       },
     },
     {
-      title: t('备注'),
-      key: 'remark',
-      render: (_, record) => {
-        const info = parseExtraInfo(record.extra_info);
-        return info.remark || '-';
-      },
-    },
-    {
       title: t('创建时间'),
       dataIndex: 'create_time',
       key: 'create_time',
@@ -98,6 +90,14 @@ export const getTopupsColumns = ({ t }) => {
         const label = getAdminTopUpLabel(record.money, t);
         const color = record.money < 0 ? 'red' : 'green';
         return <Tag color={color}>{label}</Tag>;
+      },
+    },
+    {
+      title: t('备注'),
+      key: 'remark',
+      render: (_, record) => {
+        const info = parseExtraInfo(record.extra_info);
+        return info.remark || '-';
       },
     },
   ];

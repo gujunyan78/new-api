@@ -12,6 +12,13 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	PaymentMethodStripe = "stripe"
+	PaymentMethodCreem  = "creem"
+	PaymentMethodWaffo  = "waffo"
+	PaymentMethodUsdt   = "usdt"
+)
+
 type TopUp struct {
 	Id            int     `json:"id"`
 	UserId        int     `json:"user_id" gorm:"index"`
@@ -114,6 +121,10 @@ func Recharge(referenceId string, customerId string) (err error) {
 
 		if topUp.Status != common.TopUpStatusPending {
 			return errors.New("充值订单状态错误")
+		}
+
+		if topUp.PaymentMethod != PaymentMethodStripe {
+			return errors.New("充值订单支付方式错误")
 		}
 
 		topUp.CompleteTime = common.GetTimestamp()
@@ -417,6 +428,10 @@ func RechargeCreem(referenceId string, customerEmail string, customerName string
 			return errors.New("充值订单状态错误")
 		}
 
+		if topUp.PaymentMethod != PaymentMethodCreem {
+			return errors.New("充值订单支付方式错误")
+		}
+
 		topUp.CompleteTime = common.GetTimestamp()
 		topUp.Status = common.TopUpStatusSuccess
 		err = tx.Save(topUp).Error
@@ -490,6 +505,10 @@ func RechargeWaffo(tradeNo string) (err error) {
 
 		if topUp.Status != common.TopUpStatusPending {
 			return errors.New("充值订单状态错误")
+		}
+
+		if topUp.PaymentMethod != PaymentMethodWaffo {
+			return errors.New("充值订单支付方式错误")
 		}
 
 		dAmount := decimal.NewFromInt(topUp.Amount)

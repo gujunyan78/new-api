@@ -155,6 +155,14 @@ func StripeWebhook(c *gin.Context) {
 
 	signature := c.GetHeader("Stripe-Signature")
 	endpointSecret := setting.StripeWebhookSecret
+
+	// 必须配置 Webhook 密钥
+	if endpointSecret == "" {
+		log.Printf("Stripe Webhook密钥未配置，拒绝请求\n")
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	event, err := webhook.ConstructEventWithOptions(payload, signature, endpointSecret, webhook.ConstructEventOptions{
 		IgnoreAPIVersionMismatch: true,
 	})

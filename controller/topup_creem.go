@@ -8,13 +8,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/setting"
 	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/setting"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thanhpk/randstr"
@@ -38,10 +39,7 @@ func generateCreemSignature(payload string, secret string) string {
 func verifyCreemSignature(payload string, signature string, secret string) bool {
 	if secret == "" {
 		log.Printf("Creem webhook secret not set")
-		if setting.CreemTestMode {
-			log.Printf("Skip Creem webhook sign verify in test mode")
-			return true
-		}
+		// 即使在测试模式下也不允许跳过签名验证，避免安全漏洞
 		return false
 	}
 
