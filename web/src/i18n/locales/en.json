@@ -3552,6 +3552,21 @@
     "搜索用户": "Search user",
     "请选择用户": "Please select a user",
     "红冲确认": "Reversal Confirmation",
-    "您输入了负数金额，这将执行红冲（冲销）操作，目标用户余额可能变为负数。确认继续？": "You entered a negative amount. This will perform a reversal operation and the target user's balance may become negative. Continue?"
+    "您输入了负数金额，这将执行红冲（冲销）操作，目标用户余额可能变为负数。确认继续？": "You entered a negative amount. This will perform a reversal operation and the target user's balance may become negative. Continue?",
+    "获取域名品牌配置失败": "Failed to fetch domain branding configurations",
+    "域名": "Domain",
+    "使用全局默认": "Using global default",
+    "确认删除该域名品牌配置？": "Are you sure you want to delete this domain branding configuration?",
+    "域名品牌配置更新成功": "Domain branding configuration updated successfully",
+    "域名品牌配置创建成功": "Domain branding configuration created successfully",
+    "域名品牌配置删除成功": "Domain branding configuration deleted successfully",
+    "域名品牌配置": "Domain Branding",
+    "新增域名品牌": "Add Domain Branding",
+    "为不同域名配置独立的品牌内容，留空的字段将回退使用全局默认设置": "Configure independent branding for different domains. Empty fields will fall back to global defaults.",
+    "暂无域名品牌配置": "No domain branding configurations",
+    "编辑域名品牌": "Edit Domain Branding",
+    "例如：api.example.com": "e.g. api.example.com",
+    "请输入域名": "Please enter a domain",
+    "留空则使用全局默认设置": "Leave empty to use global default"
   }
 }

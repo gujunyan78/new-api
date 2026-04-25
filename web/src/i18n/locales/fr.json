@@ -3489,6 +3489,21 @@
     "复制地址": "Copier l'adresse",
     "请务必转账精确金额，否则系统无法自动确认": "Veuillez transférer le montant exact, sinon le système ne pourra pas confirmer automatiquement",
     "请勿向非本页面显示的地址转账": "Ne transférez pas vers une adresse autre que celle affichée sur cette page",
-    "转账完成后请耐心等待系统确认": "Veuillez patienter pour la confirmation du système après le transfert"
+    "转账完成后请耐心等待系统确认": "Veuillez patienter pour la confirmation du système après le transfert",
+    "获取域名品牌配置失败": "Échec de la récupération des configurations de marque de domaine",
+    "域名": "Domaine",
+    "使用全局默认": "Utiliser la valeur globale par défaut",
+    "确认删除该域名品牌配置？": "Êtes-vous sûr de vouloir supprimer cette configuration de marque de domaine ?",
+    "域名品牌配置更新成功": "Configuration de marque de domaine mise à jour avec succès",
+    "域名品牌配置创建成功": "Configuration de marque de domaine créée avec succès",
+    "域名品牌配置删除成功": "Configuration de marque de domaine supprimée avec succès",
+    "域名品牌配置": "Marque de domaine",
+    "新增域名品牌": "Ajouter une marque de domaine",
+    "为不同域名配置独立的品牌内容，留空的字段将回退使用全局默认设置": "Configurez un contenu de marque indépendant pour différents domaines. Les champs vides utiliseront les valeurs globales par défaut.",
+    "暂无域名品牌配置": "Aucune configuration de marque de domaine",
+    "编辑域名品牌": "Modifier la marque de domaine",
+    "例如：api.example.com": "ex : api.example.com",
+    "请输入域名": "Veuillez entrer un domaine",
+    "留空则使用全局默认设置": "Laisser vide pour utiliser la valeur globale par défaut"
   }
 }

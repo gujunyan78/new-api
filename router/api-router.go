@@ -179,6 +179,16 @@ func SetApiRouter(router *gin.Engine) {
 			optionRoute.POST("/migrate_console_setting", controller.MigrateConsoleSetting) // 用于迁移检测的旧键，下个版本会删除
 		}
 
+		// Domain branding management (root only)
+		domainBrandingRoute := apiRouter.Group("/domain-branding")
+		domainBrandingRoute.Use(middleware.RootAuth())
+		{
+			domainBrandingRoute.GET("/", controller.GetAllDomainBrandings)
+			domainBrandingRoute.POST("/", controller.CreateDomainBranding)
+			domainBrandingRoute.PUT("/:id", controller.UpdateDomainBranding)
+			domainBrandingRoute.DELETE("/:id", controller.DeleteDomainBranding)
+		}
+
 		// Custom OAuth provider management (root only)
 		customOAuthRoute := apiRouter.Group("/custom-oauth-provider")
 		customOAuthRoute.Use(middleware.RootAuth())

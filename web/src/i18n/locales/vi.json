@@ -4038,6 +4038,21 @@
     "复制地址": "Sao chép địa chỉ",
     "请务必转账精确金额，否则系统无法自动确认": "Vui lòng chuyển đúng số tiền, nếu không hệ thống không thể xác nhận tự động",
     "请勿向非本页面显示的地址转账": "Không chuyển tiền đến địa chỉ khác với địa chỉ hiển thị trên trang này",
-    "转账完成后请耐心等待系统确认": "Sau khi chuyển tiền, vui lòng kiên nhẫn chờ hệ thống xác nhận"
+    "转账完成后请耐心等待系统确认": "Sau khi chuyển tiền, vui lòng kiên nhẫn chờ hệ thống xác nhận",
+    "获取域名品牌配置失败": "Không thể lấy cấu hình thương hiệu tên miền",
+    "域名": "Tên miền",
+    "使用全局默认": "Sử dụng mặc định toàn cục",
+    "确认删除该域名品牌配置？": "Bạn có chắc chắn muốn xóa cấu hình thương hiệu tên miền này?",
+    "域名品牌配置更新成功": "Cập nhật cấu hình thương hiệu tên miền thành công",
+    "域名品牌配置创建成功": "Tạo cấu hình thương hiệu tên miền thành công",
+    "域名品牌配置删除成功": "Xóa cấu hình thương hiệu tên miền thành công",
+    "域名品牌配置": "Thương hiệu tên miền",
+    "新增域名品牌": "Thêm thương hiệu tên miền",
+    "为不同域名配置独立的品牌内容，留空的字段将回退使用全局默认设置": "Cấu hình nội dung thương hiệu độc lập cho các tên miền khác nhau. Các trường trống sẽ sử dụng giá trị mặc định toàn cục.",
+    "暂无域名品牌配置": "Chưa có cấu hình thương hiệu tên miền",
+    "编辑域名品牌": "Chỉnh sửa thương hiệu tên miền",
+    "例如：api.example.com": "ví dụ: api.example.com",
+    "请输入域名": "Vui lòng nhập tên miền",
+    "留空则使用全局默认设置": "Để trống để sử dụng mặc định toàn cục"
   }
 }

@@ -39,7 +39,36 @@ func TestStatus(c *gin.Context) {
 	return
 }
 
+// getBrandingForRequest extracts the host from the request, looks up domain branding,
+// and returns brand field values with fallback to global config for empty fields.
+func getBrandingForRequest(c *gin.Context) (systemName, logo, footer string) {
+	host := c.Request.Host
+	// Strip port if present
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+	branding := model.GetCachedDomainBranding(host)
+	if branding != nil {
+		systemName = branding.SystemName
+		logo = branding.Logo
+		footer = branding.Footer
+	}
+	// Fallback to global config for empty fields
+	if systemName == "" {
+		systemName = common.SystemName
+	}
+	if logo == "" {
+		logo = common.Logo
+	}
+	if footer == "" {
+		footer = common.Footer
+	}
+	return
+}
+
 func GetStatus(c *gin.Context) {
+	// Resolve brand fields with domain-specific override + global fallback
+	brandSystemName, brandLogo, brandFooter := getBrandingForRequest(c)
 
 	cs := console_setting.GetConsoleSetting()
 	common.OptionMapRWMutex.RLock()
@@ -61,9 +90,9 @@ func GetStatus(c *gin.Context) {
 		"linuxdo_minimum_trust_level": common.LinuxDOMinimumTrustLevel,
 		"telegram_oauth":              common.TelegramOAuthEnabled,
 		"telegram_bot_name":           common.TelegramBotName,
-		"system_name":                 common.SystemName,
-		"logo":                        common.Logo,
-		"footer_html":                 common.Footer,
+		"system_name":                 brandSystemName,
+		"logo":                        brandLogo,
+		"footer_html":                 brandFooter,
 		"wechat_qrcode":               common.WeChatAccountQRCodeImageURL,
 		"wechat_login":                common.WeChatAuthEnabled,
 		"server_address":              system_setting.ServerAddress,
@@ -178,6 +207,21 @@ func GetNotice(c *gin.Context) {
 }
 
 func GetAbout(c *gin.Context) {
+	// Check domain branding first
+	host := c.Request.Host
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+	branding := model.GetCachedDomainBranding(host)
+	if branding != nil && branding.About != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "",
+			"data":    branding.About,
+		})
+		return
+	}
+	// Fallback to global config
 	common.OptionMapRWMutex.RLock()
 	defer common.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{
@@ -218,6 +262,21 @@ func GetMidjourney(c *gin.Context) {
 }
 
 func GetHomePageContent(c *gin.Context) {
+	// Check domain branding first
+	host := c.Request.Host
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+	branding := model.GetCachedDomainBranding(host)
+	if branding != nil && branding.HomePageContent != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "",
+			"data":    branding.HomePageContent,
+		})
+		return
+	}
+	// Fallback to global config
 	common.OptionMapRWMutex.RLock()
 	defer common.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{

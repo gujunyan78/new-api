@@ -294,6 +294,9 @@ func InitResources() error {
 		return err
 	}
 
+	// Initialize domain branding cache (after DB and Redis)
+	model.InitDomainBrandingCache()
+
 	// 启动系统监控
 	common.StartSystemMonitor()
 
