@@ -374,7 +374,7 @@ type etherscanTokenTx struct {
 // transfers to the given wallet address.
 func QueryEthereumTransactions(walletAddress, apiKey string) ([]constant.BlockchainTransaction, error) {
 	url := fmt.Sprintf(
-		"https://api.etherscan.io/api?module=account&action=tokentxs&contractaddress=%s&address=%s&sort=desc&page=1&offset=50&apikey=%s",
+		"https://api.etherscan.io/v2/api?module=account&action=tokentx&chainid=1&contractaddress=%s&address=%s&sort=desc&page=1&offset=50&apikey=%s",
 		ethUsdtContract, walletAddress, apiKey,
 	)
 
