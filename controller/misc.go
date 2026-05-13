@@ -39,36 +39,7 @@ func TestStatus(c *gin.Context) {
 	return
 }
 
-// getBrandingForRequest extracts the host from the request, looks up domain branding,
-// and returns brand field values with fallback to global config for empty fields.
-func getBrandingForRequest(c *gin.Context) (systemName, logo, footer string) {
-	host := c.Request.Host
-	// Strip port if present
-	if idx := strings.LastIndex(host, ":"); idx != -1 {
-		host = host[:idx]
-	}
-	branding := model.GetCachedDomainBranding(host)
-	if branding != nil {
-		systemName = branding.SystemName
-		logo = branding.Logo
-		footer = branding.Footer
-	}
-	// Fallback to global config for empty fields
-	if systemName == "" {
-		systemName = common.SystemName
-	}
-	if logo == "" {
-		logo = common.Logo
-	}
-	if footer == "" {
-		footer = common.Footer
-	}
-	return
-}
-
 func GetStatus(c *gin.Context) {
-	// Resolve brand fields with domain-specific override + global fallback
-	brandSystemName, brandLogo, brandFooter := getBrandingForRequest(c)
 
 	cs := console_setting.GetConsoleSetting()
 	common.OptionMapRWMutex.RLock()
@@ -98,7 +69,6 @@ func GetStatus(c *gin.Context) {
 		"server_address":              system_setting.ServerAddress,
 		"turnstile_check":             common.TurnstileCheckEnabled,
 		"turnstile_site_key":          common.TurnstileSiteKey,
-		"top_up_link":                 common.TopUpLink,
 		"docs_link":                   operation_setting.GetGeneralSetting().DocsLink,
 		"quota_per_unit":              common.QuotaPerUnit,
 		// 兼容旧前端：保留 display_in_currency，同时提供新的 quota_display_type
@@ -262,21 +232,6 @@ func GetMidjourney(c *gin.Context) {
 }
 
 func GetHomePageContent(c *gin.Context) {
-	// Check domain branding first
-	host := c.Request.Host
-	if idx := strings.LastIndex(host, ":"); idx != -1 {
-		host = host[:idx]
-	}
-	branding := model.GetCachedDomainBranding(host)
-	if branding != nil && branding.HomePageContent != "" {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "",
-			"data":    branding.HomePageContent,
-		})
-		return
-	}
-	// Fallback to global config
 	common.OptionMapRWMutex.RLock()
 	defer common.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{
