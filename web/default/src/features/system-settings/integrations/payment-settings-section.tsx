@@ -56,6 +56,10 @@ import {
   WaffoSettingsSection,
   type WaffoSettingsValues,
 } from './waffo-settings-section'
+import {
+  WepaySettingsSection,
+  type WepaySettingsValues,
+} from './wepay-settings-section'
 
 const paymentSchema = z.object({
   PayAddress: z.string().refine((value) => {
@@ -129,12 +133,14 @@ type PaymentSettingsSectionProps = {
   defaultValues: PaymentFormValues
   waffoDefaultValues: WaffoSettingsValues
   waffoPancakeDefaultValues: WaffoPancakeSettingsValues
+  wepayDefaultValues: WepaySettingsValues
 }
 
 export function PaymentSettingsSection({
   defaultValues,
   waffoDefaultValues,
   waffoPancakeDefaultValues,
+  wepayDefaultValues,
 }: PaymentSettingsSectionProps) {
   const { t } = useTranslation()
   const updateOption = useUpdateOption()
@@ -670,7 +676,7 @@ export function PaymentSettingsSection({
                       <Textarea
                         rows={4}
                         placeholder={t(
-                          '[{"name":"支付宝","type":"alipay","color":"#1677FF"}]'
+                          `[{"name":"${t('支付宝')}","type":"alipay","color":"#1677FF"}]`
                         )}
                         {...field}
                         onChange={(event) => field.onChange(event.target.value)}
@@ -1309,6 +1315,11 @@ export function PaymentSettingsSection({
       <Separator />
 
       <WaffoPancakeSettingsSection defaultValues={waffoPancakeDefaultValues} />
+
+      <Separator />
+
+      <WepaySettingsSection defaultValues={wepayDefaultValues} />
+
       {/* eslint-enable react-hooks/refs */}
     </SettingsSection>
   )

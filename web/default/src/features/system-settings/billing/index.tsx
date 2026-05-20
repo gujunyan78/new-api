@@ -103,6 +103,30 @@ const defaultBillingSettings: BillingSettings = {
   WaffoPancakeCurrency: 'USD',
   WaffoPancakeUnitPrice: 1,
   WaffoPancakeMinTopUp: 1,
+  
+  // Wepay Payment settings (SBP + MIR unified)
+  WepayEnabled: false,
+  WepaySandbox: false,
+  WepayMerchantId: '',
+  
+  // SBP Payment settings
+  SbpPrivateKey: '',
+  SbpPublicKey: '',
+  SbpCallbackUrl: '',
+  SbpNotifyUrl: '',
+  SbpPlatformUrl: '',
+  SbpSandboxUrl: '',
+  SbpLogo: '',
+  
+  // MIR Payment settings
+  MirPrivateKey: '',
+  MirPublicKey: '',
+  MirCallbackUrl: '',
+  MirNotifyUrl: '',
+  MirPlatformUrl: '',
+  MirSandboxUrl: '',
+  MirLogo: '',
+  
   'checkin_setting.enabled': false,
   'checkin_setting.min_quota': 1000,
   'checkin_setting.max_quota': 10000,

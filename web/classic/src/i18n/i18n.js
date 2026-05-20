@@ -28,14 +28,14 @@ import zhTWTranslation from './locales/zh-TW.json';
 import ruTranslation from './locales/ru.json';
 import jaTranslation from './locales/ja.json';
 import viTranslation from './locales/vi.json';
-import { supportedLanguages } from './language';
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     load: 'currentOnly',
-    supportedLngs: supportedLanguages,
+    //supportedLngs:['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi'],
+    supportedLngs: ['ru','en'], 
     resources: {
       en: enTranslation,
       'zh-CN': zhCNTranslation,
@@ -45,10 +45,15 @@ i18n
       ja: jaTranslation,
       vi: viTranslation,
     },
-    fallbackLng: 'zh-CN',
+    //fallbackLng: 'zh-CN',
+    fallbackLng: 'ru',
     nsSeparator: false,
     interpolation: {
       escapeValue: false,
+    },
+    detection: {
+      order: ['querystring', 'cookie', 'localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage', 'cookie'],
     },
   });
 

@@ -33,21 +33,13 @@ import { TitledCard } from '@/components/ui/titled-card'
 import { updateUserLanguage } from '../api'
 import { parseUserSettings } from '../lib'
 import type { UserProfile } from '../types'
-
-const LANGUAGE_OPTIONS = [
-  { value: 'zh', label: '简体中文' },
-  { value: 'en', label: 'English' },
-  { value: 'fr', label: 'Français' },
-  { value: 'ru', label: 'Русский' },
-  { value: 'ja', label: '日本語' },
-  { value: 'vi', label: 'Tiếng Việt' },
-] as const
+import { useLanguageSettings } from '@/hooks/use-language-settings'
 
 function normalizeLanguage(value?: string | null): string {
   if (!value) return 'en'
   const normalized = value.trim().replace(/_/g, '-').toLowerCase()
   if (normalized.startsWith('zh')) return 'zh'
-  return LANGUAGE_OPTIONS.some((lang) => lang.value === normalized)
+  return ['zh', 'en', 'fr', 'ru', 'ja', 'vi'].includes(normalized)
     ? normalized
     : 'en'
 }
@@ -60,7 +52,23 @@ type LanguagePreferencesCardProps = {
 export function LanguagePreferencesCard(props: LanguagePreferencesCardProps) {
   const { t, i18n } = useTranslation()
   const { auth } = useAuthStore()
+  const { availableLanguages } = useLanguageSettings()
   const [saving, setSaving] = useState(false)
+
+  const ALL_LANGUAGE_OPTIONS = [
+    { value: 'zh', label: t('简体中文') },
+    { value: 'en', label: 'English' },
+    { value: 'fr', label: 'Français' },
+    { value: 'ru', label: 'Русский' },
+    { value: 'ja', label: t('日本語') },
+    { value: 'vi', label: 'Tiếng Việt' },
+  ] as const
+
+  const availableLanguageOptions = useMemo(() => {
+    return ALL_LANGUAGE_OPTIONS.filter((lang) =>
+      availableLanguages.includes(lang.value)
+    )
+  }, [availableLanguages])
 
   const savedLanguage = useMemo(() => {
     const settings = parseUserSettings(props.profile?.setting)
@@ -132,7 +140,7 @@ export function LanguagePreferencesCard(props: LanguagePreferencesCardProps) {
         <div className='flex items-center gap-2 sm:min-w-48'>
           <Select
             items={[
-              ...LANGUAGE_OPTIONS.map((language) => ({
+              ...availableLanguageOptions.map((language) => ({
                 value: language.value,
                 label: language.label,
               })),
@@ -146,7 +154,7 @@ export function LanguagePreferencesCard(props: LanguagePreferencesCardProps) {
             </SelectTrigger>
             <SelectContent alignItemWithTrigger={false}>
               <SelectGroup>
-                {LANGUAGE_OPTIONS.map((language) => (
+                {availableLanguageOptions.map((language) => (
                   <SelectItem key={language.value} value={language.value}>
                     {language.label}
                   </SelectItem>

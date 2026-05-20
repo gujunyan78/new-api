@@ -18,12 +18,12 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React from 'react';
-import TopupsTable from '../../components/table/topups';
+import TopupsPage from '../../components/table/topups';
 
 const AdminManualTopUpPage = () => {
   return (
     <div className='mt-[60px] px-2'>
-      <TopupsTable />
+      <TopupsPage />
     </div>
   );
 };

@@ -26,6 +26,7 @@ import { AffiliateRewardsCard } from './components/affiliate-rewards-card'
 import { BillingHistoryDialog } from './components/dialogs/billing-history-dialog'
 import { CreemConfirmDialog } from './components/dialogs/creem-confirm-dialog'
 import { PaymentConfirmDialog } from './components/dialogs/payment-confirm-dialog'
+import { WepayPaymentModal } from './components/dialogs/wepay-payment-modal'
 import { TransferDialog } from './components/dialogs/transfer-dialog'
 import { RechargeFormCard } from './components/recharge-form-card'
 import { SubscriptionPlansCard } from './components/subscription-plans-card'
@@ -39,6 +40,7 @@ import {
   useCreemPayment,
   useWaffoPayment,
   useWaffoPancakePayment,
+  useWepayPayment,
 } from './hooks'
 import {
   getDefaultPaymentType,
@@ -102,6 +104,15 @@ export function Wallet(props: WalletProps) {
   const { processWaffoPayment } = useWaffoPayment()
   const { processing: pancakeProcessing, processWaffoPancakePayment } =
     useWaffoPancakePayment()
+  const {
+    state: wepayState,
+    loading: wepayLoading,
+    createOrder,
+    payWithSbp,
+    payWithMir,
+    goBack: wepayGoBack,
+    cancel: wepayCancel,
+  } = useWepayPayment()
 
   // Fetch and refresh user data
   const fetchUser = useCallback(async () => {
@@ -167,18 +178,47 @@ export function Wallet(props: WalletProps) {
     setPaymentLoading(method.type)
 
     try {
-      // Validate minimum topup
       const minTopup = getMinTopupAmount(topupInfo)
       if (topupAmount < minTopup) {
         return
       }
 
-      // Calculate payment amount and show confirmation dialog
+      if (method.type === 'wepay') {
+        const tradeNo = await createOrder(topupAmount)
+        if (!tradeNo) return
+        return
+      }
+
       await calculatePaymentAmount(topupAmount, method.type)
       setConfirmDialogOpen(true)
     } finally {
       setPaymentLoading(null)
     }
+  }
+
+  const handleWepaySelectSbp = async () => {
+    if (!wepayState.tradeNo) return
+    setPaymentLoading('wepay')
+    try {
+      await payWithSbp(wepayState.tradeNo, topupAmount, fetchUser)
+    } finally {
+      setPaymentLoading(null)
+    }
+  }
+
+  const handleWepaySelectMir = async () => {
+    if (!wepayState.tradeNo) return
+    setPaymentLoading('wepay')
+    try {
+      await payWithMir(wepayState.tradeNo, topupAmount)
+    } finally {
+      setPaymentLoading(null)
+    }
+  }
+
+  const handleWepayCancel = () => {
+    wepayCancel()
+    setSelectedPaymentMethod(undefined)
   }
 
   // Handle payment confirmation
@@ -336,6 +376,27 @@ export function Wallet(props: WalletProps) {
         processing={processing || pancakeProcessing}
         discountRate={getDiscountRate()}
         usdExchangeRate={effectiveUsdExchangeRate}
+      />
+
+      <WepayPaymentModal
+        open={wepayState.view !== 'select' || (wepayState.tradeNo !== '' && wepayState.view === 'select')}
+        onOpenChange={(open) => {
+          if (!open) handleWepayCancel()
+        }}
+        view={wepayState.view}
+        tradeNo={wepayState.tradeNo}
+        topupAmount={topupAmount}
+        codeUrl={wepayState.codeUrl}
+        codeImgUrl={wepayState.codeImgUrl}
+        paymentUrl={wepayState.paymentUrl}
+        sbpLogo={selectedPaymentMethod?.sbp_logo || selectedPaymentMethod?.icon || ''}
+        mirLogo={selectedPaymentMethod?.mir_logo || ''}
+        loading={wepayLoading}
+        usdExchangeRate={effectiveUsdExchangeRate}
+        onSelectSbp={handleWepaySelectSbp}
+        onSelectMir={handleWepaySelectMir}
+        onGoBack={wepayGoBack}
+        onCancel={handleWepayCancel}
       />
 
       <TransferDialog

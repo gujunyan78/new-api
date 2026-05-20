@@ -187,7 +187,7 @@ const SiderBar = ({ onNavigate = () => {} }) => {
       {
         text: t('人工充值'),
         itemKey: 'balance',
-        to: '/balance',
+        to: '/console/balance',
         className: isAdmin() ? '' : 'tableHiddle',
       },
       {

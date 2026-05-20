@@ -26,6 +26,7 @@ import SettingsPaymentGatewayCreem from '../../pages/Setting/Payment/SettingsPay
 import SettingsPaymentGatewayWaffo from '../../pages/Setting/Payment/SettingsPaymentGatewayWaffo';
 import SettingsPaymentGatewayUsdt from '../../pages/Setting/Payment/SettingsPaymentGatewayUsdt';
 import SettingsPaymentGatewayWaffoPancake from '../../pages/Setting/Payment/SettingsPaymentGatewayWaffoPancake';
+import SettingsPaymentGatewayWepay from '../../pages/Setting/Payment/SettingsPaymentGatewayWepay';
 import { API, showError, toBoolean } from '../../helpers';
 import { useTranslation } from 'react-i18next';
 
@@ -61,6 +62,29 @@ const PaymentSetting = () => {
     WaffoPancakeCurrency: 'USD',
     WaffoPancakeUnitPrice: 1.0,
     WaffoPancakeMinTopUp: 1,
+
+    // Wepay 支付 (SBP + MIR unified)
+    WepayEnabled: false,
+    WepaySandbox: false,
+    WepayMerchantId: '',
+
+    // SBP 支付
+    SbpPrivateKey: '',
+    SbpPublicKey: '',
+    SbpCallbackUrl: '',
+    SbpNotifyUrl: '',
+    SbpPlatformUrl: '',
+    SbpSandboxUrl: '',
+    SbpLogo: '',
+
+    // MIR 支付
+    MirPrivateKey: '',
+    MirPublicKey: '',
+    MirCallbackUrl: '',
+    MirNotifyUrl: '',
+    MirPlatformUrl: '',
+    MirSandboxUrl: '',
+    MirLogo: '',
   });
 
   let [loading, setLoading] = useState(false);
@@ -160,22 +184,6 @@ const PaymentSetting = () => {
     <>
       <Spin spinning={loading} size='large'>
         <Card style={{ marginTop: '10px' }}>
-          <SettingsGeneralPayment options={inputs} refresh={onRefresh} />
-        </Card>
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsPaymentGateway options={inputs} refresh={onRefresh} />
-        </Card>
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsPaymentGatewayStripe options={inputs} refresh={onRefresh} />
-        </Card>
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsPaymentGatewayCreem options={inputs} refresh={onRefresh} />
-        </Card>
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsPaymentGatewayWaffo options={inputs} refresh={onRefresh} />
-        </Card>
-        <Card style={{ marginTop: '10px' }}>
-          <SettingsPaymentGatewayUsdt options={inputs} refresh={onRefresh} />
           <Tabs
             type='card'
             defaultActiveKey='general'
@@ -216,6 +224,22 @@ const PaymentSetting = () => {
                 hideSectionTitle
               />
             </Tabs.TabPane>
+            <Tabs.TabPane tab={t('USDT设置')} itemKey='usdt'>
+              <SettingsPaymentGatewayUsdt
+                options={inputs}
+                refresh={onRefresh}
+                hideSectionTitle
+              />
+            </Tabs.TabPane>
+
+            <Tabs.TabPane tab={t('Wepay 支付设置')} itemKey='wepay'>
+              <SettingsPaymentGatewayWepay
+                options={inputs}
+                refresh={onRefresh}
+                hideSectionTitle
+              />
+            </Tabs.TabPane>
+
             {/*<Tabs.TabPane tab={t('Waffo Pancake 设置')} itemKey='waffo-pancake'>*/}
             {/*  <SettingsPaymentGatewayWaffoPancake*/}
             {/*    options={inputs}*/}

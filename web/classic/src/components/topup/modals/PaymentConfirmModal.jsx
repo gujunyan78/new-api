@@ -55,6 +55,8 @@ const PaymentConfirmModal = ({
       visible={open}
       onOk={onlineTopUp}
       onCancel={handleCancel}
+      okText={t('确定')}
+      cancelText={t('取消')}
       maskClosable={false}
       size='small'
       centered

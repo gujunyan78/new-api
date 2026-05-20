@@ -254,6 +254,8 @@ func migrateDB() error {
 	if err := migrateTokenModelLimitsToText(); err != nil {
 		return err
 	}
+	// Migrate SBP/MIR option keys to unified Wepay keys
+	migrateWepayOptionKeys()
 
 	err := DB.AutoMigrate(
 		&Channel{},
@@ -366,6 +368,7 @@ func migrateDBFast() error {
 		}
 	}
 	common.SysLog("database migrated")
+	migrateWepayOptionKeys()
 	return nil
 }
 
@@ -563,6 +566,77 @@ func migrateSubscriptionPlanPriceAmount() {
 		} else {
 			common.SysLog(fmt.Sprintf("Successfully migrated %s.%s to decimal(10,6)", tableName, columnName))
 		}
+	}
+}
+
+func migrateWepayOptionKeys() {
+	oldKeys := []string{
+		"SbpEnabled", "MirEnabled",
+		"SbpSandbox", "MirSandbox",
+		"SbpMerchantId", "MirMerchantId",
+	}
+
+	var existingOptions []Option
+	if err := DB.Where("`key` IN ?", oldKeys).Find(&existingOptions).Error; err != nil {
+		common.SysLog(fmt.Sprintf("Warning: failed to query old Wepay option keys: %v", err))
+		return
+	}
+
+	if len(existingOptions) == 0 {
+		return
+	}
+
+	oldMap := make(map[string]string)
+	for _, opt := range existingOptions {
+		oldMap[opt.Key] = opt.Value
+	}
+
+	var newOptions []Option
+	if err := DB.Where("`key` IN ?", []string{"WepayEnabled", "WepaySandbox", "WepayMerchantId"}).Find(&newOptions).Error; err != nil {
+		common.SysLog(fmt.Sprintf("Warning: failed to query new Wepay option keys: %v", err))
+		return
+	}
+
+	newMap := make(map[string]bool)
+	for _, opt := range newOptions {
+		newMap[opt.Key] = true
+	}
+
+	upsertOptions := make([]Option, 0, 3)
+
+	if !newMap["WepayEnabled"] {
+		enabled := "false"
+		if oldMap["SbpEnabled"] == "true" || oldMap["MirEnabled"] == "true" {
+			enabled = "true"
+		}
+		upsertOptions = append(upsertOptions, Option{Key: "WepayEnabled", Value: enabled})
+	}
+
+	if !newMap["WepaySandbox"] {
+		sandbox := "false"
+		if oldMap["SbpSandbox"] == "true" || oldMap["MirSandbox"] == "true" {
+			sandbox = "true"
+		}
+		upsertOptions = append(upsertOptions, Option{Key: "WepaySandbox", Value: sandbox})
+	}
+
+	if !newMap["WepayMerchantId"] {
+		merchantId := oldMap["SbpMerchantId"]
+		if merchantId == "" {
+			merchantId = oldMap["MirMerchantId"]
+		}
+		if merchantId != "" {
+			upsertOptions = append(upsertOptions, Option{Key: "WepayMerchantId", Value: merchantId})
+		}
+	}
+
+	if len(upsertOptions) > 0 {
+		for _, opt := range upsertOptions {
+			if err := DB.Where(Option{Key: opt.Key}).Assign(Option{Value: opt.Value}).FirstOrCreate(&Option{}).Error; err != nil {
+				common.SysLog(fmt.Sprintf("Warning: failed to migrate option key %s: %v", opt.Key, err))
+			}
+		}
+		common.SysLog("Successfully migrated SBP/MIR option keys to unified Wepay keys")
 	}
 }
 

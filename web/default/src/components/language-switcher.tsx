@@ -29,6 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useLanguageSettings } from '@/hooks/use-language-settings'
 
 const languages = [
   { code: 'en', label: 'English' },
@@ -42,6 +43,7 @@ const languages = [
 export function LanguageSwitcher() {
   const { i18n, t } = useTranslation()
   const user = useAuthStore((s) => s.auth.user)
+  const { availableLanguages, disableLanguageSwitch } = useLanguageSettings()
 
   const handleChangeLanguage = useCallback(
     async (code: string) => {
@@ -57,6 +59,14 @@ export function LanguageSwitcher() {
     [i18n, user]
   )
 
+  if (disableLanguageSwitch) {
+    return null
+  }
+
+  const filteredLanguages = languages.filter((lang) =>
+    availableLanguages.includes(lang.code)
+  )
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger
@@ -66,7 +76,7 @@ export function LanguageSwitcher() {
         <span className='sr-only'>{t('Change language')}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        {languages.map((lang) => (
+        {filteredLanguages.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
             onClick={() => handleChangeLanguage(lang.code)}

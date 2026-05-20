@@ -50,6 +50,11 @@ func PayMethods2JsonString() string {
 }
 
 func ContainsPayMethod(method string) bool {
+	// Special handling for wepay - it's dynamically enabled via WepayEnabled option
+	if method == "wepay" {
+		return common.OptionMap["WepayEnabled"] == "true"
+	}
+
 	for _, payMethod := range PayMethods {
 		if payMethod["type"] == method {
 			return true

@@ -95,6 +95,10 @@ export interface PaymentMethod {
   min_topup?: number
   /** Optional icon URL provided by backend (preferred over built-in icons) */
   icon?: string
+  /** SBP logo URL (for wepay type) */
+  sbp_logo?: string
+  /** MIR logo URL (for wepay type) */
+  mir_logo?: string
 }
 
 /**

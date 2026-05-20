@@ -28,6 +28,7 @@ import { normalizeLanguage } from '../../i18n/language';
 import { useIsMobile } from './useIsMobile';
 import { useSidebarCollapsed } from './useSidebarCollapsed';
 import { useMinimumLoadingTime } from './useMinimumLoadingTime';
+import { useLanguageSettings } from './useLanguageSettings';
 
 export const useHeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
   const { t, i18n } = useTranslation();
@@ -39,6 +40,9 @@ export const useHeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
   const navigate = useNavigate();
   const [currentLang, setCurrentLang] = useState(normalizeLanguage(i18n.language));
   const location = useLocation();
+
+  // 获取语言配置（公开接口，无需认证）
+  const { disableLanguageSwitch, languageOptions } = useLanguageSettings();
 
   const loading = statusState?.status === undefined;
   const isLoading = useMinimumLoadingTime(loading, 200);
@@ -238,6 +242,8 @@ export const useHeaderBar = ({ onMobileMenuToggle, drawerOpen }) => {
     drawerOpen,
     headerNavModules,
     pricingRequireAuth,
+    disableLanguageSwitch,
+    languageOptions,
 
     // Actions
     logout,

@@ -58,6 +58,9 @@ export type SiteSettings = {
   'legal.privacy_policy': string
   HeaderNavModules: string
   SidebarModulesAdmin: string
+  DefaultLanguage: string
+  AvailableLanguages: string
+  DisableLanguageSwitch: boolean
 }
 
 export type AuthSettings = {
@@ -252,6 +255,30 @@ export type BillingSettings = {
   WaffoPancakeCurrency: string
   WaffoPancakeUnitPrice: number
   WaffoPancakeMinTopUp: number
+  
+  // Wepay Payment settings (SBP + MIR unified)
+  WepayEnabled: boolean
+  WepaySandbox: boolean
+  WepayMerchantId: string
+  
+  // SBP Payment settings
+  SbpPrivateKey: string
+  SbpPublicKey: string
+  SbpCallbackUrl: string
+  SbpNotifyUrl: string
+  SbpPlatformUrl: string
+  SbpSandboxUrl: string
+  SbpLogo: string
+  
+  // MIR Payment settings
+  MirPrivateKey: string
+  MirPublicKey: string
+  MirCallbackUrl: string
+  MirNotifyUrl: string
+  MirPlatformUrl: string
+  MirSandboxUrl: string
+  MirLogo: string
+  
   'checkin_setting.enabled': boolean
   'checkin_setting.min_quota': number
   'checkin_setting.max_quota': number

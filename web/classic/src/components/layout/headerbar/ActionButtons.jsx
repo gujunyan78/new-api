@@ -32,6 +32,8 @@ const ActionButtons = ({
   onThemeToggle,
   currentLang,
   onLanguageChange,
+  disableLanguageSwitch,
+  languageOptions,
   userState,
   isLoading,
   isMobile,
@@ -56,6 +58,8 @@ const ActionButtons = ({
         currentLang={currentLang}
         onLanguageChange={onLanguageChange}
         t={t}
+        disabled={disableLanguageSwitch}
+        languageOptions={languageOptions}
       />
 
       <UserArea

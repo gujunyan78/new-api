@@ -86,6 +86,10 @@ func InitOptionMap() {
 	common.OptionMap["StripePriceId"] = setting.StripePriceId
 	common.OptionMap["StripeUnitPrice"] = strconv.FormatFloat(setting.StripeUnitPrice, 'f', -1, 64)
 	common.OptionMap["StripePromotionCodesEnabled"] = strconv.FormatBool(setting.StripePromotionCodesEnabled)
+	common.OptionMap["SbpUnitPrice"] = strconv.FormatFloat(setting.SbpUnitPrice, 'f', -1, 64)
+	common.OptionMap["SbpMinTopUp"] = strconv.Itoa(setting.SbpMinTopUp)
+	common.OptionMap["MirUnitPrice"] = strconv.FormatFloat(setting.MirUnitPrice, 'f', -1, 64)
+	common.OptionMap["MirMinTopUp"] = strconv.Itoa(setting.MirMinTopUp)
 	common.OptionMap["CreemApiKey"] = setting.CreemApiKey
 	common.OptionMap["CreemProducts"] = setting.CreemProducts
 	common.OptionMap["CreemTestMode"] = strconv.FormatBool(setting.CreemTestMode)
@@ -390,6 +394,14 @@ func updateOptionMap(key string, value string) (err error) {
 		setting.StripeMinTopUp, _ = strconv.Atoi(value)
 	case "StripePromotionCodesEnabled":
 		setting.StripePromotionCodesEnabled = value == "true"
+	case "SbpUnitPrice":
+		setting.SbpUnitPrice, _ = strconv.ParseFloat(value, 64)
+	case "SbpMinTopUp":
+		setting.SbpMinTopUp, _ = strconv.Atoi(value)
+	case "MirUnitPrice":
+		setting.MirUnitPrice, _ = strconv.ParseFloat(value, 64)
+	case "MirMinTopUp":
+		setting.MirMinTopUp, _ = strconv.Atoi(value)
 	case "CreemApiKey":
 		setting.CreemApiKey = value
 	case "CreemProducts":

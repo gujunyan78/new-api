@@ -40,6 +40,7 @@ import TransferModal from './modals/TransferModal';
 import PaymentConfirmModal from './modals/PaymentConfirmModal';
 import TopupHistoryModal from './modals/TopupHistoryModal';
 import UsdtPaymentModal from './modals/UsdtPaymentModal';
+import WepayPaymentModal from './modals/WepayPaymentModal';
 
 const TopUp = () => {
   const { t } = useTranslation();
@@ -82,6 +83,9 @@ const TopUp = () => {
   const [usdtMinTopUp, setUsdtMinTopUp] = useState(1);
   const [usdtBlockchainTypes, setUsdtBlockchainTypes] = useState([]);
   const [usdtModalVisible, setUsdtModalVisible] = useState(false);
+
+  // Wepay 相关状态
+  const [wepayModalVisible, setWepayModalVisible] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -197,6 +201,10 @@ const TopUp = () => {
   };
 
   const preTopUp = async (payment) => {
+    if (payment === 'wepay') {
+      setWepayModalVisible(true);
+      return;
+    }
     if (payment === 'stripe') {
       if (!enableStripeTopUp) {
         showError(t('管理员未开启Stripe充值！'));
@@ -431,7 +439,7 @@ const TopUp = () => {
           setAmount(parseFloat(data));
         } else {
           setAmount(0);
-          Toast.error({ content: '错误：' + data, id: 'getAmount' });
+          Toast.error({ content: t('错误：') + data, id: 'getAmount' });
         }
       } else {
         showError(res);
@@ -494,7 +502,7 @@ const TopUp = () => {
           setAmount(parseFloat(data));
         } else {
           setAmount(0);
-          Toast.error({ content: '错误：' + data, id: 'getAmount' });
+          Toast.error({ content: t('错误：') + data, id: 'getAmount' });
         }
       } else {
         showError(res);
@@ -800,7 +808,7 @@ const TopUp = () => {
           setAmount(parseFloat(data));
         } else {
           setAmount(0);
-          Toast.error({ content: '错误：' + data, id: 'getAmount' });
+          Toast.error({ content: t('错误：') + data, id: 'getAmount' });
         }
       } else {
         showError(res);
@@ -826,7 +834,7 @@ const TopUp = () => {
           setAmount(parseFloat(data));
         } else {
           setAmount(0);
-          Toast.error({ content: '错误：' + data, id: 'getAmount' });
+          Toast.error({ content: t('错误：') + data, id: 'getAmount' });
         }
       } else {
         showError(res);
@@ -932,6 +940,17 @@ const TopUp = () => {
         }}
         amount={topUpCount}
         blockchainTypes={usdtBlockchainTypes}
+      />
+
+      {/* Wepay 支付弹窗 */}
+      <WepayPaymentModal
+        t={t}
+        visible={wepayModalVisible}
+        onClose={(success) => {
+          setWepayModalVisible(false);
+          if (success) getUserQuota();
+        }}
+        amount={topUpCount}
       />
 
       {/* Creem 充值确认模态框 */}

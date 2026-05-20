@@ -39,6 +39,8 @@ export default function SettingsGeneralPayment(props) {
     PayMethods: '',
     AmountOptions: '',
     AmountDiscount: '',
+    Price: '',
+    USDExchangeRate: '',
   });
   const [originInputs, setOriginInputs] = useState({});
   const formApiRef = useRef(null);
@@ -52,6 +54,8 @@ export default function SettingsGeneralPayment(props) {
         PayMethods: props.options.PayMethods || '',
         AmountOptions: props.options.AmountOptions || '',
         AmountDiscount: props.options.AmountDiscount || '',
+        Price: props.options.Price !== undefined ? String(props.options.Price) : '',
+        USDExchangeRate: props.options.USDExchangeRate !== undefined ? String(props.options.USDExchangeRate) : '',
       };
       setInputs(currentInputs);
       setOriginInputs({ ...currentInputs });
@@ -130,6 +134,12 @@ export default function SettingsGeneralPayment(props) {
           key: 'payment_setting.amount_discount',
           value: inputs.AmountDiscount,
         });
+      }
+      if (originInputs.Price !== inputs.Price) {
+        options.push({ key: 'Price', value: inputs.Price });
+      }
+      if (originInputs.USDExchangeRate !== inputs.USDExchangeRate) {
+        options.push({ key: 'USDExchangeRate', value: inputs.USDExchangeRate });
       }
 
       const results = await Promise.all(
@@ -234,6 +244,35 @@ export default function SettingsGeneralPayment(props) {
                 autosize
                 extraText={t(
                   '设置不同充值金额对应的折扣，键为充值金额，值为折扣率，例如：{"100": 0.95, "200": 0.9, "500": 0.85}',
+                )}
+              />
+            </Col>
+          </Row>
+          <Row
+            gutter={{ xs: 8, sm: 16, md: 24, lg: 24, xl: 24, xxl: 24 }}
+            style={{ marginTop: 16 }}
+          >
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Form.Input
+                field='Price'
+                label={t('Price (本地货币 / USD)')}
+                placeholder={'7.3'}
+                type='number'
+                step='0.01'
+                extraText={t(
+                  'USD 兑本地货币汇率，用于充值金额计算。\n计算公式：支付金额 = 充值数量 × Price × 分组倍率 × 折扣\nTOKENS 模式：支付金额 = (充值数量 / QuotaPerUnit) × Price × 分组倍率 × 折扣',
+                )}
+              />
+            </Col>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12}>
+              <Form.Input
+                field='USDExchangeRate'
+                label={t('USD 汇率')}
+                placeholder={'7.3'}
+                type='number'
+                step='0.01'
+                extraText={t(
+                  'USD 兑本地货币汇率，用于额度显示转换和账单金额显示。\n计算公式：显示金额 = (额度 / QuotaPerUnit) × USDExchangeRate\n建议与 Price 保持一致，避免计算和显示不一致。',
                 )}
               />
             </Col>

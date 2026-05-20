@@ -311,6 +311,7 @@ export function RechargeFormCard({
                     {topupInfo?.pay_methods?.map((method) => {
                       const minTopup = method.min_topup || 0
                       const disabled = minTopup > topupAmount
+                      const isWepay = method.type === 'wepay'
 
                       const button = (
                         <Button
@@ -318,19 +319,22 @@ export function RechargeFormCard({
                           variant='outline'
                           onClick={() => onPaymentMethodSelect(method)}
                           disabled={disabled || !!paymentLoading}
-                          className='h-9 min-w-0 justify-start gap-2 rounded-lg px-3'
+                          className={cn(
+                            'h-9 min-w-0 justify-start gap-2 rounded-lg px-3',
+                            isWepay && 'justify-center px-2'
+                          )}
                         >
                           {paymentLoading === method.type ? (
                             <Loader2 className='h-4 w-4 animate-spin' />
                           ) : (
                             getPaymentIcon(
                               method.type,
-                              'h-4 w-4',
+                              isWepay ? 'h-6 w-6' : 'h-4 w-4',
                               method.icon,
                               method.name
                             )
                           )}
-                          <span className='truncate'>{method.name}</span>
+                          {!isWepay && <span className='truncate'>{method.name}</span>}
                         </Button>
                       )
 

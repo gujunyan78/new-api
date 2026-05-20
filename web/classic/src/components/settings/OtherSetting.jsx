@@ -86,12 +86,16 @@ const OtherSetting = () => {
     FrontendTheme: false,
   });
   const handleInputChange = async (value, e) => {
-    const name = e.target.id;
-    setInputs((inputs) => ({ ...inputs, [name]: value }));
+    const name = e.target?.id || e?.id || e?.field;
+    if (name) {
+      setInputs((inputs) => ({ ...inputs, [name]: value }));
+    }
   };
 
   // 通用设置
   const formAPISettingGeneral = useRef();
+  // 语言设置
+  const formAPILanguageSettings = useRef();
   // 通用设置 - Notice
   const submitNotice = async () => {
     try {
@@ -229,7 +233,6 @@ const OtherSetting = () => {
       setLoadingInput((loadingInput) => ({ ...loadingInput, Footer: false }));
     }
   };
-
   const checkUpdate = async () => {
     try {
       setLoadingInput((loadingInput) => ({
@@ -332,6 +335,7 @@ const OtherSetting = () => {
       setInputs(newInputs);
       formAPISettingGeneral.current.setValues(newInputs);
       formAPIPersonalization.current.setValues(newInputs);
+      formAPILanguageSettings.current.setValues(newInputs);
     } else {
       showError(message);
     }
@@ -544,6 +548,12 @@ const OtherSetting = () => {
               <DomainBrandingSettings />
             </Form.Section>
           </Card>
+        </Form>
+        {/* 语言设置 */}
+        <Form
+          values={inputs}
+          getFormApi={(formAPI) => (formAPILanguageSettings.current = formAPI)}
+        >
         </Form>
       </Col>
       <Modal

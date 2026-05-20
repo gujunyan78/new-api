@@ -82,18 +82,18 @@ export default function SettingsPaymentGateway(props) {
     try {
       const options = [];
 
-      if (inputs.StripeApiSecret && inputs.StripeApiSecret !== '') {
-        options.push({ key: 'StripeApiSecret', value: inputs.StripeApiSecret });
-      }
-      if (inputs.StripeWebhookSecret && inputs.StripeWebhookSecret !== '') {
-        options.push({
-          key: 'StripeWebhookSecret',
-          value: inputs.StripeWebhookSecret,
-        });
-      }
-      if (inputs.StripePriceId !== '') {
-        options.push({ key: 'StripePriceId', value: inputs.StripePriceId });
-      }
+      options.push({
+        key: 'StripeApiSecret',
+        value: inputs.StripeApiSecret || '',
+      });
+      options.push({
+        key: 'StripeWebhookSecret',
+        value: inputs.StripeWebhookSecret || '',
+      });
+      options.push({
+        key: 'StripePriceId',
+        value: inputs.StripePriceId || '',
+      });
       if (
         inputs.StripeUnitPrice !== undefined &&
         inputs.StripeUnitPrice !== null

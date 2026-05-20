@@ -187,6 +187,25 @@ const BILLING_SECTIONS = [
           WaffoPancakeUnitPrice: settings.WaffoPancakeUnitPrice ?? 1,
           WaffoPancakeMinTopUp: settings.WaffoPancakeMinTopUp ?? 1,
         }}
+        wepayDefaultValues={{
+          WepayEnabled: settings.WepayEnabled ?? false,
+          WepaySandbox: settings.WepaySandbox ?? false,
+          WepayMerchantId: settings.WepayMerchantId ?? '',
+          SbpPrivateKey: settings.SbpPrivateKey ?? '',
+          SbpPublicKey: settings.SbpPublicKey ?? '',
+          SbpCallbackUrl: settings.SbpCallbackUrl ?? '',
+          SbpNotifyUrl: settings.SbpNotifyUrl ?? '',
+          SbpPlatformUrl: settings.SbpPlatformUrl ?? '',
+          SbpSandboxUrl: settings.SbpSandboxUrl ?? '',
+          SbpLogo: settings.SbpLogo ?? '',
+          MirPrivateKey: settings.MirPrivateKey ?? '',
+          MirPublicKey: settings.MirPublicKey ?? '',
+          MirCallbackUrl: settings.MirCallbackUrl ?? '',
+          MirNotifyUrl: settings.MirNotifyUrl ?? '',
+          MirPlatformUrl: settings.MirPlatformUrl ?? '',
+          MirSandboxUrl: settings.MirSandboxUrl ?? '',
+          MirLogo: settings.MirLogo ?? '',
+        }}
       />
     ),
   },

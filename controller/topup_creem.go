@@ -9,18 +9,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/logger"
-	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/setting"
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/logger"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/setting"
-
 	"github.com/gin-gonic/gin"
 	"github.com/thanhpk/randstr"
 )
@@ -44,7 +40,7 @@ func verifyCreemSignature(payload string, signature string, secret string) bool 
 			logger.LogInfo(context.Background(), fmt.Sprintf("Creem webhook 验签已跳过 reason=test_mode signature=%q body=%q", signature, payload))
 			return true
 		}
-		log.Printf("Creem webhook secret not set")
+		logger.LogInfo(context.Background(), "Creem webhook secret not set")
 		// 即使在测试模式下也不允许跳过签名验证，避免安全漏洞
 		return false
 	}

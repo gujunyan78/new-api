@@ -46,42 +46,6 @@ type PaymentMethodsVisualEditorProps = {
   onChange: (value: string) => void
 }
 
-const PAYMENT_TEMPLATES = [
-  {
-    name: 'Alipay',
-    template: {
-      color: 'rgba(var(--semi-blue-5), 1)',
-      name: '支付宝',
-      type: 'alipay',
-    },
-  },
-  {
-    name: 'WeChat Pay',
-    template: {
-      color: 'rgba(var(--semi-green-5), 1)',
-      name: '微信',
-      type: 'wxpay',
-    },
-  },
-  {
-    name: 'Stripe',
-    template: {
-      color: 'rgba(var(--semi-green-5), 1)',
-      name: 'Stripe',
-      type: 'stripe',
-    },
-  },
-  {
-    name: 'Custom',
-    template: {
-      color: 'black',
-      min_topup: '50',
-      name: '自定义1',
-      type: 'custom1',
-    },
-  },
-]
-
 export function PaymentMethodsVisualEditor({
   value,
   onChange,
@@ -90,6 +54,42 @@ export function PaymentMethodsVisualEditor({
   const [searchText, setSearchText] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editData, setEditData] = useState<PaymentMethodData | null>(null)
+
+  const PAYMENT_TEMPLATES = [
+    {
+      name: 'Alipay',
+      template: {
+        color: 'rgba(var(--semi-blue-5), 1)',
+        name: t('支付宝'),
+        type: 'alipay',
+      },
+    },
+    {
+      name: 'WeChat Pay',
+      template: {
+        color: 'rgba(var(--semi-green-5), 1)',
+        name: t('微信'),
+        type: 'wxpay',
+      },
+    },
+    {
+      name: 'Stripe',
+      template: {
+        color: 'rgba(var(--semi-green-5), 1)',
+        name: 'Stripe',
+        type: 'stripe',
+      },
+    },
+    {
+      name: 'Custom',
+      template: {
+        color: 'black',
+        min_topup: '50',
+        name: t('自定义1'),
+        type: 'custom1',
+      },
+    },
+  ]
 
   const paymentMethods = useMemo(() => {
     const parsed = safeJsonParseWithValidation<unknown[]>(value, {

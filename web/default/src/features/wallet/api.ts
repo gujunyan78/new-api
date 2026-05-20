@@ -169,6 +169,49 @@ export async function requestWaffoPancakePayment(
 }
 
 /**
+ * Create Wepay order (without executing payment)
+ */
+export async function createWepayOrder(
+  amount: number
+): Promise<ApiResponse<{ trade_no: string; amount: number }>> {
+  const res = await api.post('/api/user/wepay/order', { amount }, {
+    skipBusinessError: true,
+  } as Record<string, unknown>)
+  return res.data
+}
+
+/**
+ * Request Wepay payment (SBP or MIR)
+ */
+export async function requestWepayPay(
+  amount: number,
+  paymentMethod: 'sbp' | 'mir',
+  tradeNo: string
+): Promise<ApiResponse<{ trade_no: string; code_url: string; code_img_url: string; pay_url: string; amount: number }>> {
+  const res = await api.post('/api/user/wepay/pay', {
+    amount,
+    payment_method: paymentMethod,
+    trade_no: tradeNo,
+  }, {
+    skipBusinessError: true,
+  } as Record<string, unknown>)
+  return res.data
+}
+
+/**
+ * Query Wepay order status
+ */
+export async function queryWepayOrder(
+  tradeNo: string,
+  paymentMethod: 'sbp' | 'mir'
+): Promise<ApiResponse<{ is_success: boolean }>> {
+  const res = await api.get('/api/user/wepay/query', {
+    params: { trade_no: tradeNo, payment_method: paymentMethod },
+  })
+  return res.data
+}
+
+/**
  * Get affiliate code
  */
 export async function getAffiliateCode(): Promise<AffiliateCodeResponse> {
