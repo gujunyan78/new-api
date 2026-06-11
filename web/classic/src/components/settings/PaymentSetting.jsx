@@ -27,7 +27,7 @@ import SettingsPaymentGatewayWaffo from '../../pages/Setting/Payment/SettingsPay
 import SettingsPaymentGatewayUsdt from '../../pages/Setting/Payment/SettingsPaymentGatewayUsdt';
 import SettingsPaymentGatewayWaffoPancake from '../../pages/Setting/Payment/SettingsPaymentGatewayWaffoPancake';
 import SettingsPaymentGatewayWepay from '../../pages/Setting/Payment/SettingsPaymentGatewayWepay';
-import { API, showError, toBoolean } from '../../helpers';
+import SettingsPaymentGatewaySilkroad from '../../pages/Setting/Payment/SettingsPaymentGatewaySilkroad';
 import { API, showError, showSuccess, toBoolean } from '../../helpers';
 import { useTranslation } from 'react-i18next';
 import RiskAcknowledgementModal from '../common/modals/RiskAcknowledgementModal';
@@ -93,6 +93,20 @@ const PaymentSetting = () => {
     MirPlatformUrl: '',
     MirSandboxUrl: '',
     MirLogo: '',
+
+    // Gwiff Pay (Silkroad)
+    pay_silkroad_enable: false,
+    pay_silkroad_sandbox: false,
+    pay_silkroad_mch_id: '',
+    pay_silkroad_app_id: '',
+    pay_silkroad_gateway_url: '',
+    pay_silkroad_sandbox_url: '',
+    pay_silkroad_notify_url: '',
+    pay_silkroad_private_key: '',
+    pay_silkroad_platform_public_key: '',
+    pay_silkroad_payment_method: 'SOLID_BANK',
+    pay_silkroad_category: 1,
+    pay_silkroad_currency: 'RUB',
   });
 
   let [loading, setLoading] = useState(false);
@@ -364,6 +378,13 @@ const PaymentSetting = () => {
 
                 <Tabs.TabPane tab={t('Wepay 支付设置')} itemKey='wepay'>
                     <SettingsPaymentGatewayWepay
+                        options={inputs}
+                        refresh={onRefresh}
+                        hideSectionTitle
+                    />
+                </Tabs.TabPane>
+                <Tabs.TabPane tab={t('Gwiff Pay 设置')} itemKey='silkroad'>
+                    <SettingsPaymentGatewaySilkroad
                         options={inputs}
                         refresh={onRefresh}
                         hideSectionTitle

@@ -34,16 +34,17 @@ const About = () => {
   const currentYear = new Date().getFullYear();
 
   const displayAbout = async () => {
-    setAbout(localStorage.getItem('about') || '');
+    const cacheKey = `about_${window.location.hostname}`;
+    setAbout(localStorage.getItem(cacheKey) || '');
     const res = await API.get('/api/about');
     const { success, message, data } = res.data;
     if (success) {
       let aboutContent = data;
-      if (!data.startsWith('https://')) {
+      if (!data.startsWith('http') ) {
         aboutContent = marked.parse(data);
       }
       setAbout(aboutContent);
-      localStorage.setItem('about', aboutContent);
+      localStorage.setItem(cacheKey, aboutContent);
     } else {
       showError(message);
       setAbout(t('加载关于内容失败...'));
@@ -153,7 +154,7 @@ const About = () => {
         </div>
       ) : (
         <>
-          {about.startsWith('https://') ? (
+          {about.startsWith('http') ? (
             <iframe
               src={about}
               style={{ width: '100%', height: '100vh', border: 'none' }}

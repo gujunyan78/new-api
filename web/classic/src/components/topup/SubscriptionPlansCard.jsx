@@ -77,6 +77,8 @@ const SubscriptionPlansCard = ({
   enableOnlineTopUp = false,
   enableStripeTopUp = false,
   enableCreemTopUp = false,
+  enableUsdtTopUp = false,
+  enableWepayTopUp = false,
   billingPreference,
   onChangeBillingPreference,
   activeSubscriptions = [],
@@ -673,6 +675,8 @@ const SubscriptionPlansCard = ({
         enableOnlineTopUp={enableOnlineTopUp}
         enableStripeTopUp={enableStripeTopUp}
         enableCreemTopUp={enableCreemTopUp}
+        enableUsdtTopUp={enableUsdtTopUp}
+        enableWepayTopUp={enableWepayTopUp}
         purchaseLimitInfo={
           selectedPlan?.plan?.id
             ? {

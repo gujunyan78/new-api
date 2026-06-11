@@ -41,6 +41,7 @@ import PaymentConfirmModal from './modals/PaymentConfirmModal';
 import TopupHistoryModal from './modals/TopupHistoryModal';
 import UsdtPaymentModal from './modals/UsdtPaymentModal';
 import WepayPaymentModal from './modals/WepayPaymentModal';
+import SilkroadPaymentModal from './modals/SilkroadPaymentModal';
 
 const TopUp = () => {
   const { t } = useTranslation();
@@ -58,6 +59,8 @@ const TopUp = () => {
   const [enableOnlineTopUp, setEnableOnlineTopUp] = useState(
     statusState?.status?.enable_online_topup || false,
   );
+  const [enableWepayTopUp, setEnableWepayTopUp] = useState(false);
+  const [enableSilkroadTopUp, setEnableSilkroadTopUp] = useState(false);
   const [priceRatio, setPriceRatio] = useState(statusState?.status?.price || 1);
 
   const [enableStripeTopUp, setEnableStripeTopUp] = useState(
@@ -86,6 +89,10 @@ const TopUp = () => {
 
   // Wepay 相关状态
   const [wepayModalVisible, setWepayModalVisible] = useState(false);
+
+  // Gwiff Pay 相关状态
+  const [silkroadModalVisible, setSilkroadModalVisible] = useState(false);
+  const [silkroadCurrency, setSilkroadCurrency] = useState('RUB');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
@@ -126,14 +133,22 @@ const TopUp = () => {
   });
 
   const confirmPayMethods = [
-    ...payMethods,
-    ...waffoPayMethods.map((method, index) => ({
+    ...(payMethods || []),
+    ...(waffoPayMethods || []).map((method, index) => ({
       ...method,
       type: `waffo:${index}`,
       min_topup: waffoMinTopUp,
       color: method.color || 'rgba(var(--semi-primary-5), 1)',
     })),
   ];
+  
+  console.log('TopUp component state:', {
+    payMethods,
+    waffoPayMethods,
+    confirmPayMethods,
+    enableUsdtTopUp,
+    usdtMinTopUp
+  });
 
   const getPayMethodConfig = (payment) =>
     confirmPayMethods.find((method) => method.type === payment);
@@ -205,6 +220,10 @@ const TopUp = () => {
   const preTopUp = async (payment) => {
     if (payment === 'wepay') {
       setWepayModalVisible(true);
+      return;
+    }
+    if (payment === 'silkroad') {
+      setSilkroadModalVisible(true);
       return;
     }
     if (payment === 'stripe') {
@@ -591,6 +610,7 @@ const TopUp = () => {
     try {
       const res = await API.get('/api/user/topup/info');
       const { message, data, success } = res.data;
+      console.log('getTopupInfo response:', { message, data, success });
       if (success) {
         setTopupInfo({
           amount_options: data.amount_options || [],
@@ -650,6 +670,8 @@ const TopUp = () => {
           setPayMethods(payMethods);
           const enableStripeTopUp = data.enable_stripe_topup || false;
           const enableOnlineTopUp = data.enable_online_topup || false;
+          const enableWepayTopUp = data.enable_wepay_topup || false;
+          const enableSilkroadTopUp = data.enable_silkroad_topup || false;
           const enableCreemTopUp = data.enable_creem_topup || false;
           const enableWaffoTopUp = data.enable_waffo_topup || false;
           const enableWaffoPancakeTopUp =
@@ -664,6 +686,13 @@ const TopUp = () => {
                   ? data.waffo_pancake_min_topup
                   : 1;
           setEnableOnlineTopUp(enableOnlineTopUp);
+          setEnableWepayTopUp(enableWepayTopUp);
+          setEnableSilkroadTopUp(enableSilkroadTopUp);
+
+          const silkroadMethod = payMethods.find((m) => m.type === 'silkroad');
+          if (silkroadMethod?.currency) {
+            setSilkroadCurrency(silkroadMethod.currency);
+          }
           setEnableStripeTopUp(enableStripeTopUp);
           setEnableCreemTopUp(enableCreemTopUp);
           setEnableWaffoTopUp(enableWaffoTopUp);
@@ -963,6 +992,18 @@ const TopUp = () => {
         amount={topUpCount}
       />
 
+      {/* Gwiff Pay 支付弹窗 */}
+      <SilkroadPaymentModal
+        t={t}
+        visible={silkroadModalVisible}
+        onClose={(success) => {
+          setSilkroadModalVisible(false);
+          if (success) getUserQuota();
+        }}
+        amount={topUpCount}
+        currency={silkroadCurrency}
+      />
+
       {/* Creem 充值确认模态框 */}
       <Modal
         title={t('确定要充值 $')}
@@ -996,6 +1037,8 @@ const TopUp = () => {
         <RechargeCard
           t={t}
           enableOnlineTopUp={enableOnlineTopUp}
+          enableWepayTopUp={enableWepayTopUp}
+          enableSilkroadTopUp={enableSilkroadTopUp}
           enableStripeTopUp={enableStripeTopUp}
           enableCreemTopUp={enableCreemTopUp}
           creemProducts={creemProducts}

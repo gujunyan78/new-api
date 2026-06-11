@@ -82,7 +82,8 @@ const Home = () => {
   const isChinese = i18n.language.startsWith('zh');
 
   const displayHomePageContent = async () => {
-    setHomePageContent(localStorage.getItem('home_page_content') || '');
+    const cacheKey = `home_page_content_${window.location.hostname}`;
+    setHomePageContent(localStorage.getItem(cacheKey) || '');
     const res = await API.get('/api/home_page_content');
     const { success, message, data } = res.data;
     if (success) {
@@ -91,7 +92,7 @@ const Home = () => {
         content = marked.parse(data);
       }
       setHomePageContent(content);
-      localStorage.setItem('home_page_content', content);
+      localStorage.setItem(cacheKey, content);
 
       // 如果内容是 URL，则发送主题模式
       if (data.startsWith('https://')) {
@@ -265,7 +266,7 @@ const Home = () => {
                       {t('支持众多的大模型供应商')}
                     </Text>
                   </div>
-                  {/*
+
                   <div className='flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-5xl mx-auto px-4'>
                     <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
                       <Moonshot size={40} />
@@ -333,8 +334,8 @@ const Home = () => {
                       </Typography.Text>
                     </div>
                   </div>
-                  */}
 
+                  {/*
                   <div className='flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-5xl mx-auto px-4'>
                     <div className='w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 flex items-center justify-center'>
                       <Moonshot size={40} />
@@ -378,6 +379,8 @@ const Home = () => {
                       </Typography.Text>
                     </div>
                   </div>
+                  */}
+
                 </div>
               </div>
             </div>

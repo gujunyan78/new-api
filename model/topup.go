@@ -118,6 +118,16 @@ func GetTopUpByTradeNo(tradeNo string) *TopUp {
 	return topUp
 }
 
+func GetTopUpByTradeNoAndProvider(tradeNo string, paymentProvider string) *TopUp {
+	var topUp *TopUp
+	var err error
+	err = DB.Where("trade_no = ? AND payment_provider = ?", tradeNo, paymentProvider).First(&topUp).Error
+	if err != nil {
+		return nil
+	}
+	return topUp
+}
+
 func UpdatePendingTopUpStatus(tradeNo string, expectedPaymentProvider string, targetStatus string) error {
 	if tradeNo == "" {
 		return errors.New("未提供支付单号")

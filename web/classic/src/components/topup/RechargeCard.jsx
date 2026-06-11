@@ -55,6 +55,8 @@ const { Text } = Typography;
 const RechargeCard = ({
   t,
   enableOnlineTopUp,
+  enableWepayTopUp,
+  enableSilkroadTopUp,
   enableStripeTopUp,
   enableCreemTopUp,
   creemProducts,
@@ -234,9 +236,12 @@ const RechargeCard = ({
             <Spin size='large' />
           </div>
         ) : enableOnlineTopUp ||
+          enableWepayTopUp ||
+          enableSilkroadTopUp ||
           enableStripeTopUp ||
           enableCreemTopUp ||
           enableWaffoTopUp ||
+          enableUsdtTopUp ||
           enableWaffoPancakeTopUp ? (
           <Form
             getFormApi={(api) => (onlineFormApiRef.current = api)}
@@ -244,9 +249,11 @@ const RechargeCard = ({
           >
             <div className='space-y-6'>
               {(enableOnlineTopUp ||
+                enableWepayTopUp ||
+                enableSilkroadTopUp ||
                 enableStripeTopUp ||
                 enableWaffoTopUp ||
-                enableWaffoPancakeTopUp) && (
+                enableWaffoPancakeTopUp ||enableUsdtTopUp) && (
                 <Row gutter={12}>
                   <Col xs={24} sm={24} md={24} lg={10} xl={10}>
                     <Form.InputNumber
@@ -254,9 +261,12 @@ const RechargeCard = ({
                       label={t('充值数量')+" "+t('₽')}
                       disabled={
                         !enableOnlineTopUp &&
+                        !enableWepayTopUp &&
+                        !enableSilkroadTopUp &&
                         !enableStripeTopUp &&
                         !enableWaffoTopUp &&
-                        !enableWaffoPancakeTopUp
+                        !enableWaffoPancakeTopUp &&
+                        !enableUsdtTopUp
                       }
                       placeholder={
                         t('充值数量，最低 ') + renderQuotaWithAmount(minTopUp)
@@ -310,19 +320,19 @@ const RechargeCard = ({
                       style={{ width: '100%' }}
                     />
                   </Col>
-                  {(payMethods && payMethods.filter(m => m.type !== 'waffo').length > 0 || enableUsdtTopUp) && (
+                  {(Boolean(enableUsdtTopUp) || (Array.isArray(payMethods) && payMethods.filter(m => m && m.type !== 'waffo').length > 0)) && (
                   <Col xs={24} sm={24} md={24} lg={14} xl={14}>
                     <Form.Slot label={t('选择支付方式')}>
                         <Space wrap>
                           {(() => {
                             const wepayMethods = regularPayMethods.filter(
-                              (m) => m.type === 'wepay'
+                              (m) => m && m.type === 'wepay'
                             );
                             const otherMethods = regularPayMethods.filter(
-                              (m) => m.type !== 'wepay'
+                              (m) => m && m.type !== 'wepay'
                             );
 
-                            const wepayDisabled = wepayMethods.some((m) => {
+                            const wepayDisabled = !enableWepayTopUp || wepayMethods.some((m) => {
                               const minTopupVal = Number(m.min_topup) || 0;
                               return minTopupVal > Number(topUpCount || 0);
                             });
@@ -386,14 +396,18 @@ const RechargeCard = ({
                                 payMethod.type.startsWith('waffo:');
                               const isWaffoPancake =
                                 payMethod.type === 'waffo_pancake';
+                              const isSilkroad =
+                                payMethod.type === 'silkroad';
                               const disabled =
                                 (!enableOnlineTopUp &&
                                   !isStripe &&
                                   !isWaffo &&
-                                  !isWaffoPancake) ||
+                                  !isWaffoPancake &&
+                                  !isSilkroad) ||
                                 (!enableStripeTopUp && isStripe) ||
                                 (!enableWaffoTopUp && isWaffo) ||
                                 (!enableWaffoPancakeTopUp && isWaffoPancake) ||
+                                (!enableSilkroadTopUp && isSilkroad) ||
                                 minTopupVal > Number(topUpCount || 0);
 
                               const buttonEl = (
@@ -785,6 +799,8 @@ const RechargeCard = ({
                 enableOnlineTopUp={enableOnlineTopUp}
                 enableStripeTopUp={enableStripeTopUp}
                 enableCreemTopUp={enableCreemTopUp}
+                enableUsdtTopUp={enableUsdtTopUp}
+                enableWepayTopUp={enableWepayTopUp}
                 billingPreference={billingPreference}
                 onChangeBillingPreference={onChangeBillingPreference}
                 activeSubscriptions={activeSubscriptions}

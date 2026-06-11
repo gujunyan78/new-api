@@ -98,6 +98,9 @@ func GetOptions(c *gin.Context) {
 		if isSensitiveKey && !isVisiblePublicKeyOption(k) {
 			continue
 		}
+		if k == "pay_silkroad_private_key" {
+			continue
+		}
 		options = append(options, &model.Option{
 			Key:   k,
 			Value: value,

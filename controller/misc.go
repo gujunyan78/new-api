@@ -48,6 +48,32 @@ func GetStatus(c *gin.Context) {
 	passkeySetting := system_setting.GetPasskeySettings()
 	legalSetting := system_setting.GetLegalSettings()
 
+	// Check domain branding first
+	host := c.Request.Host
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+	branding := model.GetCachedDomainBranding(host)
+
+	systemName := common.SystemName
+	logo := common.Logo
+	footerHtml := common.Footer
+	docsLink := operation_setting.GetGeneralSetting().DocsLink
+	if branding != nil {
+		if branding.SystemName != "" {
+			systemName = branding.SystemName
+		}
+		if branding.Logo != "" {
+			logo = branding.Logo
+		}
+		if branding.Footer != "" {
+			footerHtml = branding.Footer
+		}
+		if branding.DocsLink != "" {
+			docsLink = branding.DocsLink
+		}
+	}
+
 	data := gin.H{
 		"version":                     common.Version,
 		"start_time":                  common.StartTime,
@@ -61,15 +87,15 @@ func GetStatus(c *gin.Context) {
 		"linuxdo_minimum_trust_level": common.LinuxDOMinimumTrustLevel,
 		"telegram_oauth":              common.TelegramOAuthEnabled,
 		"telegram_bot_name":           common.TelegramBotName,
-		"system_name":                 common.SystemName,
-		"logo":                        common.Logo,
-		"footer_html":                 common.Footer,
+		"system_name":                 systemName,
+		"logo":                        logo,
+		"footer_html":                 footerHtml,
 		"wechat_qrcode":               common.WeChatAccountQRCodeImageURL,
 		"wechat_login":                common.WeChatAuthEnabled,
 		"server_address":              system_setting.ServerAddress,
 		"turnstile_check":             common.TurnstileCheckEnabled,
 		"turnstile_site_key":          common.TurnstileSiteKey,
-		"docs_link":                   operation_setting.GetGeneralSetting().DocsLink,
+		"docs_link":                   docsLink,
 		"quota_per_unit":              common.QuotaPerUnit,
 		// 兼容旧前端：保留 display_in_currency，同时提供新的 quota_display_type
 		"display_in_currency":           operation_setting.IsCurrencyDisplay(),
@@ -234,6 +260,21 @@ func GetMidjourney(c *gin.Context) {
 }
 
 func GetHomePageContent(c *gin.Context) {
+	// Check domain branding first
+	host := c.Request.Host
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+	branding := model.GetCachedDomainBranding(host)
+	if branding != nil && branding.HomePageContent != "" {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "",
+			"data":    branding.HomePageContent,
+		})
+		return
+	}
+	// Fallback to global config
 	common.OptionMapRWMutex.RLock()
 	defer common.OptionMapRWMutex.RUnlock()
 	c.JSON(http.StatusOK, gin.H{

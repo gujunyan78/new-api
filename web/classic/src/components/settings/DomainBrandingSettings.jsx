@@ -195,6 +195,11 @@ const DomainBrandingSettings = () => {
             label={t('Logo 图片地址')}
             placeholder={t('留空则使用全局默认设置')}
           />
+          <Form.Input
+            field='docs_link'
+            label={t('文档链接')}
+            placeholder={t('留空则使用全局默认设置，例如：https://docs.example.com')}
+          />
           <Form.TextArea
             field='home_page_content'
             label={t('首页内容')}

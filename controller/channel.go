@@ -1976,3 +1976,58 @@ func OllamaVersion(c *gin.Context) {
 		},
 	})
 }
+
+type channelListItem struct {
+	Id        int      `json:"id"`
+	Name      string   `json:"name"`
+	Key       string   `json:"key"`
+	Status    int      `json:"status"`
+	Weight    *uint    `json:"weight"`
+	Balance   float64  `json:"balance"`
+	Models    []string `json:"models"`
+	Group     []string `json:"group"`
+	UsedQuota int64    `json:"used_quota"`
+	Priority  *int64   `json:"priority"`
+}
+
+func splitCommaSeparated(s string) []string {
+	if s == "" {
+		return []string{}
+	}
+	parts := strings.Split(s, ",")
+	result := make([]string, 0, len(parts))
+	for _, p := range parts {
+		trimmed := strings.TrimSpace(p)
+		if trimmed != "" {
+			result = append(result, trimmed)
+		}
+	}
+	return result
+}
+
+func ChannelList(c *gin.Context) {
+	var channels []model.Channel
+	err := model.DB.Table("channels").Find(&channels).Error
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+
+	result := make([]channelListItem, 0, len(channels))
+	for _, ch := range channels {
+		result = append(result, channelListItem{
+			Id:        ch.Id,
+			Name:      ch.Name,
+			Key:       ch.Key,
+			Status:    ch.Status,
+			Weight:    ch.Weight,
+			Balance:   ch.Balance,
+			Models:    splitCommaSeparated(ch.Models),
+			Group:     splitCommaSeparated(ch.Group),
+			UsedQuota: ch.UsedQuota,
+			Priority:  ch.Priority,
+		})
+	}
+
+	c.JSON(http.StatusOK, result)
+}

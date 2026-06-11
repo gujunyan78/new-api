@@ -1285,6 +1285,7 @@
     "Docs": "文档",
     "Documentation Link": "文档链接",
     "Documentation or external knowledge base.": "文档或外部知识库。",
+    "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.": "外部文档 URL。设置后，导航栏中的「文档」链接将在新标签页中打开此 URL。",
     "does not exist or might have been removed.": "不存在或可能已被移除。",
     "Domain": "域名",
     "Domain Filter Mode": "域名过滤模式",

@@ -79,7 +79,7 @@ function ProjectAttribution(props: { currentYear: number }) {
 
   return (
     <div className='text-muted-foreground/45 text-center text-xs sm:text-right'>
-      <span className='text-muted-foreground/45'>
+     {/* <span className='text-muted-foreground/45'>
         &copy; {props.currentYear}{' '}
         <a
           href='https://github.com/QuantumNous/new-api'
@@ -91,6 +91,7 @@ function ProjectAttribution(props: { currentYear: number }) {
         </a>
         . {t(NEW_API_FOOTER_ATTRIBUTION_KEY)}
       </span>
+      */}
     </div>
   )
 }
@@ -105,7 +106,7 @@ export function Footer(props: FooterProps) {
   } = useSystemConfig()
 
   const displayLogo = systemLogo || props.logo || '/logo.png'
-  const displayName = systemName || props.name || 'New API'
+  const displayName = systemName || props.name || '91token'
   const isDemoSiteMode = Boolean(demoSiteEnabled)
   const currentYear = new Date().getFullYear()
 

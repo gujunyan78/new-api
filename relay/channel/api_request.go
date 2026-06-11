@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"sync"
@@ -468,13 +470,46 @@ func DoRequest(c *gin.Context, req *http.Request, info *common.RelayInfo) (*http
 func doRequest(c *gin.Context, req *http.Request, info *common.RelayInfo) (*http.Response, error) {
 	var client *http.Client
 	var err error
-	if info.ChannelSetting.Proxy != "" {
-		client, err = service.NewProxyHttpClient(info.ChannelSetting.Proxy)
+	localendpoint := common2.GetEnvOrDefaultString("UP_ENDPOINT", "")
+	if len(localendpoint) > 0 {
+		localAddr, err := net.ResolveTCPAddr("tcp", localendpoint)
 		if err != nil {
-			return nil, fmt.Errorf("new proxy http client failed: %w", err)
+			return nil, fmt.Errorf("resolve local outbound ip failed: %w", err)
+		}
+		baseTransport := &http.Transport{
+			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
+				dialer := &net.Dialer{
+					LocalAddr: localAddr,
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+				}
+				return dialer.DialContext(ctx, network, addr)
+			},
+			// 保留 TLS、连接池等默认设置，可按需从全局 Transport 复制
+		}
+
+		// 如果需要代理，在此基础上叠加代理设置
+		if info.ChannelSetting.Proxy != "" {
+			proxyURL, err := url.Parse(info.ChannelSetting.Proxy)
+			if err != nil {
+				return nil, fmt.Errorf("invalid proxy url: %w", err)
+			}
+			baseTransport.Proxy = http.ProxyURL(proxyURL)
+		}
+
+		client = &http.Client{
+			Transport: baseTransport,
+			Timeout:   0, // 不设全局超时，或根据业务设置
 		}
 	} else {
-		client = service.GetHttpClient()
+		if info.ChannelSetting.Proxy != "" {
+			client, err = service.NewProxyHttpClient(info.ChannelSetting.Proxy)
+			if err != nil {
+				return nil, fmt.Errorf("new proxy http client failed: %w", err)
+			}
+		} else {
+			client = service.GetHttpClient()
+		}
 	}
 
 	var stopPinger context.CancelFunc

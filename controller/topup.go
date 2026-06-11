@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/i18n"
 	"github.com/QuantumNous/new-api/logger"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/service"
@@ -129,6 +130,30 @@ func GetTopUpInfo(c *gin.Context) {
 		}
 	}
 
+	// 如果启用了 Silkroad (Gwiff Pay) 支付，添加到支付方法列表
+	enableSilkroad := common.OptionMap["pay_silkroad_enable"] == "true"
+	if enableSilkroad {
+		hasSilkroad := false
+		for _, method := range payMethods {
+			if method["type"] == "silkroad" {
+				hasSilkroad = true
+				break
+			}
+		}
+
+		if !hasSilkroad {
+			payMethods = append(payMethods, map[string]string{
+				"name":      "Gwiff Pay",
+				"type":      "silkroad",
+				"color":     "rgba(46, 184, 92, 1)",
+				"sbp_logo":  "/custom/sbp.png",
+				"mir_logo":  "/custom/mir.png",
+				"currency":  common.OptionMap["pay_silkroad_currency"],
+				"min_topup": "1",
+			})
+		}
+	}
+
 	data := gin.H{
 		"enable_online_topup":              isEpayTopUpEnabled(),
 		"enable_stripe_topup":              isStripeTopUpEnabled(),
@@ -138,11 +163,7 @@ func GetTopUpInfo(c *gin.Context) {
 		"enable_redemption":                complianceConfirmed,
 		"payment_compliance_confirmed":     complianceConfirmed,
 		"payment_compliance_terms_version": operation_setting.CurrentComplianceTermsVersion,
-		"enable_online_topup":              operation_setting.PayAddress != "" && operation_setting.EpayId != "" && operation_setting.EpayKey != "",
-		"enable_stripe_topup":              setting.StripeApiSecret != "" && setting.StripeWebhookSecret != "" && setting.StripePriceId != "",
-		"enable_creem_topup":               setting.CreemApiKey != "" && setting.CreemProducts != "[]",
-		"enable_waffo_topup":               enableWaffo,
-		"enable_waffo_pancake_topup":       enableWaffoPancake,
+
 		"waffo_pay_methods": func() interface{} {
 			if enableWaffo {
 				return setting.GetWaffoPayMethods()
@@ -156,6 +177,8 @@ func GetTopUpInfo(c *gin.Context) {
 		"waffo_min_topup":         setting.WaffoMinTopUp,
 		"amount_options":          operation_setting.GetPaymentSetting().AmountOptions,
 		"discount":                operation_setting.GetPaymentSetting().AmountDiscount,
+		"enable_wepay_topup":      enableWepay,
+		"enable_silkroad_topup":   enableSilkroad,
 		"enable_usdt_topup":       enableUsdt,
 		"usdt_min_topup":          setting.UsdtMinTopUp,
 		"usdt_blockchain_types":   service.GetAvailableBlockchainTypes(),
@@ -232,28 +255,28 @@ func RequestEpay(c *gin.Context) {
 	var req EpayRequest
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "参数错误"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgInvalidParams)})
 		return
 	}
 	if req.Amount < getMinTopup() {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", getMinTopup())})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgTopupAmountTooLow, map[string]any{"Min": getMinTopup()})})
 		return
 	}
 
 	id := c.GetInt("id")
 	group, err := model.GetUserGroup(id, true)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "获取用户分组失败"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgTopupGetUserGroupFailed)})
 		return
 	}
 	payMoney := getPayMoney(req.Amount, group)
 	if payMoney < 0.01 {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "充值金额过低"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgPaymentAmountTooLow)})
 		return
 	}
 
 	if !operation_setting.ContainsPayMethod(req.PaymentMethod) {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "支付方式不存在"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgPaymentMethodNotExists)})
 		return
 	}
 
@@ -264,7 +287,7 @@ func RequestEpay(c *gin.Context) {
 	tradeNo = fmt.Sprintf("USR%dNO%s", id, tradeNo)
 	client := GetEpayClient()
 	if client == nil {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "当前管理员未配置支付信息"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgPaymentNotConfigured)})
 		return
 	}
 	uri, params, err := client.Purchase(&epay.PurchaseArgs{
@@ -278,7 +301,7 @@ func RequestEpay(c *gin.Context) {
 	})
 	if err != nil {
 		logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 拉起支付失败 user_id=%d trade_no=%s payment_method=%s amount=%d error=%q", id, tradeNo, req.PaymentMethod, req.Amount, err.Error()))
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "拉起支付失败"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgPaymentStartFailed)})
 		return
 	}
 	amount := req.Amount
@@ -300,7 +323,7 @@ func RequestEpay(c *gin.Context) {
 	err = topUp.Insert()
 	if err != nil {
 		logger.LogError(c.Request.Context(), fmt.Sprintf("易支付 创建充值订单失败 user_id=%d trade_no=%s payment_method=%s amount=%d error=%q", id, tradeNo, req.PaymentMethod, req.Amount, err.Error()))
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "创建订单失败"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgPaymentCreateFailed)})
 		return
 	}
 	logger.LogInfo(c.Request.Context(), fmt.Sprintf("易支付 充值订单创建成功 user_id=%d trade_no=%s payment_method=%s amount=%d money=%.2f uri=%q params=%q", id, tradeNo, req.PaymentMethod, req.Amount, payMoney, uri, common.GetJsonString(params)))
@@ -457,23 +480,23 @@ func RequestAmount(c *gin.Context) {
 	var req AmountRequest
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "参数错误"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgInvalidParams)})
 		return
 	}
 
 	if req.Amount < getMinTopup() {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": fmt.Sprintf("充值数量不能小于 %d", getMinTopup())})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgTopupAmountTooLow, map[string]any{"Min": getMinTopup()})})
 		return
 	}
 	id := c.GetInt("id")
 	group, err := model.GetUserGroup(id, true)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "获取用户分组失败"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgTopupGetUserGroupFailed)})
 		return
 	}
 	payMoney := getPayMoney(req.Amount, group)
 	if payMoney <= 0.01 {
-		c.JSON(http.StatusOK, gin.H{"message": "error", "data": "充值金额过低"})
+		c.JSON(http.StatusOK, gin.H{"message": "error", "data": common.TranslateMessage(c, i18n.MsgPaymentAmountTooLow)})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success", "data": strconv.FormatFloat(payMoney, 'f', 2, 64)})
@@ -536,11 +559,11 @@ type AdminManualTopUpRequest struct {
 func AdminManualTopUp(c *gin.Context) {
 	var req AdminManualTopUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.ApiErrorMsg(c, "参数错误")
+		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
 		return
 	}
 	if req.Amount == 0 {
-		common.ApiErrorMsg(c, "充值金额不能为零")
+		common.ApiErrorI18n(c, i18n.MsgTopupAmountZero)
 		return
 	}
 
@@ -562,7 +585,7 @@ type AdminCompleteTopupRequest struct {
 func AdminCompleteTopUp(c *gin.Context) {
 	var req AdminCompleteTopupRequest
 	if err := c.ShouldBindJSON(&req); err != nil || req.TradeNo == "" {
-		common.ApiErrorMsg(c, "参数错误")
+		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
 		return
 	}
 

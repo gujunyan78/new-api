@@ -143,6 +143,9 @@ topup.order_not_exists: "充值订单不存在"
 topup.order_status: "充值订单状态错误"
 topup.failed: "充值失败，请稍后重试"
 topup.invalid_quota: "无效的充值额度"
+topup.amount_too_low: "充值数量不能小于 {{.Min}}"
+topup.get_user_group_failed: "获取用户分组失败"
+topup.amount_zero: "充值金额不能为零"
 
 # Channel messages
 channel.not_exists: "渠道不存在"

@@ -72,6 +72,6 @@ root.render(
           </ThemeProvider>
         </BrowserRouter>
       </UserProvider>
-    </StatusProvider>mmain
+    </StatusProvider>
   </React.StrictMode>,
 );

@@ -1285,6 +1285,7 @@
     "Docs": "Docs",
     "Documentation Link": "Documentation Link",
     "Documentation or external knowledge base.": "Documentation or external knowledge base.",
+    "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.": "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.",
     "does not exist or might have been removed.": "does not exist or might have been removed.",
     "Domain": "Domain",
     "Domain Filter Mode": "Domain Filter Mode",

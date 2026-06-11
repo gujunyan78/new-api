@@ -52,6 +52,8 @@ const SubscriptionPurchaseModal = ({
   enableOnlineTopUp = false,
   enableStripeTopUp = false,
   enableCreemTopUp = false,
+  enableUsdtTopUp = false,
+  enableWepayTopUp = false,
   purchaseLimitInfo = null,
   onPayStripe,
   onPayCreem,
@@ -69,7 +71,9 @@ const SubscriptionPurchaseModal = ({
   const hasStripe = enableStripeTopUp && !!plan?.stripe_price_id;
   const hasCreem = enableCreemTopUp && !!plan?.creem_product_id;
   const hasEpay = enableOnlineTopUp && epayMethods.length > 0;
-  const hasAnyPayment = hasStripe || hasCreem || hasEpay;
+  const hasUsdt = enableUsdtTopUp;
+  const hasWepay = enableWepayTopUp;
+  const hasAnyPayment = hasStripe || hasCreem || hasEpay || hasUsdt || hasWepay;
   const purchaseLimit = Number(purchaseLimitInfo?.limit || 0);
   const purchaseCount = Number(purchaseLimitInfo?.count || 0);
   const purchaseLimitReached =

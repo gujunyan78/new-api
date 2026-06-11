@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -115,6 +116,19 @@ func InitOptionMap() {
 	common.OptionMap["UsdtWallets"] = setting.UsdtWallets
 	common.OptionMap["TronGridApiKey"] = setting.TronGridApiKey
 	common.OptionMap["EtherscanApiKey"] = setting.EtherscanApiKey
+	common.OptionMap["pay_silkroad_enable"] = "false"
+	common.OptionMap["pay_silkroad_sandbox"] = "false"
+	common.OptionMap["pay_silkroad_mch_id"] = ""
+	common.OptionMap["pay_silkroad_app_id"] = ""
+	common.OptionMap["pay_silkroad_gateway_url"] = ""
+	common.OptionMap["pay_silkroad_sandbox_url"] = ""
+	common.OptionMap["pay_silkroad_notify_url"] = ""
+	common.OptionMap["pay_silkroad_private_key"] = ""
+	common.OptionMap["pay_silkroad_platform_public_key"] = ""
+	common.OptionMap["pay_silkroad_payment_method"] = "SOLID_BANK"
+	common.OptionMap["pay_silkroad_category"] = "1"
+	common.OptionMap["pay_silkroad_currency"] = "RUB"
+	common.OptionMap["pay_silkroad_serial_no"] = ""
 	common.OptionMap["WaffoPancakeEnabled"] = strconv.FormatBool(setting.WaffoPancakeEnabled)
 	common.OptionMap["WaffoPancakeSandbox"] = strconv.FormatBool(setting.WaffoPancakeSandbox)
 	common.OptionMap["WaffoPancakeMerchantID"] = setting.WaffoPancakeMerchantID
@@ -200,7 +214,26 @@ func InitOptionMap() {
 func loadOptionsFromDatabase() {
 	options, _ := AllOption()
 	for _, option := range options {
-		err := updateOptionMap(option.Key, option.Value)
+		value := option.Value
+		if option.Key == "pay_silkroad_private_key" && value != "" {
+			common.SysLog(fmt.Sprintf("[DEBUG] loading silkroad private key from DB, encrypted length: %d", len(value)))
+			decrypted, err := common.DecryptByAES(value)
+			if err != nil {
+				common.SysLog("failed to decrypt silkroad private key: " + err.Error())
+				if strings.Contains(value, "PRIVATE KEY") {
+					common.SysLog("silkroad private key appears to be plaintext PEM, using as-is")
+					common.SysLog(fmt.Sprintf("[DEBUG] plaintext private key length: %d", len(value)))
+				} else {
+					common.SysLog("[DEBUG] silkroad private key decryption failed, preserving existing in-memory value")
+					common.SysLog("[ERROR] This usually means CRYPTO_SECRET env var changed or was not set persistently. Please set CRYPTO_SECRET to a fixed value and re-save the private key.")
+					continue // do NOT overwrite in-memory value with empty string
+				}
+			} else {
+				common.SysLog(fmt.Sprintf("[DEBUG] silkroad private key decrypted successfully, length: %d", len(decrypted)))
+				value = decrypted
+			}
+		}
+		err := updateOptionMap(option.Key, value)
 		if err != nil {
 			common.SysLog("failed to update option map: " + err.Error())
 		}
@@ -216,18 +249,20 @@ func SyncOptions(frequency int) {
 }
 
 func UpdateOption(key string, value string) error {
-	// Save to database first
 	option := Option{
 		Key: key,
 	}
-	// https://gorm.io/docs/update.html#Save-All-Fields
 	DB.FirstOrCreate(&option, Option{Key: key})
-	option.Value = value
-	// Save is a combination function.
-	// If save value does not contain primary key, it will execute Create,
-	// otherwise it will execute Update (with all fields).
+	if key == "pay_silkroad_private_key" && value != "" {
+		encrypted, err := common.EncryptByAES(value)
+		if err != nil {
+			return err
+		}
+		option.Value = encrypted
+	} else {
+		option.Value = value
+	}
 	DB.Save(&option)
-	// Update OptionMap
 	return updateOptionMap(key, value)
 }
 

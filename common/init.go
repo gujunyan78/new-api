@@ -55,12 +55,15 @@ func InitEnv() {
 		} else {
 			SessionSecret = ss
 		}
-	}
-	if os.Getenv("CRYPTO_SECRET") != "" {
-		CryptoSecret = os.Getenv("CRYPTO_SECRET")
 	} else {
-		CryptoSecret = SessionSecret
+		log.Println("WARNING: SESSION_SECRET is not set. A random key will be generated on each restart.")
+		log.Println("警告：未设置 SESSION_SECRET 环境变量。每次重启将生成随机密钥。")
+		log.Println("ALL encrypted data (e.g., payment private keys) will be LOST on restart.")
+		log.Println("所有加密数据（如支付私钥）将在重启后丢失。")
+		log.Println("Please set SESSION_SECRET to a persistent random string in your environment.")
+		log.Println("请在环境变量中设置 SESSION_SECRET 为固定的随机字符串。")
 	}
+	CryptoSecret = SessionSecret
 	if os.Getenv("SQLITE_PATH") != "" {
 		SQLitePath = os.Getenv("SQLITE_PATH")
 	}

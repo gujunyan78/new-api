@@ -9,6 +9,7 @@ type DomainBranding struct {
 	Domain          string    `json:"domain" gorm:"type:varchar(256);uniqueIndex;not null"`
 	SystemName      string    `json:"system_name" gorm:"type:varchar(256);default:''"`
 	Logo            string    `json:"logo" gorm:"type:varchar(512);default:''"`
+	DocsLink        string    `json:"docs_link" gorm:"type:varchar(512);default:''"`
 	HomePageContent string    `json:"home_page_content" gorm:"type:text"`
 	About           string    `json:"about" gorm:"type:text"`
 	Footer          string    `json:"footer" gorm:"type:text"`

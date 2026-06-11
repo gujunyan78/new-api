@@ -76,6 +76,7 @@ func UpdateDomainBranding(c *gin.Context) {
 	existing.Domain = req.Domain
 	existing.SystemName = req.SystemName
 	existing.Logo = req.Logo
+	existing.DocsLink = req.DocsLink
 	existing.HomePageContent = req.HomePageContent
 	existing.About = req.About
 	existing.Footer = req.Footer

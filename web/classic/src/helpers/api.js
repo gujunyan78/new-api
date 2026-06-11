@@ -37,6 +37,12 @@ export let API = axios.create({
   },
 });
 
+// Dynamically set Accept-Language from current i18next language on every request
+API.interceptors.request.use((config) => {
+  config.headers['Accept-Language'] = i18next.language;
+  return config;
+});
+
 
 function redirectToOAuthUrl(url, options = {}) {
   const { openInNewTab = false } = options;
@@ -90,6 +96,12 @@ export function updateAPI() {
       'New-API-User': getUserIdFromLocalStorage(),
       'Cache-Control': 'no-store',
     },
+  });
+
+  // Dynamically set Accept-Language from current i18next language on every request
+  API.interceptors.request.use((config) => {
+    config.headers['Accept-Language'] = i18next.language;
+    return config;
   });
 
   patchAPIInstance(API);

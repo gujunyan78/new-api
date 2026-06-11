@@ -26,7 +26,7 @@ import {
 const defaultSiteSettings: SiteSettings = {
   'theme.frontend': 'default',
   Notice: '',
-  SystemName: 'New API',
+  SystemName: '91token',
   Logo: '',
   Footer: '',
   About: '',
@@ -36,6 +36,9 @@ const defaultSiteSettings: SiteSettings = {
   'legal.privacy_policy': '',
   HeaderNavModules: '',
   SidebarModulesAdmin: '',
+  DefaultLanguage: '',
+  AvailableLanguages: '',
+  DisableLanguageSwitch: false,
 }
 
 export function SiteSettings() {
