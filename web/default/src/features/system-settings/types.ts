@@ -259,24 +259,23 @@ export type BillingSettings = {
   WaffoNotifyUrl: string
   WaffoReturnUrl: string
   WaffoPayMethods: string
-  WaffoPancakeEnabled: boolean
-  WaffoPancakeSandbox: boolean
   WaffoPancakeMerchantID: string
   WaffoPancakePrivateKey: string
-  WaffoPancakeWebhookPublicKey: string
-  WaffoPancakeWebhookTestKey: string
+  WaffoPancakeReturnURL: string
+  // Bound by the operator through the catalog flow in the admin Pancake
+  // section (saved via /api/option/waffo-pancake/save).
   WaffoPancakeStoreID: string
   WaffoPancakeProductID: string
   WaffoPancakeReturnURL: string
   WaffoPancakeCurrency: string
   WaffoPancakeUnitPrice: number
   WaffoPancakeMinTopUp: number
-  
+
   // Wepay Payment settings (SBP + MIR unified)
   WepayEnabled: boolean
   WepaySandbox: boolean
   WepayMerchantId: string
-  
+
   // SBP Payment settings
   SbpPrivateKey: string
   SbpPublicKey: string
@@ -285,7 +284,7 @@ export type BillingSettings = {
   SbpPlatformUrl: string
   SbpSandboxUrl: string
   SbpLogo: string
-  
+
   // MIR Payment settings
   MirPrivateKey: string
   MirPublicKey: string
@@ -294,7 +293,7 @@ export type BillingSettings = {
   MirPlatformUrl: string
   MirSandboxUrl: string
   MirLogo: string
-  
+
   'checkin_setting.enabled': boolean
   'checkin_setting.min_quota': number
   'checkin_setting.max_quota': number

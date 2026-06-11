@@ -61,6 +61,8 @@ require (
 	gorm.io/gorm v1.31.1
 )
 
+require github.com/waffo-com/waffo-pancake-sdk-go v0.3.1
+
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/DmitriyVTitov/size v1.5.0 // indirect

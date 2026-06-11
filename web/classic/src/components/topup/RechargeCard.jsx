@@ -47,6 +47,7 @@ import {
 } from 'lucide-react';
 import { IconGift } from '@douyinfe/semi-icons';
 import { useMinimumLoadingTime } from '../../hooks/common/useMinimumLoadingTime';
+import { useActualTheme } from '../../context/Theme';
 import { getCurrencyConfig } from '../../helpers/render';
 import SubscriptionPlansCard from './SubscriptionPlansCard';
 
@@ -109,6 +110,7 @@ const RechargeCard = ({
   const redeemFormApiRef = useRef(null);
   const initialTabSetRef = useRef(false);
   const showAmountSkeleton = useMinimumLoadingTime(amountLoading);
+  const actualTheme = useActualTheme();
   const [activeTab, setActiveTab] = useState('topup');
   const shouldShowSubscription =
     !subscriptionLoading && subscriptionPlans.length > 0;
@@ -457,6 +459,62 @@ const RechargeCard = ({
                                   {payMethod.name}
                                 </Button>
                               );
+                            const buttonEl = (
+                              <Button
+                                key={payMethod.type}
+                                theme='outline'
+                                type='tertiary'
+                                onClick={() => preTopUp(payMethod.type)}
+                                disabled={disabled}
+                                loading={
+                                  paymentLoading && payWay === payMethod.type
+                                }
+                                icon={
+                                  payMethod.type === 'alipay' ? (
+                                    <SiAlipay size={18} color='#1677FF' />
+                                  ) : payMethod.type === 'wxpay' ? (
+                                    <SiWechat size={18} color='#07C160' />
+                                  ) : payMethod.type === 'stripe' ? (
+                                    <SiStripe size={18} color='#635BFF' />
+                                  ) : payMethod.icon ? (
+                                    <img
+                                      src={payMethod.icon}
+                                      alt={payMethod.name}
+                                      style={{
+                                        width: 18,
+                                        height: 18,
+                                        objectFit: 'contain',
+                                      }}
+                                    />
+                                  ) : payMethod.type === 'waffo_pancake' ? (
+                                    <img
+                                      src={
+                                        actualTheme === 'dark'
+                                          ? '/waffo-logo-dark.svg'
+                                          : '/waffo-logo-light.svg'
+                                      }
+                                      alt='Waffo'
+                                      style={{
+                                        width: 18,
+                                        height: 18,
+                                        objectFit: 'contain',
+                                      }}
+                                    />
+                                  ) : (
+                                    <CreditCard
+                                      size={18}
+                                      color={
+                                        payMethod.color ||
+                                        'var(--semi-color-text-2)'
+                                      }
+                                    />
+                                  )
+                                }
+                                className='!rounded-lg !px-4 !py-2'
+                              >
+                                {payMethod.name}
+                              </Button>
+                            );
 
                               elements.push(
                                 disabled &&
