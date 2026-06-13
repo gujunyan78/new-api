@@ -130,8 +130,6 @@ func InitOptionMap() {
 	common.OptionMap["pay_silkroad_category"] = "1"
 	common.OptionMap["pay_silkroad_currency"] = "RUB"
 	common.OptionMap["pay_silkroad_serial_no"] = ""
-	common.OptionMap["WaffoPancakeEnabled"] = strconv.FormatBool(setting.WaffoPancakeEnabled)
-	common.OptionMap["WaffoPancakeSandbox"] = strconv.FormatBool(setting.WaffoPancakeSandbox)
 	common.OptionMap["WaffoPancakeMerchantID"] = setting.WaffoPancakeMerchantID
 	common.OptionMap["WaffoPancakePrivateKey"] = setting.WaffoPancakePrivateKey
 	common.OptionMap["WaffoPancakeReturnURL"] = setting.WaffoPancakeReturnURL

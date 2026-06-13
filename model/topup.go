@@ -19,6 +19,7 @@ const (
 	PaymentMethodUsdt         = "usdt"
 	PaymentMethodWaffoPancake = "waffo_pancake"
 	PaymentMethodMir          = "mir"
+	PaymentMethodBalance      = "balance"
 )
 
 type TopUp struct {
@@ -70,14 +71,6 @@ func GetPendingUsdtOrdersByWallet(walletAddress string) ([]*TopUp, error) {
 	}
 	return matched, nil
 }
-
-const (
-	PaymentMethodStripe       = "stripe"
-	PaymentMethodCreem        = "creem"
-	PaymentMethodWaffo        = "waffo"
-	PaymentMethodWaffoPancake = "waffo_pancake"
-	PaymentMethodBalance      = "balance"
-)
 
 const (
 	PaymentProviderEpay         = "epay"
