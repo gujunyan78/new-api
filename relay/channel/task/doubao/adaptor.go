@@ -40,7 +40,7 @@ type MediaURL struct {
 	URL string `json:"url,omitempty"`
 }
 
-type requestPayload struct {
+type RequestPayload struct {
 	Model                 string         `json:"model"`
 	Content               []ContentItem  `json:"content,omitempty"`
 	CallbackURL           string         `json:"callback_url,omitempty"`
@@ -61,11 +61,11 @@ type requestPayload struct {
 	Watermark   *dto.BoolValue `json:"watermark,omitempty"`
 }
 
-type responsePayload struct {
+type ResponsePayload struct {
 	ID string `json:"id"` // task_id
 }
 
-type responseTask struct {
+type ResponseTask struct {
 	ID      string `json:"id"`
 	Model   string `json:"model"`
 	Status  string `json:"status"`
@@ -138,7 +138,7 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 	if err != nil {
 		return nil
 	}
-	if hasVideoInMetadata(req.Metadata) {
+	if HasVideoInMetadata(req.Metadata) {
 		if ratio, ok := GetVideoInputRatio(info.OriginModelName); ok {
 			return map[string]float64{"video_input": ratio}
 		}
@@ -148,7 +148,7 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 
 // hasVideoInMetadata 直接检查 metadata 的 content 数组是否包含 video_url 条目，
 // 避免构建完整的上游 requestPayload。
-func hasVideoInMetadata(metadata map[string]interface{}) bool {
+func HasVideoInMetadata(metadata map[string]interface{}) bool {
 	if metadata == nil {
 		return false
 	}
@@ -182,7 +182,7 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 		return nil, err
 	}
 
-	body, err := a.convertToRequestPayload(&req)
+	body, err := a.ConvertToRequestPayload(&req)
 	if err != nil {
 		return nil, errors.Wrap(err, "convert request payload failed")
 	}
@@ -213,7 +213,7 @@ func (a *TaskAdaptor) DoResponse(c *gin.Context, resp *http.Response, info *rela
 	_ = resp.Body.Close()
 
 	// Parse Doubao response
-	var dResp responsePayload
+	var dResp ResponsePayload
 	if err := common.Unmarshal(responseBody, &dResp); err != nil {
 		taskErr = service.TaskErrorWrapper(errors.Wrapf(err, "body: %s", responseBody), "unmarshal_response_body_failed", http.StatusInternalServerError)
 		return
@@ -267,8 +267,8 @@ func (a *TaskAdaptor) GetChannelName() string {
 	return ChannelName
 }
 
-func (a *TaskAdaptor) convertToRequestPayload(req *relaycommon.TaskSubmitReq) (*requestPayload, error) {
-	r := requestPayload{
+func (a *TaskAdaptor) ConvertToRequestPayload(req *relaycommon.TaskSubmitReq) (*RequestPayload, error) {
+	r := RequestPayload{
 		Model:   req.Model,
 		Content: []ContentItem{},
 	}
@@ -304,7 +304,7 @@ func (a *TaskAdaptor) convertToRequestPayload(req *relaycommon.TaskSubmitReq) (*
 }
 
 func (a *TaskAdaptor) ParseTaskResult(respBody []byte) (*relaycommon.TaskInfo, error) {
-	resTask := responseTask{}
+	resTask := ResponseTask{}
 	if err := common.Unmarshal(respBody, &resTask); err != nil {
 		return nil, errors.Wrap(err, "unmarshal task result failed")
 	}
@@ -342,7 +342,7 @@ func (a *TaskAdaptor) ParseTaskResult(respBody []byte) (*relaycommon.TaskInfo, e
 }
 
 func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, error) {
-	var dResp responseTask
+	var dResp ResponseTask
 	if err := common.Unmarshal(originTask.Data, &dResp); err != nil {
 		return nil, errors.Wrap(err, "unmarshal doubao task data failed")
 	}

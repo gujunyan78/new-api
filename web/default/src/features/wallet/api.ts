@@ -276,3 +276,53 @@ export async function completeOrder(
   const res = await api.post('/api/user/topup/complete', request)
   return res.data
 }
+
+/**
+ * Create Silkroad (Gwiff Pay) order
+ */
+export async function createSilkroadOrder(
+  amount: number,
+  paymentMethod: string
+): Promise<ApiResponse<{ trade_no: string; code_url: string; code_img_url: string; pay_url: string }>> {
+  const res = await api.post('/api/user/silkroad/pay', {
+    amount,
+    payment_method: paymentMethod,
+  })
+  return res.data
+}
+
+/**
+ * Query Silkroad (Gwiff Pay) order status
+ */
+export async function querySilkroadOrder(
+  tradeNo: string
+): Promise<ApiResponse<{ is_success: boolean }>> {
+  const res = await api.get('/api/user/silkroad/query', {
+    params: { trade_no: tradeNo },
+  })
+  return res.data
+}
+
+/**
+ * Create USDT payment order
+ */
+export async function createUsdtOrder(
+  amount: number,
+  blockchainType: string
+): Promise<ApiResponse<{ trade_no: string; wallet_address: string; usdt_amount: string; blockchain_type: string; expire_time: number }>> {
+  const res = await api.post('/api/user/usdt/pay', {
+    amount,
+    blockchain_type: blockchainType,
+  })
+  return res.data
+}
+
+/**
+ * Query USDT order status
+ */
+export async function queryUsdtOrderStatus(
+  tradeNo: string
+): Promise<ApiResponse<{ status: string }>> {
+  const res = await api.get(`/api/user/usdt/status/${tradeNo}`)
+  return res.data
+}

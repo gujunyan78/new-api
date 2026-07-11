@@ -202,6 +202,52 @@ const BILLING_SECTIONS = [
           confirmedAt: settings['payment_setting.compliance_confirmed_at'] ?? 0,
           confirmedBy: settings['payment_setting.compliance_confirmed_by'] ?? 0,
         }}
+        silkroadDefaultValues={{
+          pay_silkroad_enable:
+            settings.pay_silkroad_enable === true ||
+            settings.pay_silkroad_enable === 'true',
+          pay_silkroad_sandbox:
+            settings.pay_silkroad_sandbox === true ||
+            settings.pay_silkroad_sandbox === 'true',
+          pay_silkroad_mch_id: settings.pay_silkroad_mch_id ?? '',
+          pay_silkroad_app_id: settings.pay_silkroad_app_id ?? '',
+          pay_silkroad_gateway_url:
+            settings.pay_silkroad_gateway_url ?? '',
+          pay_silkroad_sandbox_url:
+            settings.pay_silkroad_sandbox_url ?? '',
+          pay_silkroad_notify_url:
+            settings.pay_silkroad_notify_url ?? '',
+          pay_silkroad_private_key:
+            settings.pay_silkroad_private_key ?? '',
+          pay_silkroad_platform_public_key:
+            settings.pay_silkroad_platform_public_key ?? '',
+          pay_silkroad_payment_method:
+            settings.pay_silkroad_payment_method ?? 'SOLID_BANK',
+          pay_silkroad_category: settings.pay_silkroad_category ?? 1,
+          pay_silkroad_currency:
+            settings.pay_silkroad_currency ?? 'RUB',
+          pay_silkroad_serial_no: settings.pay_silkroad_serial_no ?? '',
+        }}
+        usdtDefaultValues={{
+          UsdtEnabled:
+            settings.UsdtEnabled === true ||
+            settings.UsdtEnabled === 'true',
+          UsdtMinTopUp: settings.UsdtMinTopUp ?? 1,
+          TronGridApiKey: settings.TronGridApiKey ?? '',
+          EtherscanApiKey: settings.EtherscanApiKey ?? '',
+        }}
+        usdtDefaultWallets={(() => {
+          try {
+            const raw = settings.UsdtWallets
+            if (raw) {
+              const parsed = JSON.parse(raw)
+              if (Array.isArray(parsed)) return parsed
+            }
+          } catch {
+            /* ignore */
+          }
+          return []
+        })()}
       />
     ),
   },

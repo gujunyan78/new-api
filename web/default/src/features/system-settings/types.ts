@@ -294,6 +294,28 @@ export type BillingSettings = {
   MirSandboxUrl: string
   MirLogo: string
 
+  // Silkroad (Gwiff Pay) payment settings
+  pay_silkroad_enable: boolean
+  pay_silkroad_sandbox: boolean
+  pay_silkroad_mch_id: string
+  pay_silkroad_app_id: string
+  pay_silkroad_gateway_url: string
+  pay_silkroad_sandbox_url: string
+  pay_silkroad_notify_url: string
+  pay_silkroad_private_key: string
+  pay_silkroad_platform_public_key: string
+  pay_silkroad_payment_method: string
+  pay_silkroad_category: number
+  pay_silkroad_currency: string
+  pay_silkroad_serial_no: string
+
+  // USDT payment settings
+  UsdtEnabled: boolean
+  UsdtMinTopUp: number
+  TronGridApiKey: string
+  EtherscanApiKey: string
+  UsdtWallets: string
+
   'checkin_setting.enabled': boolean
   'checkin_setting.min_quota': number
   'checkin_setting.max_quota': number

@@ -5,16 +5,20 @@ import (
 )
 
 type DomainBranding struct {
-	Id              int       `json:"id" gorm:"primaryKey"`
-	Domain          string    `json:"domain" gorm:"type:varchar(256);uniqueIndex;not null"`
-	SystemName      string    `json:"system_name" gorm:"type:varchar(256);default:''"`
-	Logo            string    `json:"logo" gorm:"type:varchar(512);default:''"`
-	DocsLink        string    `json:"docs_link" gorm:"type:varchar(512);default:''"`
-	HomePageContent string    `json:"home_page_content" gorm:"type:text"`
-	About           string    `json:"about" gorm:"type:text"`
-	Footer          string    `json:"footer" gorm:"type:text"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	Id              int    `json:"id" gorm:"primaryKey"`
+	Domain          string `json:"domain" gorm:"type:varchar(256);uniqueIndex;not null"`
+	SystemName      string `json:"system_name" gorm:"type:varchar(256);default:''"`
+	Logo            string `json:"logo" gorm:"type:varchar(512);default:''"`
+	DocsLink        string `json:"docs_link" gorm:"type:varchar(512);default:''"`
+	HomePageContent string `json:"home_page_content" gorm:"type:text"`
+	About           string `json:"about" gorm:"type:text"`
+	Footer          string `json:"footer" gorm:"type:text"`
+	// DefaultUserGroup 该域名注册新用户时缺省写入的 User.Group;为空则使用 model 默认值。
+	DefaultUserGroup string `json:"default_user_group" gorm:"type:varchar(64);default:''"`
+	// UsableGroups 逗号分隔的资源组白名单,用于模型广场与令牌可选组过滤;为空表示不过滤。
+	UsableGroups string    `json:"usable_groups" gorm:"type:varchar(512);default:''"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 func GetAllDomainBrandings() ([]*DomainBranding, error) {

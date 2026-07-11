@@ -1,0 +1,4 @@
+{
+  "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.": "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.",
+  "Obtain the merchant ID and RSA key pair from the RUPAY dashboard, and configure the callback and return URLs.": "Obtain the merchant ID and RSA key pair from the RUPAY dashboard, and configure the callback and return URLs."
+}

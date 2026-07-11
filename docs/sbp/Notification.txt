@@ -1,0 +1,237 @@
+# MTS Notification
+
+## OpenAPI Specification
+
+```yaml
+openapi: 3.0.1
+info:
+  title: ''
+  description: ''
+  version: 1.0.0
+paths:
+  /:
+    post:
+      summary: MTS Notification
+      deprecated: false
+      description: >
+        Notifications are triggered when the payment order status is "success".
+        For other statuses, the Order Query interface is called to obtain the
+        information.
+      tags:
+        - API List
+      parameters: []
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: object
+              properties:
+                charset:
+                  type: string
+                  maxLength: 8
+                fee_type:
+                  type: string
+                  description: Complies with ISO 4217 standards.
+                  maxLength: 8
+                local_fee_type:
+                  type: string
+                  description: >-
+                    Local currency type, three-letter code in accordance with
+                    ISO 4217
+                  maxLength: 8
+                local_total_fee:
+                  type: string
+                  description: Local total order amount
+                mch_id:
+                  type: string
+                  maxLength: 32
+                  description: >-
+                    Merchant ID, Specifies an unique id assigned by platform
+                    (for ordinary merchants and stores)
+                nonce_str:
+                  type: string
+                  maxLength: 32
+                  description: >-
+                    Included in platform payment API protocols to ensure
+                    unpredictability for signatures. 32 characters or fewer.
+                order_fee:
+                  type: string
+                  description: Merchant order amount
+                out_trade_no:
+                  type: string
+                  description: >-
+                    Specifies an order number created by a merchant's system,
+                    which is consistent with request.
+                  maxLength: 32
+                out_transaction_id:
+                  type: string
+                  description: order number provided by the third-party
+                  maxLength: 32
+                pay_result:
+                  type: string
+                result_code:
+                  type: string
+                  description: '"0": success. Others value : fail.'
+                sign:
+                  type: string
+                  description: Please refer to section "Digital Signature".
+                sign_type:
+                  type: string
+                  maxLength: 16
+                  description: 'MD5: MD5 SHA256: SHA256 RSA: RSA_1_256 Default value: MD5'
+                status:
+                  type: string
+                  maxLength: 16
+                  description: >-
+                    "0": success. Others value : fail. Specifies communicating
+                    label (not transaction label). The status of a transaction
+                    is determined by the value of trade_state.
+                time_end:
+                  type: string
+                  description: >-
+                    Specifies the transaction payment time in the format of
+                    yyyyMMddHHmmss, such as 20091225091010 for Dec 25, 2009
+                    09:10:10. GMT+8 Beijing.
+                total_fee:
+                  type: string
+                  description: >-
+                    Specifies the total amount.Integral number is allowed only.
+                    The unit of the fee is the minimal unit of the local
+                    currency.
+                trade_state:
+                  type: string
+                  maxLength: 32
+                  description: |-
+                    SUCCESS: Payment successful
+                    REFUND: Order to be refunded
+                    NOTPAY: Order not paid
+                    FAIL: Order fail
+                trade_type:
+                  type: string
+                  description: pay.mts.native
+                  maxLength: 8
+                transaction_id:
+                  type: string
+                  description: platform order id
+                  maxLength: 32
+                version:
+                  type: string
+                  maxLength: 8
+                device_info:
+                  type: string
+                  description: >-
+                    Terminal serial number customized by merchant (only record
+                    in database)
+              required:
+                - charset
+                - fee_type
+                - local_fee_type
+                - local_total_fee
+                - mch_id
+                - nonce_str
+                - order_fee
+                - out_trade_no
+                - out_transaction_id
+                - pay_result
+                - result_code
+                - sign
+                - sign_type
+                - status
+                - time_end
+                - total_fee
+                - trade_state
+                - trade_type
+                - transaction_id
+                - version
+              xml:
+                name: xml
+                x-header: ''
+              x-apifox-orders:
+                - charset
+                - fee_type
+                - local_fee_type
+                - local_total_fee
+                - mch_id
+                - nonce_str
+                - order_fee
+                - out_trade_no
+                - out_transaction_id
+                - pay_result
+                - result_code
+                - sign
+                - sign_type
+                - status
+                - time_end
+                - total_fee
+                - trade_state
+                - trade_type
+                - transaction_id
+                - device_info
+                - version
+            example: >-
+              <xml><charset><![CDATA[UTF-8]]></charset>
+
+              <fee_type><![CDATA[RUB]]></fee_type>
+
+              <local_fee_type><![CDATA[RUB]]></local_fee_type>
+
+              <local_total_fee><![CDATA[10000]]></local_total_fee>
+
+              <mch_id><![CDATA[100580000591]]></mch_id>
+
+              <nonce_str><![CDATA[1762917133503]]></nonce_str>
+
+              <order_fee><![CDATA[10000]]></order_fee>
+
+              <out_trade_no><![CDATA[1762916986]]></out_trade_no>
+
+              <out_transaction_id><![CDATA[3127542835185036]]></out_transaction_id>
+
+              <pay_result><![CDATA[0]]></pay_result>
+
+              <result_code><![CDATA[0]]></result_code>
+
+              <sign><![CDATA[89DEDC25CAF2116F62699DCDB4C59496]]></sign>
+
+              <sign_type><![CDATA[MD5]]></sign_type>
+
+              <status><![CDATA[0]]></status>
+
+              <time_end><![CDATA[20251112111213]]></time_end>
+
+              <total_fee><![CDATA[10000]]></total_fee>
+
+              <trade_state><![CDATA[SUCCESS]]></trade_state>
+
+              <trade_type><![CDATA[pay.mts.native]]></trade_type>
+
+              <transaction_id><![CDATA[100580000591202511123000010867]]></transaction_id>
+
+              <version><![CDATA[2.0]]></version>
+
+              </xml>
+      responses:
+        '200':
+          description: ''
+          content:
+            success:
+              schema:
+                type: object
+                properties: {}
+                xml:
+                  name: xml
+                  x-header: ''
+                x-apifox-orders: []
+          headers: {}
+          x-apifox-name: 成功
+      security: []
+      x-apifox-folder: API List
+      x-apifox-status: developing
+      x-run-in-apifox: https://app.apifox.com/web/project/7444509/apis/api-380109116-run
+components:
+  schemas: {}
+  securitySchemes: {}
+servers: []
+security: []
+
+```

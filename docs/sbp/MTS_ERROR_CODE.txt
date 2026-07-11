@@ -1,0 +1,147 @@
+# MTS_ERROR_CODE
+
+| Error Code                                      | Error Message                                                                 |
+|-------------------------------------------------|-------------------------------------------------------------------------------|
+| Auth code invalid| Invalid payment code |
+| 400 | Invalid request parameters.Please contact your card issuing bank.|
+| 401 | Insufficient rights.Please contact your card issuing bank.|
+| 404 | Transaction not found. Please wait or try again later.|
+| 500 | General (undefined) critical problem. Please contact your card issuing bank.|
+| 400 | Payment code can not be blank|
+| 400 | Missing pre-order info |
+| 400 | Require xml content |
+| 400 | Require POST method |
+| 400 | Parse xml error |
+| 400 | unsupported sign method |
+| 400 | Signature error |
+| 400 | Parse params error |
+| 400 | Parse xml error,please use UTF-8 encoded |
+| 400 | XXX:This field is required |
+| 400 | total_fee:Invalid value |
+| 400 | Verification failed |
+| INVALID_FEE | Amount error |
+| INVALID_REFUND_FEE | Refund amount error |
+| REFUND_FEE_LIMIT | Refund request intercepted, please check if settings are correct |
+| REFUND_FEE_INVALID | Invalid refund amount |
+| 验证参数失败 | Parse params error |
+| ORDER_FEE_INVALID | Order amount invalid |
+| ORDER_DATE_INVALID | Order date invalid |
+| transaction_id\|out_trade_no is required | 缺少参数 |
+| buyer_logon_id\|buyer_id is required | 缺少参数 |
+| transaction_id\|out_trade_no\|out_refund_no\|refund_id is required | 缺少参数 |
+| out_refund_no\|refund_id is required | 缺少参数 |
+| Refundid and refundpwd is required | 缺少参数 |
+| thi_mch_id is required | 缺少参数 |
+| 400 | Sign error |
+| Refund exists | Refund already existed |
+| Order exists | Order already existed |
+| Refund not exists | Refund do not exist |
+| 400 | Pre-paid order nunmber do not exist |
+| Order not exists | Order do not exist |
+| 400 | Missing pre-paid order number |
+| 400 | Order do not exist |
+| 500 | Internal error |
+| 500 | SYSTEMERROR |
+| SYSTEMERROR | System error |
+| Internal error | Wechat request error, url error |
+| Internal error | Wechat request error, connection failed |
+| Internal error | Wechat request error, timeout |
+| Internal error | Wechat request error, protocal error |
+| Internal error | Wechat request error, unkown error |
+| Internal error | Third-party request error, url error |
+| Internal error | Third-party request error, connection failed |
+| Internal error | Third-party request error, timeout |
+| Internal error | Third-party request error, protocal error |
+| Internal error | Third-party request error, unkown error |
+| Order reverse | Order is reversed |
+| 400 | Unsupport Api |
+| 400 | 商户未开通[XXX]支付类型 |
+| 400 | Merchant is suspended |
+| 400 | Merchant can not initiate order alone |
+| 400 | This order is paid |
+| Order paid | Order already paid |
+| 400 | Order amount exceeds merchant limit |
+| 400 | Order amount is below merchant limit |
+| 金额限制 | PRODUCT_AMOUNT_LIMIT_ERROR |
+| BALANCE_NOT_ENOUGH | Insufficient balance |
+| USERPAYING | 微信需要用户输入密码 |
+| Refund status error | Refund status error |
+| REFUND_ERROR | REFUND ERROR |
+| Order date limit | Order expired |
+| Order status error | Order status error |
+| Reverse fail | Reverse failed |
+| Order close fail | Failed to close order |
+| 400 | This order can not be reversed |
+| Refund limit | Do not support this function |
+| 400 | Order status error, can not close order |
+| ORDER ERROR | Order failed |
+| refund frequency high | Refund too frequent |
+| 400 | Request too frequent |
+| REQUEST CHANGE ERROR | Do not match with original order |
+| APPID_MCHID_NOT_MATCH | appid和mch_id不匹配 |
+| APPID_NOT_EXIST | 参数中缺少APPID |
+| Auth code invalid | 付款码无效 |
+| CONTEXT_INCONSISTENT | 交易信息不对等 |
+| ILLEGAL_ARGUMENT | 参数错误 |
+| ILLEGAL_EXTERFACE | 接口配置错误 |
+| INVALID_FEE | 金额参数有误 |
+| INVALID_REQUEST | 参数格式有误或者未按规则上传 |
+| INVALID_TRANSACTIONID | 请求参数未按指引进行填写 |
+| LACK_PARAMS | 缺少必要的请求参数 |
+| MCHID_NOT_EXIST | 参数中缺少MCHID |
+| NOT_UTF8 | 未使用指定编码格式 |
+| ORDER ERROR | 订单错误 |
+| PARAM_ERROR | 请求参数未按指引进行填写 |
+| POST_DATA_EMPTY | post数据不能为空 |
+| REQUIRE_POST_METHOD | 未使用post传递参数 |
+| Signature error | 参数签名结果不正确 |
+| SIGNERROR | 商户号填写错误 |
+| XML_FORMAT_ERROR XML | XML格式错误 |
+| OUT_TRADE_NO_USED | 同一笔交易不能多次提交 |
+| 0100 | CFT订单不存在 |
+| ORDERNOTEXIST | 此交易订单号不存在 |
+| BANKERROR | 银行端超时 |
+| Internal error | 系统处理超时 |
+| SYSTEMERROR | 系统超时 |
+| ORDERCLOSED | 当前订单已关闭，无法支付 |
+| ORDERREVERSED | 当前订单已经被撤销 |
+| TRADE_HAS_CLOSE | 相应的交易已结束，不允许进行当前操作 |
+| USER_FACE_PAYMENT_SWITCH_OFF | 支付方式已关闭 |
+| 0013 | 风控 |
+| BIZERR_NEED_RETRY | 并发情况下，业务被拒绝，商户重试即可解决 |
+| ERROR | 申请退款业务发生错误 |
+| HAS_NO_PRIVILEGE | 没有权限 |
+| ILLEGAL_PARTNER_EXTERFACE | partner ID没有访问权限 |
+| NOAUTH | 商户未开通此接口权限 |
+| TRADE_BUYER_NOT_MATCH | 用户不匹配 |
+| TRADE_ERROR | 订单错误 |
+| ORDERPAID | 订单号已支付 |
+| BUYER_BALANCE_NOT_ENOUGH | 买方的支付宝账户没有足够的余额用于当前操作。 |
+| NOTENOUGH | 用户账号余额不足 |
+| AUTH_CODE_ERROR | 请求参数未按指引进行填写 |
+| AUTH_CODE_INVALID | 收银员扫描的不是微信支付的条形码 |
+| AUTHCODEEXPIRE | 用户的条形码已经过期 |
+| SOUNDWAVE_PARSER_FAIL | 条形码不正确。 |
+| ACCOUNTERROR | 无效的用户账户 |
+| BUYER_ENABLE_STATUS_FORBID | 由于安全问题，输入买方账户已被禁用 |
+| BUYER_MISMATCH | 暂不支持同一笔订单更换支付方 |
+| BUYER_NOT_EXIST | 输入"buyer_identity_code"不正确，我们根据它找不到账号，请检查 |
+| BUYER_SELLER_EQUAL | 输入买方账户等于卖方账户 |
+| CLIENT_VERSION_NOT_MATCH | 客户端版本不匹配 |
+| EXIST_FORBIDDEN_WORD | 根据中国法律，输入上下文内容为禁词 |
+| NOTSUPORTCARD | 用户使用卡种不支持当前支付形式 |
+| PAYERROR | 支付错误 |
+| TRADE_STATUS_ERROR | 当前操作不允许相应的交易状态 |
+| 0001 | 输入错误的密码 |
+| UNKNOW | 消费者输入密码 |
+| USERPAYING | 该笔交易因为业务规则要求，需要用户输入支付密码。 |
+| USERPAYING | 用户支付中 |
+| REVERSE_EXPIRE | 订单无法撤销 |
+| TRADE_OVERDUE | 订单已经超过可退款的最大期限(支付后一年内可退款) |
+| FREQUENCY_LIMITED | 2个月之前的订单申请退款有频率限制 |
+| INVALID_REQ_TOO_MUCH | 连续错误请求数过多被系统短暂屏蔽 |
+| Other| If the response code is not 200, 400, 401, 404, or 500, a general unknown error occurred (Error code: {code}) — please contact your card-issuing bank for assistance..|
+
+
+
+

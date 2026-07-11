@@ -151,6 +151,17 @@ export function ApiKeysMutateDrawer({
   useEffect(() => {
     if (groups.length === 0) return
     const currentGroup = form.getValues('group')
+    // 仅有一个可用组时,直接锁定为该组
+    if (groups.length === 1) {
+      const onlyGroup = groups[0].value
+      if (currentGroup !== onlyGroup) {
+        form.setValue('group', onlyGroup)
+        if (currentGroup === 'auto' && onlyGroup !== 'auto') {
+          form.setValue('cross_group_retry', false)
+        }
+      }
+      return
+    }
     if (currentGroup && !groups.some((g) => g.value === currentGroup)) {
       const fallback =
         groups.find((g) => g.value === 'default')?.value ??

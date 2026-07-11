@@ -34,8 +34,8 @@ i18n
   .use(initReactI18next)
   .init({
     load: 'currentOnly',
-    supportedLngs:['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi'],
-    //supportedLngs: ['ru','en'],
+    //supportedLngs:['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi'],
+    supportedLngs: ['ru','en'],
     resources: {
       en: enTranslation,
       'zh-CN': zhCNTranslation,
@@ -45,8 +45,8 @@ i18n
       ja: jaTranslation,
       vi: viTranslation,
     },
-    fallbackLng: 'zh-CN',
-    //fallbackLng: 'ru',
+    //fallbackLng: 'zh-CN',
+    fallbackLng: 'ru',
     nsSeparator: false,
     interpolation: {
       escapeValue: false,

@@ -19,16 +19,17 @@ For commercial licensing, please contact support@quantumnous.com
 
 import { useMemo } from 'react';
 
-  //const DEFAULT_DEFAULT_LANGUAGE = 'ru'; //'zh-CN'
-  const DEFAULT_DEFAULT_LANGUAGE = 'zh-CN';
+  const DEFAULT_DEFAULT_LANGUAGE = 'ru'; //'zh-CN'
+  //const DEFAULT_DEFAULT_LANGUAGE = 'zh-CN';
 
-//const DEFAULT_AVAILABLE_LANGUAGES = [ 'ru','en'];  // ['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi']
-const DEFAULT_AVAILABLE_LANGUAGES =['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi'];
+const DEFAULT_AVAILABLE_LANGUAGES = [ 'ru','en'];  // ['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi']
+//const DEFAULT_AVAILABLE_LANGUAGES =['zh-CN', 'zh-TW', 'en', 'fr', 'ru', 'ja', 'vi'];
 const DEFAULT_DISABLE_LANGUAGE_SWITCH = false;
 
 export const useLanguageSettings = () => {
   const languageOptions = useMemo(() => {
 
+    /*
     const allLanguages = {
       'zh-CN': { code: 'zh-CN', label: '简体中文' },
       'zh-TW': { code: 'zh-TW', label: '繁體中文' },
@@ -38,14 +39,14 @@ export const useLanguageSettings = () => {
       'ja': { code: 'ja', label: '日本語' },
       'vi': { code: 'vi', label: 'Tiếng Việt' },
     };
+*/
 
-/*
      const allLanguages = {
       'ru': { code: 'ru', label: 'Русский' },
       'en': { code: 'en', label: 'English' },
     };
 
- */
+
     return DEFAULT_AVAILABLE_LANGUAGES
       .map(code => allLanguages[code])
       .filter(Boolean);

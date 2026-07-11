@@ -80,6 +80,8 @@ func UpdateDomainBranding(c *gin.Context) {
 	existing.HomePageContent = req.HomePageContent
 	existing.About = req.About
 	existing.Footer = req.Footer
+	existing.DefaultUserGroup = req.DefaultUserGroup
+	existing.UsableGroups = req.UsableGroups
 	if err := model.UpdateDomainBranding(existing); err != nil {
 		common.ApiError(c, err)
 		return

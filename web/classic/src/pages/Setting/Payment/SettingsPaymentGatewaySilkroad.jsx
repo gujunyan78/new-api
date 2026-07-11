@@ -52,8 +52,8 @@ export default function SettingsPaymentGatewaySilkroad(props) {
   useEffect(() => {
     if (props.options && formApiRef.current) {
       const currentInputs = {
-        pay_silkroad_enable: props.options.pay_silkroad_enable || false,
-        pay_silkroad_sandbox: props.options.pay_silkroad_sandbox || false,
+        pay_silkroad_enable: props.options.pay_silkroad_enable === true || props.options.pay_silkroad_enable === 'true',
+        pay_silkroad_sandbox: props.options.pay_silkroad_sandbox === true || props.options.pay_silkroad_sandbox === 'true',
         pay_silkroad_mch_id: props.options.pay_silkroad_mch_id || '',
         pay_silkroad_app_id: props.options.pay_silkroad_app_id || '',
         pay_silkroad_gateway_url: props.options.pay_silkroad_gateway_url || '',

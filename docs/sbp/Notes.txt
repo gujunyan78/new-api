@@ -1,0 +1,39 @@
+# Notes
+
+1. If the merchant does not follow the requirements of the interface document for development, the merchant will be responsible for any problems that arise.
+
+ 
+
+2. The platform provides one-on-one technical support services. During the merchant development process, please be sure to contact your company's business personnel. 
+
+The business personnel will establish a WeChat group to arrange corresponding technical support and assist in joint debugging to ensure the stability of the project after it goes online.
+
+ 
+
+3. When requesting, all units involved in the amount are cents. The smallest unit is 1 cent. No decimals can appear.
+
+ 
+
+4. Among the return parameters, parameters that are required to be filled in yes will definitely be returned, while parameters that are required to be filled in no are not necessarily returned. 
+
+Due to upgrade or configuration, the actual returned parameters may not be completely consistent with the documentation, and the actual parameters received must prevail.
+
+ 
+
+5. Other matters needing attention
+
+(1) Parameter case problem
+
+Please pay attention to the character case issues required in the document, such as "The value of the character set charset is UTF-8 and cannot be utf-8".
+
+(2) Parameter format problem
+
+All incoming parameters are generally of string type. Please pay attention to the specific requirements elsewhere in the document.
+
+(3) Timestamp issue
+
+Please use Linux timestamp, note that it is in string format.
+
+(4) Payment issues with the same merchant order number
+
+The merchant's out_trade_no must be globally unique, and both debugging and production environments need to use unique order numbers.

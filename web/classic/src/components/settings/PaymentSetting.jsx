@@ -97,6 +97,7 @@ const PaymentSetting = () => {
     pay_silkroad_payment_method: 'SOLID_BANK',
     pay_silkroad_category: 1,
     pay_silkroad_currency: 'RUB',
+    pay_silkroad_serial_no: '',
   });
 
   let [loading, setLoading] = useState(false);
@@ -205,6 +206,10 @@ const PaymentSetting = () => {
           case 'WaffoPancakeUnitPrice':
           case 'WaffoPancakeMinTopUp':
             newInputs[item.key] = parseFloat(item.value);
+            break;
+          case 'pay_silkroad_enable':
+          case 'pay_silkroad_sandbox':
+            newInputs[item.key] = toBoolean(item.value);
             break;
           default:
             if (item.key.endsWith('Enabled')) {

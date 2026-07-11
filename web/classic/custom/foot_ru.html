@@ -1,0 +1,45 @@
+<style>
+  .custom-footer-simple {
+    background: #ffffff;
+    color: #666666;
+    padding: 12px 24px;
+    font-size: 12px;
+    line-height: 1.5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    text-align: center;
+  }
+
+  .custom-footer-simple a {
+    color: #666666;
+    text-decoration: none;
+  }
+
+  .custom-footer-simple a:hover {
+    color: #333333;
+    text-decoration: underline;
+  }
+
+  .custom-footer-simple .separator {
+    margin: 0 8px;
+    color: #cccccc;
+  }
+</style>
+
+<div class="custom-footer-simple">
+  <span>INFINITAS CLOUD LIMITED</span>
+  <span class="separator">|</span>
+  <span>Адрес: Магазин 185, 1/F, Hang Wai Industrial Centre, No. 6 Kin Tai Street, Tuen Mun, NT, HK</span>
+  <span class="separator">|</span>
+  <span>Техподдержка: <a href="mailto:support@91token.ru">support@91token.ru</a></span>
+  <span class="separator">|</span>
+  <span>Бизнес: <a href="mailto:biz@91token.ru">biz@91token.ru</a></span>
+  <span class="separator">|</span>
+  <span>&copy; <span class="custom-footer-year"></span> Все права защищены.</span>
+</div>
+
+<script>
+(function() {
+  var yearEl = document.querySelector('.custom-footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
+</script>

@@ -12,6 +12,7 @@ import (
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/service"
 	"github.com/QuantumNous/new-api/setting/system_setting"
 
 	"github.com/gin-contrib/sessions"
@@ -153,6 +154,9 @@ func OidcAuth(c *gin.Context) {
 				user.DisplayName = oidcUser.Name
 			} else {
 				user.DisplayName = "OIDC User"
+			}
+			if defaultGroup := service.GetDomainDefaultUserGroup(service.ExtractDomainHost(c)); defaultGroup != "" {
+				user.Group = defaultGroup
 			}
 			err := user.Insert(0)
 			if err != nil {

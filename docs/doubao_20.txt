@@ -1,0 +1,231 @@
+doubao-seedance-2-0
+支持模型
+名称
+doubao-seedance-2-0
+doubao-seedance-2-0-fast
+doubao-seedance-2-0-filter-off
+doubao-seedance-2-0-fast-filter-off
+提交视频任务请求
+POST {base_url}/v1/videos/generations
+
+获取视频生成结果
+GET /v1/videos/generations/{id}
+
+能力
+多模态参考生视频：输入参考图片（0~9）+参考视频（0~3）+ 参考音频（0~3）+ 文本提示词（可选）生成 1 个目标视频。支持生成全新视频、编辑视频、延长视频。 注意：不可单独输入音频，应至少包含 1 个参考视频或图片。
+图生视频-首尾帧：输入首帧图片+尾帧图片+文本提示词（可选）生成 1 个目标视频。
+图生视频-首帧：输入首帧图片+文本提示词（可选）生成 1 个目标视频。
+文生视频：输入文本提示词生成 1 个目标视频。
+发起请求
+POST
+/v1/videos/generations
+
+doubao-seedance-2-0-fast
+ curl  --location '${BASE_URL}/v1/videos/generations' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+--data '
+  {
+"model": "doubao-seedance-2-0-fast",
+"content": [
+  {
+    "type": "text",
+    "text": "全程使用视频1的第一视角构图，全程使用音频1作为背景音乐。第一人称视角宣传广告，...背景声音统一为男生音色。"
+  },
+  {
+    "type": "image_url",
+    "image_url": {"url": "https://exmaple.com/...."},
+    "role": "reference_image"
+  },
+  {
+    "type": "image_url",
+    "image_url": {"url": "https://exmaple.com/xxx.jpg"},
+    "role": "reference_image"
+  },
+  {
+    "type": "video_url",
+    "video_url": {"url": "https://exmaple.com/xxx.mp4"},
+    "role": "reference_video"
+  },
+  {
+    "type": "audio_url",
+    "audio_url": {"url": "https://exmaple.com/xxx.mp3"},
+    "role": "reference_audio"
+  }
+],
+"generate_audio": true,
+"ratio": "16:9",
+"duration": 11,
+"watermark": false
+}'
+Response
+{
+  "id": "xxxx",
+}
+查询生成结果
+GET
+/v1/videos/generations/{id}
+ curl  --location '${BASE_URL}/v1/videos/generations/{$id}' \
+--header 'Authorization: Bearer YOUR_API_KEY' \
+--header 'Content-Type: application/json' \
+
+{
+  "id": "xxxxx",
+  "model": "doubao-seedance-2-0-fast-fast",
+  "status": "succeeded",
+  "content": {
+    "video_url": "xxxxxx"
+  },
+  "usage": {
+    "completion_tokens": 324900,
+    "total_tokens": 324900
+  },
+  "created_at": 1774708030,
+  "updated_at": 1774708309,
+  "seed": 75036,
+  "resolution": "720p",
+  "ratio": "16:9",
+  "duration": 15,
+  "framespersecond": 24,
+  "service_tier": "default",
+  "execution_expires_after": 172800,
+  "generate_audio": true,
+  "draft": false
+}
+
+查询URL参数
+参数名称	描述
+id	生成视频任务后，返回的id
+
+请求参数
+content 参数说明
+content object[] 必选 - 输入给模型，生成视频的信息，支持文本、图片、音频、视频、样片任务 ID。
+
+支持以下几种组合：
+
+文本
+文本（可选）+ 图片
+文本（可选）+ 视频
+文本（可选）+ 图片 + 音频
+文本（可选）+ 图片 + 视频
+文本（可选）+ 视频 + 音频
+文本（可选）+ 图片 + 视频 + 音频
+文本信息 object
+输入给模型的提示词信息。
+
+参数	类型	必选	说明
+content.type	string	必选	输入内容的类型，此处应为 text
+content.text	string	必选	输入给模型的文本提示词，描述期望生成的视频。支持中英文。建议中文不超过500字，英文不超过1000词。字数过多信息容易分散，模型可能因此忽略细节，只关注重点，造成视频缺失部分元素。提示词的更多使用技巧请参见 提示词指南。
+图片信息 object
+输入给模型的图片信息。
+
+参数	类型	必选	说明
+content.type	string	必选	输入内容的类型，此处应为 image_url
+content.image_url	object	必选	输入给模型的图片对象
+content.image_url.url	string	必选	图片 URL、图片 Base64 编码、素材 ID：
+• 图片 URL：填入图片的公网 URL
+• Base64 编码：将本地文件转换为 Base64 编码字符串，然后提交给大模型。遵循格式：data:image/<图片格式>;base64,<Base64编码>，注意 <图片格式> 需小写，如 data:image/png;base64,{base64_image}。
+• 素材 ID：用于视频生成的预置素材及虚拟人像的 ID，遵循格式：asset://<ASSET_ID>，可从 素材&虚拟人像库 获取，详细使用请参见文档。
+content.role	string	条件必填	图片的位置或用途
+图片要求：
+
+格式：jpeg、png、webp、bmp、tiff、gif
+宽高比（宽/高）：(0.4, 2.5)
+宽高长度（px）：(300, 6000)
+大小：单张图片小于 30 MB，请求体大小不超过 64 MB，大文件请勿使用 Base64 编码
+图片数量：
+
+图生视频-首帧：1 张
+图生视频-首尾帧：2 张
+2.0 & 2.0-fast 多模态参考生视频：1~9 张
+content.role 取值说明：
+
+场景	图片数量	role取值
+图生视频-首帧	1 个 image_url 对象	first_frame 或不填
+图生视频-首尾帧	2 个 image_url 对象	首帧：first_frame（必填）
+尾帧：last_frame（必填）
+图生视频-参考图	1~9 个 image_url 对象	每张参考图：reference_image（必填）
+视频信息 object
+输入给模型的视频信息。仅 2.0 & 2.0-fast 支持输入视频。
+
+参数	类型	必选	说明
+content.type	string	必选	输入内容的类型，此处应为 video_url
+content.video_url	object	必选	输入给模型的视频对象
+content.video_url.url	string	必选	视频 URL、素材 ID：
+• 视频 URL：填入视频的公网 URL
+• 素材 ID：格式 asset://<ASSET_ID> 可从素材&虚拟人像库获取。
+content.role	string	条件必填	视频的位置或用途，当前仅支持 reference_video
+视频要求：
+
+视频格式：mp4、mov
+分辨率：480p、720p、1080p （1080p 仅 doubao-seedance-2-0 支持）
+时长：单个视频时长 [2, 15] s，最多传入 3 个参考视频，所有视频总时长不超过 15s
+宽高比（宽/高）：[0.4, 2.5]
+宽高长度（px）：[300, 6000]
+画面像素（宽 × 高）：[409600, 927408]
+大小：单个视频不超过 50 MB
+帧率 (FPS)：[24, 60]
+音频信息 object
+输入给模型的音频信息。仅 2.0 & 2.0-fast 支持输入音频。
+
+注意： 不可单独输入音频，应至少包含 1 个参考视频或图片。
+
+参数	类型	必选	说明
+content.type	string	必选	输入内容的类型，此处应为 audio_url
+content.audio_url	object	必选	输入给模型的音频对象
+content.audio_url.url	string	必选	音频 URL、音频 Base64 编码、素材 ID：
+• 音频 URL：填入音频的公网 URL
+• Base64 编码：将本地文件转换为 Base64 编码字符串，然后提交给大模型。遵循格式：data:audio/<音频格式>;base64,<Base64编码>，注意 <音频格式> 需小写，如 data:audio/wav;base64,{base64_audio}。
+• 素材 ID：用于视频生成的虚拟人的音频素材 ID，遵循格式：asset://<ASSET_ID>。可从素材&虚拟人像库获取。
+content.role	string	条件必填	音频的位置或用途，当前仅支持 reference_audio
+音频要求：
+
+格式：wav、mp3
+时长：单个音频时长 [2, 15] s，最多传入 3 段参考音频，所有音频总时长不超过 15 s
+大小：单个音频不超过 15 MB，请求体大小不超过 64 MB，大文件请勿使用 Base64 编码
+其他请求参数
+参数	类型	默认值	说明
+service_tier	string	-	2.0 & 2.0-fast 暂不支持
+generate_audio	boolean	2.0 & 2.0-fast 默认值：true	控制生成的视频是否包含与画面同步的声音：
+• true：模型输出的视频包含同步音频。模型会基于文本提示词与视觉内容，自动生成与之匹配的人声、音效及背景音乐。建议将对话部分置于双引号内。以优化音频生成效果。
+• false：模型输出的视频为无声视频。
+
+说明： 生成的有声视频均为单声道，和传入的音频声道数无关。
+draft	boolean	-	2.0 & 2.0-fast 暂不支持
+tools	object[]	-	仅 2.0 & 2.0-fast 支持。配置模型要调用的工具。
+tools.type：指定使用的工具类型，web_search 为联网搜索工具。
+
+说明： 开启联网搜索后，模型会根据用户的提示词自主判断是否搜索互联网内容（如商品、天气等）。可提升生成视频的时效性，但也会增加一定的时延。实际搜索次数可通过 查询视频生成任务 API 返回的 usage.tool_usage.web_search 字段获取，如果为 0 表示未搜索。
+resolution	string	2.0 & 2.0-fast 默认值：720p	视频分辨率，取值范围：480p、720p 、1080p（1080p 仅 doubao-seedance-2-0 支持）
+ratio	string	2.0 & 2.0-fast 默认值：adaptive	生成视频的宽高比例：16:9、4:3、1:1、3:4、9:16、21:9、adaptive（根据输入自动选择最合适的宽高比）
+duration	integer	2.0 & 2.0-fast 默认值：5	生成视频时长，仅支持整数，单位：秒。取值范围：[4,15] 或设置为 -1
+• 指定具体时长：支持有效范围内的任一整数
+• 智能指定：设置为 -1，表示由模型在有效范围内自主选择合适的视频长度（整数秒）。
+
+注意： 视频时长与计费相关，请谨慎设置。
+frames	integer	-	2.0 & 2.0-fast 暂不支持
+camera_fixed	boolean	-	2.0 & 2.0-fast 暂不支持
+adaptive 适配规则
+当配置 ratio 为 adaptive 时，模型会根据生成场景自动适配宽高比：
+
+文生视频： 根据输入的提示词，智能选择最合适的宽高比
+首帧 / 首尾帧生视频： 根据上传的首帧图片比例，自动选择最接近的宽高比
+多模态参考生视频： 根据用户提示词意图判断，如果是首帧生视频/编辑视频/延长视频，以该图片/视频为准选择最接近的宽高比；否则，以传入的第一个媒体文件为准（优先级：视频＞图片）选择最接近的宽高比
+不同宽高比对应的宽高像素值
+480p 分辨率
+宽高比	宽高像素值
+16:9	864×496
+4:3	752×560
+1:1	640×640
+3:4	560×752
+9:16	496×864
+21:9	992×432
+720p 分辨率
+宽高比	宽高像素值
+16:9	1280×720
+4:3	1112×834
+1:1	960×960
+3:4	834×1112
+9:16	720×1280
+21:9	1470×630
+

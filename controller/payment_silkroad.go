@@ -169,19 +169,22 @@ func RequestSilkroadPay(c *gin.Context) {
 
 	common.SysLog(fmt.Sprintf("[DEBUG] silkroad notify_url: %s", notifyUrl))
 
+	// Silkroad API 金额单位为分（копейка），需要 ×100
+	amountKopecks := req.Amount * 100
+
 	apiBody := map[string]interface{}{
 		"category":       cfg.Category,
 		"ext_order_no":   tradeNo,
 		"nonce":          tradeNo,
-		"amount":         req.Amount,
+		"amount":         amountKopecks,
 		"currency":       cfg.Currency,
 		"payment_method": cfg.PaymentMethod,
 		"notify_url":     notifyUrl,
 		"description":    "Account TopUp",
 	}
 
-	common.SysLog(fmt.Sprintf("[DEBUG] silkroad apiBody: category=%d, ext_order_no=%s, nonce=%s, amount=%v, currency=%s, payment_method=%s",
-		cfg.Category, tradeNo, tradeNo, req.Amount, cfg.Currency, cfg.PaymentMethod))
+	common.SysLog(fmt.Sprintf("[DEBUG] silkroad apiBody: category=%d, ext_order_no=%s, nonce=%s, amount=%.2f RUB (kopecks=%v), currency=%s, payment_method=%s",
+		cfg.Category, tradeNo, tradeNo, req.Amount, amountKopecks, cfg.Currency, cfg.PaymentMethod))
 
 	apiPath := "/v1/payment/qrcode"
 	if req.PaymentMethod == "mir" {
@@ -191,6 +194,11 @@ func RequestSilkroadPay(c *gin.Context) {
 	bodyBytes, _ := common.Marshal(apiBody)
 	gatewayUrl := strings.TrimRight(cfg.GatewayUrl, "/")
 	apiUrl := gatewayUrl + apiPath
+
+	fmt.Println("========== Silkroad API 原始请求 ==========")
+	fmt.Println("POST " + apiUrl)
+	fmt.Println("Body: " + string(bodyBytes))
+	fmt.Println("===========================================")
 
 	common.SysLog("[DEBUG] silkroad pay request: url=" + apiUrl + ", body=" + string(bodyBytes))
 
@@ -367,10 +375,10 @@ func SilkroadNotify(c *gin.Context) {
 		return
 	}
 
-	// 校验金额一致性
-	if notify.Data.Amount > 0 && topUp.Money != notify.Data.Amount {
-		common.SysError(fmt.Sprintf("silkroad notify: amount mismatch for order %s, expected: %.2f, got: %.2f",
-			notify.Data.ExtOrderNo, topUp.Money, notify.Data.Amount))
+	// 校验金额一致性（notify.Data.Amount 是分，topUp.Money 是卢布）
+	if notify.Data.Amount > 0 && topUp.Money*100 != notify.Data.Amount {
+		common.SysError(fmt.Sprintf("silkroad notify: amount mismatch for order %s, expected: %.2f RUB (%v kopecks), got: %.2f kopecks",
+			notify.Data.ExtOrderNo, topUp.Money, int(topUp.Money*100), notify.Data.Amount))
 		c.JSON(http.StatusOK, gin.H{"code": "FAIL", "msg": "amount mismatch"})
 		return
 	}
@@ -400,15 +408,9 @@ func buildSilkroadAuthHeader(cfg setting.SilkroadConfig, method string, path str
 	timestamp := fmt.Sprintf("%d", time.Now().Unix())
 	nonce := common.GetRandomString(32)
 
-	// Log private key diagnostic info BEFORE signing attempt
+	// Log private key diagnostic info BEFORE signing attempt (length only, never log key content)
 	keyLen := len(cfg.PrivateKey)
-	keyPreview := ""
-	if keyLen > 50 {
-		keyPreview = cfg.PrivateKey[:50] + "..."
-	} else {
-		keyPreview = cfg.PrivateKey
-	}
-	common.SysLog(fmt.Sprintf("[DEBUG] silkroad private key: length=%d, preview=%s", keyLen, keyPreview))
+	common.SysLog(fmt.Sprintf("[DEBUG] silkroad private key: length=%d", keyLen))
 
 	signData := fmt.Sprintf("%s\n%s\n%s\n%s\n%s\n", method, path, timestamp, nonce, body)
 

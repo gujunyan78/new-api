@@ -182,6 +182,9 @@ func Register(c *gin.Context) {
 	if domain == "" {
 		domain = c.GetHeader("Host")
 	}
+	// 注册时应用域名缺省用户组（若已配置）
+	domainHost := service.ExtractDomainHost(c)
+	defaultGroup := service.GetDomainDefaultUserGroup(domainHost)
 
 	cleanUser := model.User{
 		Username:    user.Username,
@@ -191,6 +194,9 @@ func Register(c *gin.Context) {
 		Role:        common.RoleCommonUser, // 明确设置角色为普通用户
 		Channel:     user.Channel,
 		Domain:      domain,
+	}
+	if defaultGroup != "" {
+		cleanUser.Group = defaultGroup
 	}
 	if common.EmailVerificationEnabled {
 		cleanUser.Email = user.Email

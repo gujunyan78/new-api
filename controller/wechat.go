@@ -11,6 +11,7 @@ import (
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/service"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -95,6 +96,9 @@ func WeChatAuth(c *gin.Context) {
 			user.DisplayName = "WeChat User"
 			user.Role = common.RoleCommonUser
 			user.Status = common.UserStatusEnabled
+			if defaultGroup := service.GetDomainDefaultUserGroup(service.ExtractDomainHost(c)); defaultGroup != "" {
+				user.Group = defaultGroup
+			}
 
 			if err := user.Insert(0); err != nil {
 				c.JSON(http.StatusOK, gin.H{

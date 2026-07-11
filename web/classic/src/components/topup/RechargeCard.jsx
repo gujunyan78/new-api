@@ -412,53 +412,7 @@ const RechargeCard = ({
                                 (!enableSilkroadTopUp && isSilkroad) ||
                                 minTopupVal > Number(topUpCount || 0);
 
-                              const buttonEl = (
-                                <Button
-                                  key={payMethod.type}
-                                  theme='outline'
-                                  type='tertiary'
-                                  onClick={() => preTopUp(payMethod.type)}
-                                  disabled={disabled}
-                                  loading={
-                                    paymentLoading && payWay === payMethod.type
-                                  }
-                                  icon={
-                                    payMethod.type === 'alipay' ? (
-                                      <SiAlipay size={18} color='#1677FF' />
-                                    ) : payMethod.type === 'wxpay' ? (
-                                      <SiWechat size={18} color='#07C160' />
-                                    ) : payMethod.type === 'stripe' ? (
-                                      <SiStripe size={18} color='#635BFF' />
-                                    ) : payMethod.icon ? (
-                                      <img
-                                        src={payMethod.icon}
-                                        alt={payMethod.name}
-                                        style={{
-                                          width: 24,
-                                          height: 24,
-                                          objectFit: 'contain',
-                                        }}
-                                      />
-                                    ) : payMethod.type === 'waffo_pancake' ? (
-                                      <CreditCard
-                                        size={18}
-                                        color='var(--semi-color-primary)'
-                                      />
-                                    ) : (
-                                      <CreditCard
-                                        size={18}
-                                        color={
-                                          payMethod.color ||
-                                          'var(--semi-color-text-2)'
-                                        }
-                                      />
-                                    )
-                                  }
-                                  className='!rounded-lg !px-3 !py-2'
-                                >
-                                  {payMethod.name}
-                                </Button>
-                              );
+
                             const buttonEl = (
                               <Button
                                 key={payMethod.type}

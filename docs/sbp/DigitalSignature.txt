@@ -1,0 +1,49 @@
+# Original String
+
+To ensure the authenticity and integrity of transmissible data, we need to verify the signed data after receiving them.
+
+There are two steps in digital signature.
+
+(1) Follow the rules to connect the original string that needs to be signed;
+
+(2) Calculate the signature result according to specific algorithm and key.
+
+Generally, failed results will not be signed.
+
+
+
+Original string of signature
+
+The original string of signature will be assembled into character string according to the following modes, be it request or response:
+
+1. Besides the sign field, all parameter fields will be ranked in ascending order according to the ASCII of the field name and then connected in the format of Query String (i.e. key1=value1&key2=value2…), and the null value should not be added to this string and will not participate in formation of string of signature.
+
+2. In the original string of signature, both field name and value will adopt original values and will not conduct URL Encode.
+
+3. Responses or notification information returned by platform might increase parameters due to upgrading, and this case should be allowed when the response signature is verified.
+
+ 
+
+Example：
+
+Calling an interface with following fields:
+```
+<xml>
+<body><![CDATA[Testing]]></body>
+<mch_create_ip><![CDATA[127.0.0.1]]></mch_create_ip>
+<mch_id><![CDATA[7551000001]]></mch_id>
+<nonce_str><![CDATA[1409196838]]></nonce_str>
+<out_trade_no><![CDATA[141903606228]]></out_trade_no>
+<service><![CDATA[unified.trade.micropay]]></service>
+<sign><![CDATA[52836FAD27E0813DAA4072A4BDA9F654]]></sign>
+<total_fee><![CDATA[1]]></total_fee>
+</xml>
+```
+
+
+The signature field sequence:
+```
+body=Testing&mch_create_ip=127.0.0.1&mch_id=7551000001&nonce_str=1409196838&out_trade_no=141903606228&service=unified.trade.micropay&total_fee=1
+```
+
+

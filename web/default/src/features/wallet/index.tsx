@@ -26,6 +26,8 @@ import { AffiliateRewardsCard } from './components/affiliate-rewards-card'
 import { BillingHistoryDialog } from './components/dialogs/billing-history-dialog'
 import { CreemConfirmDialog } from './components/dialogs/creem-confirm-dialog'
 import { PaymentConfirmDialog } from './components/dialogs/payment-confirm-dialog'
+import { SilkroadPaymentModal } from './components/dialogs/silkroad-payment-modal'
+import { UsdtPaymentModal } from './components/dialogs/usdt-payment-modal'
 import { WepayPaymentModal } from './components/dialogs/wepay-payment-modal'
 import { TransferDialog } from './components/dialogs/transfer-dialog'
 import { RechargeFormCard } from './components/recharge-form-card'
@@ -41,6 +43,8 @@ import {
   useWaffoPayment,
   useWaffoPancakePayment,
   useWepayPayment,
+  useSilkroadPayment,
+  useUsdtPayment,
 } from './hooks'
 import {
   getDefaultPaymentType,
@@ -74,6 +78,8 @@ export function Wallet(props: WalletProps) {
   const [creemDialogOpen, setCreemDialogOpen] = useState(false)
   const [selectedCreemProduct, setSelectedCreemProduct] =
     useState<CreemProduct | null>(null)
+  const [silkroadDialogOpen, setSilkroadDialogOpen] = useState(false)
+  const [usdtDialogOpen, setUsdtDialogOpen] = useState(false)
   const [showSubscriptionPanel, setShowSubscriptionPanel] = useState(true)
 
   const { status } = useStatus()
@@ -113,6 +119,21 @@ export function Wallet(props: WalletProps) {
     goBack: wepayGoBack,
     cancel: wepayCancel,
   } = useWepayPayment()
+  const {
+    state: silkroadState,
+    loading: silkroadLoading,
+    createOrder: createSilkroadOrder,
+    payWithSbp: silkroadPayWithSbp,
+    cancel: silkroadCancel,
+  } = useSilkroadPayment()
+  const {
+    state: usdtState,
+    loading: usdtLoading,
+    timeLeft: usdtTimeLeft,
+    expired: usdtExpired,
+    createOrder: createUsdtOrderAction,
+    cancel: usdtCancel,
+  } = useUsdtPayment()
 
   // Fetch and refresh user data
   const fetchUser = useCallback(async () => {
@@ -219,6 +240,50 @@ export function Wallet(props: WalletProps) {
   const handleWepayCancel = () => {
     wepayCancel()
     setSelectedPaymentMethod(undefined)
+  }
+
+  const handleSilkroadMethodSelect = async () => {
+    setPaymentLoading('silkroad')
+    try {
+      const success = await createSilkroadOrder(topupAmount, 'sbp')
+      if (success) {
+        setSilkroadDialogOpen(true)
+      }
+    } finally {
+      setPaymentLoading(null)
+    }
+  }
+
+  const handleSilkroadSelectSbp = async () => {
+    setPaymentLoading('silkroad')
+    try {
+      await silkroadPayWithSbp(fetchUser)
+    } finally {
+      setPaymentLoading(null)
+    }
+  }
+
+  const handleSilkroadCancel = () => {
+    silkroadCancel()
+    setSilkroadDialogOpen(false)
+  }
+
+  const handleUsdtMethodSelect = () => {
+    setUsdtDialogOpen(true)
+  }
+
+  const handleUsdtSelectChain = async (chain: string) => {
+    setPaymentLoading('usdt')
+    try {
+      await createUsdtOrderAction(topupAmount, chain)
+    } finally {
+      setPaymentLoading(null)
+    }
+  }
+
+  const handleUsdtCancel = () => {
+    usdtCancel()
+    setUsdtDialogOpen(false)
   }
 
   // Handle payment confirmation
@@ -343,6 +408,11 @@ export function Wallet(props: WalletProps) {
                   enableWaffoPancakeTopup={
                     topupInfo?.enable_waffo_pancake_topup
                   }
+                  enableSilkroadTopup={topupInfo?.enable_silkroad_topup}
+                  onSilkroadMethodSelect={handleSilkroadMethodSelect}
+                  enableUsdtTopup={topupInfo?.enable_usdt_topup}
+                  onUsdtMethodSelect={handleUsdtMethodSelect}
+                  usdtMinTopup={topupInfo?.usdt_min_topup || 1}
                 />
               </div>
 
@@ -400,6 +470,35 @@ export function Wallet(props: WalletProps) {
         onGoBack={wepayGoBack}
         onCancel={handleWepayCancel}
       />
+
+      <SilkroadPaymentModal
+        open={silkroadDialogOpen}
+        onOpenChange={setSilkroadDialogOpen}
+        view={silkroadState.view}
+        tradeNo={silkroadState.tradeNo}
+        topupAmount={topupAmount}
+        codeUrl={silkroadState.codeUrl}
+        codeImgUrl={silkroadState.codeImgUrl}
+        loading={silkroadLoading}
+        onSelectSbp={handleSilkroadSelectSbp}
+        onCancel={handleSilkroadCancel}
+      />
+
+      {topupInfo?.enable_usdt_topup && (
+        <UsdtPaymentModal
+          open={usdtDialogOpen}
+          onOpenChange={setUsdtDialogOpen}
+          blockchainTypes={topupInfo?.usdt_blockchain_types || ['tron', 'ethereum']}
+          loading={usdtLoading}
+          timeLeft={usdtTimeLeft}
+          expired={usdtExpired}
+          walletAddress={usdtState.walletAddress}
+          usdtAmount={usdtState.usdtAmount}
+          blockchainType={usdtState.blockchainType}
+          onSelectChain={handleUsdtSelectChain}
+          onCancel={handleUsdtCancel}
+        />
+      )}
 
       <TransferDialog
         open={transferDialogOpen}

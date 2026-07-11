@@ -221,6 +221,16 @@ const DomainBrandingSettings = () => {
             autosize={{ minRows: 3, maxRows: 8 }}
             style={{ fontFamily: 'JetBrains Mono, Consolas' }}
           />
+          <Form.Input
+            field='default_user_group'
+            label={t('新用户缺省用户组')}
+            placeholder={t('该域名注册的新用户默认归属的用户组，留空则使用 default')}
+          />
+          <Form.Input
+            field='usable_groups'
+            label={t('可用资源组（逗号分隔）')}
+            placeholder={t('该域名内模型广场与令牌可选的资源组白名单，例如：default,vip。留空表示不限制')}
+          />
         </Form>
       </Modal>
     </>

@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-
+/*
 export const supportedLanguages = [
   'zh-CN',
   'zh-TW',
@@ -27,13 +27,13 @@ export const supportedLanguages = [
   'ja',
   'vi',
 ];
+*/
 
-/*
 export const supportedLanguages = [
   'ru',
   'en',
 ];
-*/
+
 export const normalizeLanguage = (language) => {
   if (!language) {
     return language;

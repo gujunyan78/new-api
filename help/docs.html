@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>91токен-документ
+
+</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; color: #333; line-height: 1.6; }
+        .container { display: flex; min-height: 100vh; }
+        .sidebar { width: 280px; background: #f8f9fa; border-right: 1px solid #e9ecef; position: fixed; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+        .sidebar-logo { padding: 24px; border-bottom: 1px solid #e9ecef; background: #fff; }
+        .logo-wrapper { display: flex; align-items: center; gap: 12px; }
+        .logo { width: 40px; height: 40px; background: linear-gradient(135deg, #007bff 0%, #6610f2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: bold; }
+        .site-name { font-size: 18px; font-weight: 700; color: #1a1a1a; }
+        .sidebar-header { padding: 20px 24px; border-bottom: 1px solid #e9ecef; }
+        .sidebar-header h1 { font-size: 16px; font-weight: 600; color: #6c757d; margin: 0; }
+        .nav-list { list-style: none; padding: 0 12px; }
+        .nav-item { margin-bottom: 4px; }
+        .nav-link { display: block; padding: 10px 16px; color: #495057; text-decoration: none; border-radius: 8px; transition: all 0.2s; font-size: 14px; cursor: pointer; }
+        .nav-link:hover { background: #e9ecef; color: #212529; }
+        .nav-link.active { background: #007bff; color: #fff; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 0; }
+        .sidebar-footer { padding: 20px 24px; border-top: 1px solid #e9ecef; background: #fff; }
+        .footer-text { font-size: 12px; color: #adb5bd; text-align: center; margin-bottom: 8px; }
+        .footer-links { display: flex; justify-content: center; gap: 16px; }
+        .footer-links a { font-size: 12px; color: #6c757d; text-decoration: none; }
+        .footer-links a:hover { color: #007bff; }
+        .content { flex: 1; margin-left: 280px; padding: 32px 48px; min-height: 100vh; }
+        .content-header { margin-bottom: 32px; }
+        .content-header h2 { font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+        .content-header p { color: #6c757d; font-size: 16px; }
+        .content-section { margin-bottom: 40px; display: none; }
+        .content-section.active { display: block; }
+        .content-section h3 { font-size: 20px; font-weight: 600; color: #1a1a1a; margin: 24px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #e9ecef; }
+        .content-section h4 { font-size: 16px; font-weight: 600; color: #1a1a1a; margin: 20px 0 12px; }
+        .content-section p { font-size: 15px; color: #495057; margin-bottom: 16px; }
+        .content-section ul, .content-section ol { padding-left: 24px; margin-bottom: 16px; }
+        .content-section li { font-size: 15px; color: #495057; margin-bottom: 8px; }
+        .content-section code { background: #f4f4f4; padding: 4px 8px; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 14px; color: #e74c3c; }
+        .content-section pre { background: #f8f9fa; padding: 16px; border-radius: 8px; overflow-x: auto; border: 1px solid #e9ecef; margin-bottom: 16px; }
+        .content-section pre code { background: transparent; padding: 0; color: #333; }
+        .content-section .tip { background: #e7f3ff; border-left: 4px solid #007bff; padding: 12px 16px; margin-bottom: 16px; border-radius: 0 4px 4px 0; }
+        .content-section .tip p { margin: 0; color: #0c63e4; }
+        .content-section .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 16px; margin-bottom: 16px; border-radius: 0 4px 4px 0; }
+        .content-section .warning p { margin: 0; color: #856404; }
+        .content-section table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        .content-section table th, .content-section table td { padding: 12px; text-align: left; border-bottom: 1px solid #e9ecef; }
+        .content-section table th { font-weight: 600; color: #1a1a1a; background: #f8f9fa; }
+        .language-switcher { position: fixed; top: 24px; right: 24px; display: flex; gap: 8px; z-index: 100; }
+        .lang-btn { padding: 8px 16px; border: 1px solid #dee2e6; border-radius: 6px; background: #fff; color: #495057; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .lang-btn:hover { background: #f8f9fa; }
+        .lang-btn.active { background: #007bff; color: #fff; border-color: #007bff; }
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; position: relative; height: auto; }
+            .content { margin-left: 0; padding: 24px; }
+            .language-switcher { flex-wrap: wrap; }
+        }
+        .imagehelp { 
+            width: 800px;
+            height: auto;
+            margin-bottom: 16px;
+        }
+        .imagehelpmin { 
+            width: 500px;
+            height: auto;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switcher">
+        <!--<button class="lang-btn active" id="lang-zh" onclick="changeLanguage('zh')">中文</button>-->
+        <button class="lang-btn" id="lang-en" onclick="changeLanguage('en')">English</button>
+        <button class="lang-btn" id="lang-ru" onclick="changeLanguage('ru')">Русский</button>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-wrapper">
+                    <img src="91_ru.png" alt="logo">
+                    <span class="site-name">91токен</span>
+                </div>
+            </div>
+            <div class="sidebar-header">
+                <h1 id="nav-doc">用户文档</h1>
+            </div>
+            <div class="sidebar-nav">
+                <nav>
+                    <ul class="nav-list">
+                        <li class="nav-item"><a class="nav-link active" onclick="showSection('intro')" id="nav-intro">介绍</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('features')" id="nav-features">功能指南概述</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('register')" id="nav-register">注册与登录</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('profile')" id="nav-profile">个人设置</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('tokens')" id="nav-tokens">令牌管理</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('api')" id="nav-api">使用 API</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('chat')" id="nav-chat">聊天应用集成</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('pricing')" id="nav-pricing">定价</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('usage')" id="nav-usage">使用记录</a></li>
+                        <li class="nav-item"><a class="nav-link" onclick="showSection('quota')" id="nav-quota">配额与充值</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="sidebar-footer">
+                <p class="footer-text">© 2026 91токен. All rights reserved.</p>
+                <div class="footer-links">
+                
+                </div>
+            </div>
+        </aside>
+
+        <main class="content">
+            <section id="intro" class="content-section active">
+                <div class="content-header">
+                    <h2 id="intro-title">介绍</h2>
+                    <p id="intro-subtitle">欢迎使用91token文档</p>
+                </div>
+                <p id="intro-p1">91Token 是一个统一的 LLM 网关平台，将多个 AI 服务商的接口聚合为标准的 OpenAI 兼容 API，让你通过一个地址访问数十种模型。</p>
+                <p id="intro-p2">本指南按角色分为用户指南与管理员指南两部分，帮助你快速上手并充分发挥平台功能。</p>
+                <h3 id="intro-features-title">平台特点</h3>
+                <ul>
+                    <li id="intro-f1">统一 API 接口：使用标准 OpenAI 格式调用所有服务</li>
+                    <li id="intro-f2">多提供商支持：同时支持 40+ AI 服务提供商</li>
+                    <li id="intro-f3">智能路由：自动选择最佳提供商</li>
+                    <li id="intro-f4">实时计费：精确到 token 级别的计费系统</li>
+                    <li id="intro-f5">灵活配额管理：支持充值、兑换码、邀请返利</li>
+                </ul>
+                <h3 id="intro-quick-title">快速开始</h3>
+                <ol>
+                    <li id="intro-q1">注册账号并登录</li>
+                    <li id="intro-q2">创建 API 令牌</li>
+                    <li id="intro-q3">充值配额</li>
+                    <li id="intro-q4">开始调用 API</li>
+                </ol>
+            </section>
+
+            <section id="features" class="content-section">
+                <div class="content-header">
+                    <h2 id="features-title">功能指南概述</h2>
+                    <p id="features-subtitle">了解平台提供的核心功能</p>
+                </div>
+                <p id="features-intro">91Token 是一个统一的 LLM 网关平台，将多个 AI 服务商的接口聚合为标准的 OpenAI 兼容 API，让你通过一个地址访问数十种模型。本指南按角色分为用户指南与管理员指南两部分。</p>
+                <h3 id="features-core-title">核心功能</h3>
+                <ul>
+                    <li id="features-c1">多提供商支持：同时支持 40+ AI 服务提供商</li>
+                    <li id="features-c2">统一 API 接口：使用标准 OpenAI 格式调用所有服务</li>
+                    <li id="features-c3">智能路由：自动选择最佳提供商</li>
+                    <li id="features-c4">实时计费：精确到 token 级别的计费系统</li>
+                    <li id="features-c5">访问控制：灵活的 API 令牌管理</li>
+                </ul>
+                <h3 id="features-svc-title">支持的服务类型</h3>
+                <ul>
+                    <li id="features-s1">文本生成：GPT、Claude、Gemini 等大语言模型</li>
+                    <li id="features-s2">图像生成：DALL-E、Midjourney、Stable Diffusion</li>
+                    <li id="features-s3">语音合成与识别</li>
+                    <li id="features-s4">嵌入模型：文本向量化服务</li>
+                </ul>
+            </section>
+
+            <section id="register" class="content-section">
+                <div class="content-header">
+                    <h2 id="reg-title">注册与登录</h2>
+                    <img src="1.png" alt="注册与登录" id="reg-img" class="imagehelp">
+                    <p id="reg-subtitle">支持账号密码注册，以及多种第三方 OAuth 一键登录</p>
+                     
+                </div>
+                <p id="reg-intro">支持账号密码注册，以及多种第三方 OAuth 一键登录。首次使用请先完成注册。</p>
+                <h3 id="reg-login-title">登录</h3>
+                <h4 id="reg-login-acc">账号密码登录</h4>
+                <img src="2.png" alt="注册与登录" id="reg-img" class="imagehelp">
+                <ol>
+                    <li id="reg-login-s1">打开平台首页，点击右上角「登录」按钮，或直接访问 /login</li>
+                    <li id="reg-login-s2">在登录页输入用户名和密码，点击「登录」完成登录</li>
+                </ol>
+                <h4 id="reg-login-oauth">第三方 OAuth 登录</h4>
+                <p id="reg-login-oauth-desc">如需使用第三方账号登录，点击页面下方对应平台的图标（GitHub、Discord、LinuxDO 等），跳转至第三方授权页面完成授权后自动登录</p>
+                <h4 id="reg-forgot">忘记密码</h4>
+                <p id="reg-forgot-desc">忘记密码时，点击登录页的「忘记密码」链接，输入注册邮箱后系统会发送重置链接，点击链接设置新密码，原密码随即失效。</p>
+                <h3 id="reg-signup-title">注册</h3>
+                <h4 id="reg-signup-flow">注册流程</h4>
+                 <img src="regist.png" alt="注册与登录" id="reg-img" class="imagehelpmin">
+
+                <ol>
+                    <li id="reg-signup-s1">在登录页点击「注册」链接，或直接访问 /register</li>
+                    <li id="reg-signup-s2">填写用户名、密码</li>
+                    <li id="reg-signup-s3">填写邮箱地址，点击「发送验证码」，将收到的验证码填入输入框</li>
+                    <li id="reg-signup-s4">点击「注册」完成账号创建，注册成功后自动跳转至首页</li>
+                </ol>
+            </section>
+
+            <section id="profile" class="content-section">
+                <div class="content-header">
+                    <h2 id="profile-title">个人设置</h2>
+                    <p id="profile-subtitle">管理账号基本信息、安全设置和第三方账号绑定</p>
+                    
+                </div>
+                <p id="profile-intro">管理账号基本信息、安全设置和第三方账号绑定。登录后点击右上角头像，在下拉菜单中选择「个人设置」，或直接访问 /console/personal。</p>
+                <h3 id="profile-basic-title">基本信息</h3>
+                <h4 id="profile-username">修改用户名</h4>
+                <p id="profile-username-desc">在用户名输入框中输入新用户名，点击「保存」</p>
+                <h4 id="profile-email">绑定邮箱</h4>
+                <p id="profile-email-desc">填写邮箱地址，点击「发送验证码」，输入验证码后点击「绑定」</p>
+                <h4 id="profile-password">更改密码</h4>
+                <p id="profile-password-desc">依次填写当前密码、新密码、确认新密码，点击「修改密码」</p>
+                <h3 id="profile-2fa-title">双因素认证（2FA）</h3>
+                <p id="profile-2fa-desc">开启 2FA 后，每次登录时除密码外还需输入验证器 App 中的动态码，有效防止账号被盗。</p>
+                <h4 id="profile-2fa-enable">开启 2FA</h4>
+                <img src="changepwd.png" alt="注册与登录" id="reg-img" class="imagehelpmin">
+                <ol>
+                    <li id="profile-2fa-s1">在手机上安装验证器 App（推荐 Google Authenticator 或 Microsoft Authenticator）</li>
+                    <li id="profile-2fa-s2">在个人设置页找到「双因素认证」区域，点击「开启 2FA」</li>
+                    <li id="profile-2fa-s3">用验证器 App 扫描页面上显示的二维码，App 中会出现一个 6 位动态码</li>
+                    <li id="profile-2fa-s4">将 App 中显示的 6 位动态码填入验证框，点击「确认开启」</li>
+                    <li id="profile-2fa-s5">系统显示一组备用码，请立即截图或抄写保存，用于无法使用验证器时的紧急登录</li>
+                </ol>
+                <div class="warning">
+                    <p><strong id="warning">警告：</strong><span id="profile-2fa-warn">备用码只显示一次，关闭弹窗后无法再次查看。丢失备用码且无法使用验证器时，需联系管理员重置。</span></p>
+                </div>
+
+                <h3 id="profile-notify-title">通知设置</h3>
+                <p id="profile-notify-desc">配置接收系统通知的方式，支持邮件和 Webhook 两种方式。</p>
+                <h4 id="profile-notify-email">邮件通知</h4>
+                <img src="profilesetting.png" class="imagehelpmin" />
+                <ol>
+                    <li id="profile-notify-e1">在个人设置页找到「通知设置」区域</li>
+                    <li id="profile-notify-e2">勾选「启用邮件通知」</li>
+                    <li id="profile-notify-e3">选择要接收通知的事件类型：配额不足提醒、令牌即将过期、系统公告</li>
+                    <li id="profile-notify-e4">点击「保存」完成配置</li>
+                </ol>
+                <h4 id="profile-notify-webhook">Webhook 通知</h4>
+                <ol>
+                    <li id="profile-notify-w1">在通知设置区域勾选「启用 Webhook」</li>
+                    <li id="profile-notify-w2">填写 Webhook URL（接收通知的接口地址）</li>
+                    <li id="profile-notify-w3">选择要推送的事件类型</li>
+                    <li id="profile-notify-w4">点击「测试」验证 Webhook 是否可用</li>
+                    <li id="profile-notify-w5">点击「保存」完成配置</li>
+                </ol>
+               
+            </section>
+
+            <section id="tokens" class="content-section">
+                <div class="content-header">
+                    <h2 id="tokens-title">令牌管理</h2>
+                    <p id="tokens-subtitle">令牌是调用 API 的凭证，每个令牌可独立配置权限范围和配额上限</p>
+                </div>
+                <p id="tokens-intro">令牌是调用 API 的凭证，每个令牌可独立配置权限范围和配额上限。左侧导航点击「令牌」，或直接访问 /console/token。令牌列表展示所有已创建的令牌，包含名称、状态、已用配额、剩余配额、过期时间等信息。</p>
+                <h3 id="tokens-create-title">创建令牌</h3>
+                <h4 id="tokens-create-basic">基本配置</h4>
+                <img src="newkey.png" alt="注册与登录" id="reg-img" class="imagehelp">
+                <ol>
+                    <li id="tokens-create-s1">在令牌列表页点击右上角「创建令牌」按钮，弹出创建弹窗</li>
+                    <li id="tokens-create-s2">填写令牌名称（建议按用途命名，如「生产环境」「测试用」）</li>
+                </ol>
+                <h4 id="tokens-create-adv">高级配置选项</h4>
+                <img src="newkey1.png" alt="注册与登录" id="reg-img" class="imagehelpmin">
+                <table>
+                    <tr><th id="th-config">配置项</th><th id="th-desc">说明</th></tr>
+                    <tr><td id="tokens-expire">过期时间</td><td id="tokens-expire-d">设置有效期，留空或设为 -1 表示永不过期</td></tr>
+                    <tr><td id="tokens-quota">剩余配额</td><td id="tokens-quota-d">限制该令牌可消耗的最大配额，超出后自动失效</td></tr>
+                    <tr><td id="tokens-unlimited">无限配额</td><td id="tokens-unlimited-d">开启后不受配额限制（仍受账户总配额约束）</td></tr>
+                    <tr><td id="tokens-model">模型限制</td><td id="tokens-model-d">限定该令牌只能调用指定模型，留空表示不限制</td></tr>
+                    <tr><td id="tokens-ip">IP 白名单</td><td id="tokens-ip-d">限定允许使用该令牌的来源 IP，留空表示不限制</td></tr>
+                    <tr><td id="tokens-group">分组</td><td id="tokens-group-d">指定该令牌使用的渠道分组</td></tr>
+                </table>
+                <h4 id="tokens-save-key">保存令牌 Key</h4>
+                <p id="tokens-save-desc">点击「提交」，弹窗显示完整的令牌 Key，立即复制保存，关闭弹窗后无法再次查看完整 Key</p>
+                <div class="warning">
+                    <p><strong id="warning2">警告：</strong><span id="tokens-warn">令牌 Key 仅在创建时完整显示一次，请立即复制保存。令牌 Key 具有完整的 API 调用权限，请勿泄露给他人，不要提交到代码仓库。</span></p>
+                </div>
+                <h3 id="tokens-edit-title">编辑令牌</h3>
+                <p id="tokens-edit-desc">在令牌列表中找到目标令牌，点击右侧「编辑」按钮，可修改令牌的配置选项（不包括令牌 Key 本身）。</p>
+                <h3 id="tokens-del-title">删除令牌</h3>
+                <p id="tokens-del-desc">在令牌列表中找到目标令牌，点击右侧「删除」按钮，确认后该令牌立即失效，无法恢复。</p>
+            </section>
+
+            <section id="api" class="content-section">
+                <div class="content-header">
+                    <h2 id="api-title">使用 API</h2>
+                    <p id="api-subtitle">将平台地址替换 OpenAI 的 base_url，使用平台颁发的令牌作为 api_key，即可开始调用</p>
+                </div>
+                <p id="api-intro">将平台地址替换 OpenAI 的 <code>base_url</code>，使用平台颁发的令牌作为 <code>api_key</code>，即可开始调用。</p>
+                <h3 id="api-playground-title">操练场在线测试</h3>
+                <p id="api-playground-desc">操练场是内置的在线测试工具，无需编写代码即可直接与模型对话，适合快速验证令牌是否可用。</p>
+                <h4 id="api-playground-access">访问操练场</h4>
+                <p id="api-playground-access-d">左侧导航点击「操练场」，或直接访问 /console/playground</p>
+                <h4 id="api-playground-use">使用操练场</h4>
+   
+                <img src="test.png" class="imagehelp" />
+                <ol>
+                    <li id="api-playground-s1">在左侧选择要测试的模型</li>
+                    <li id="api-playground-s2">在底部输入框输入消息内容，点击发送</li>
+                    <li id="api-playground-s3">右侧对话区域显示模型的回复结果</li>
+                </ol>
+                <h3 id="api-url-title">获取 API 地址</h3>
+                <h4 id="api-url-copy">复制 API 地址</h4>
+                <img src="key3.png" class="imagehelp" />
+                <ol>
+                    <li id="api-url-s1">访问平台首页</li>
+                    <li id="api-url-s2">在页面中部找到 API Base URL 显示区域</li>
+                    <li id="api-url-s3">点击复制按钮，将地址复制到剪贴板</li>
+                </ol>
+                <h4 id="api-url-config">配置客户端</h4>
+                <p id="api-url-config-d">将复制的地址填入你的客户端或代码中作为 <code>base_url</code>，配合令牌即可开始调用。</p>
+                <h3 id="api-code-title">代码示例</h3>
+                <h4 id="api-code-py">Python（OpenAI SDK）</h4>
+                <pre><code>from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-xxxxxxxxxxxxxxxx",
+    base_url="https://91token.ru/v1"
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+print(response.choices[0].message.content)</code></pre>
+                <h4 id="api-code-claude">Claude 原生格式</h4>
+                <pre><code>curl https://91token.ru/v1/messages \
+  -H "x-api-key: sk-xxxxxxxx" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "content-type: application/json" \
+  -d '{"model": "claude-3-5-sonnet-20241022", "max_tokens": 1024, "messages": [{"role": "user", "content": "Hello"}]}'</code></pre>
+                <h4 id="api-code-gemini">Gemini 原生格式</h4>
+                <pre><code>curl "https://91token.ru/v1beta/models/gemini-1.5-pro:generateContent?key=sk-xxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"contents": [{"parts": [{"text": "Hello"}]}]}'</code></pre>
+                <h3 id="api-endpoints-title">支持的接口端点</h3>
+                <table>
+                    <tr><th id="th-api">接口</th><th>路径</th><th id="th-api-desc">说明</th></tr>
+                    <tr><td id="api-chat">聊天补全</td><td>POST /v1/chat/completions</td><td id="api-chat-d">对话生成，支持流式输出</td></tr>
+                    <tr><td id="api-text">文本补全</td><td>POST /v1/completions</td><td id="api-text-d">传统补全接口</td></tr>
+                    <tr><td id="api-embed">向量嵌入</td><td>POST /v1/embeddings</td><td id="api-embed-d">文本向量化</td></tr>
+                    <tr><td id="api-image">图像生成</td><td>POST /v1/images/generations</td><td id="api-image-d">文生图</td></tr>
+                    <tr><td id="api-image-edit">图像编辑</td><td>POST /v1/images/edits</td><td id="api-image-edit-d">图像编辑</td></tr>
+                    <tr><td id="api-stt">语音转文字</td><td>POST /v1/audio/transcriptions</td><td id="api-stt-d">Whisper 等</td></tr>
+                    <tr><td id="api-tts">文字转语音</td><td>POST /v1/audio/speech</td><td id="api-tts-d">TTS</td></tr>
+                    <tr><td id="api-rerank">重排序</td><td>POST /v1/rerank</td><td id="api-rerank-d">文档重排序</td></tr>
+                    <tr><td id="api-models">模型列表</td><td>GET /v1/models</td><td id="api-models-d">查询可用模型</td></tr>
+                </table>
+            </section>
+
+            <section id="chat" class="content-section">
+                <div class="content-header">
+                    <h2 id="chat-title">聊天应用集成</h2>
+                    <p id="chat-subtitle">91token 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用</p>
+                </div>
+                <p id="chat-intro">91token 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用。</p>
+                <h3 id="chat-import-title">一键导入配置</h3>
+                <p id="chat-import-desc">在控制台→令牌页面可以一键导入配置到支持的聊天应用中。</p>
+                <h4 id="chat-import-how">使用方法</h4>
+                <ol>
+                    <li id="chat-import-s1">在令牌列表页找到要使用的令牌</li>
+                    <li id="chat-import-s2">点击令牌右侧的「导入」或「配置」按钮</li>
+                    <li id="chat-import-s3">选择目标聊天应用</li>
+                    <li id="chat-import-s4">系统自动跳转到对应应用并填充配置信息</li>
+                </ol>
+                <h3 id="chat-lobe-title">Lobe Chat</h3>
+                <div class="tip">
+                    <p id="chat-lobe-desc">Lobe Chat 是一款开源的多模态对话应用，支持多种大语言模型（LLM）和插件扩展。它不仅可以实现文本对话，还支持图片、音频等多模态交互，适用于个人助理、知识问答、内容创作等多种场景。</p>
+                </div>
+                <h4 id="chat-lobe-cfg">配置步骤</h4>
+                <ol>
+                    <li id="chat-lobe-s1">打开 Lobe Chat 应用</li>
+                    <li id="chat-lobe-s2">进入设置页面，找到「语言模型」配置区域</li>
+                    <li id="chat-lobe-s3">填写 API 地址和 API Key</li>
+                    <li id="chat-lobe-s4">点击「保存」完成配置</li>
+                    <li id="chat-lobe-s5">在模型选择中即可看到 91Token 提供的所有可用模型</li>
+                </ol>
+                <h3 id="chat-ws-title">AI as Workspace</h3>
+                <div class="tip">
+                    <p id="chat-ws-desc">AI as Workspace 是一种将人工智能能力集成到工作空间中的创新方式。通过将 AI 助手与日常办公、协作、知识管理等场景深度结合，用户可以更高效地处理信息、自动化重复任务。</p>
+                </div>
+                <p id="chat-ws-import">支持从 91Token 一键导入配置</p>
+                <h3 id="chat-ama-title">AMA 问天</h3>
+                <div class="tip">
+                    <p id="chat-ama-desc">AMA 问天是 91Token 提供的智能问答助手，支持多轮对话和复杂问题解答。用户可以通过自然语言与 AMA 问天进行交流，获取知识、技术支持或业务咨询。</p>
+                </div>
+                <p id="chat-ama-req">需要先安装 AMA 问天 app</p>
+                <h3 id="chat-opencat-title">OpenCat</h3>
+                <div class="tip">
+                    <p id="chat-opencat-desc">OpenCat 是一款开源的多平台 AI 聊天客户端，支持多种大语言模型接入。用户可以通过简洁的界面与 AI 进行自然语言对话，适用于日常交流、知识问答和内容创作等多种场景。</p>
+                </div>
+                <p id="chat-opencat-req">需要先安装 OpenCat app</p>
+                <h3 id="chat-manual-title">手动配置其他应用</h3>
+                <p id="chat-manual-desc">对于不支持一键导入的应用，可以手动配置：</p>
+                <table>
+                    <tr><th id="th-config2">配置项</th><th id="th-desc2">说明</th><th id="th-loc">获取位置</th></tr>
+                    <tr><td>API Base URL</td><td id="chat-cfg-url-d">API 接口地址</td><td id="chat-cfg-url-l">平台首页或令牌页面</td></tr>
+                    <tr><td>API Key</td><td id="chat-cfg-key-d">令牌密钥</td><td id="chat-cfg-key-l">创建令牌时显示（仅一次）</td></tr>
+                    <tr><td id="chat-cfg-models">可用模型</td><td id="chat-cfg-models-d">支持的模型列表</td><td id="chat-cfg-models-l">个人设置→可用模型 或 定价页面</td></tr>
+                </table>
+            </section>
+
+            <section id="pricing" class="content-section">
+                <div class="content-header">
+                    <h2 id="price-title">定价</h2>
+                    <p id="price-subtitle">了解平台计费方式和模型价格</p>
+                </div>
+                <h3 id="price-view-title">查看定价</h3>
+                <h4 id="price-view-access">访问定价页</h4>
+                <p id="price-view-p">点击左侧导航栏的「定价」，或直接访问 /pricing</p>
+                <h4 id="price-view-browse">浏览模型价格</h4>
+                <p id="price-view-browse-d">页面列出所有可用模型，每行显示模型名称、输入价格和输出价格</p>
+                <img src="market.png" class="imagehelp" />
+                <h4 id="price-view-search">搜索模型</h4>
+                <p id="price-view-search-d">可在页面顶部搜索框输入模型名称关键词，快速定位特定模型的价格</p>
+                <h3 id="price-rules-title">价格说明</h3>
+                <h4 id="price-billing-title">计费规则</h4>
+                <ul>
+                    <li id="price-billing-in">输入价格：每 1K 输入 Token 消耗的配额</li>
+                    <li id="price-billing-out">输出价格：每 1K 输出 Token 消耗的配额</li>
+                    <li id="price-billing-calc">实际消耗 = Token 数量 ÷ 1000 × 对应单价</li>
+                </ul>
+                <img src="price2.png" class="imagehelp" />
+                <h4 id="price-group-title">分组差异</h4>
+                <p id="price-group-desc">不同分组的用户可能享有不同的计费倍率，具体以实际扣减为准，可在充值页查看当前余额变化</p>
+            </section>
+
+            <section id="usage" class="content-section">
+                <div class="content-header">
+                    <h2 id="usage-title">使用记录</h2>
+                    <p id="usage-subtitle">查看每次 API 调用的详细信息，支持按时间、模型、令牌等条件过滤</p>
+                </div>
+                <p id="usage-intro">查看每次 API 调用的详细信息，支持按时间、模型、令牌等条件过滤。左侧导航点击「日志」，或直接访问 /console/log。普通用户只能看到自己的调用记录。日志列表每行展示一次调用记录，包含调用时间、使用的模型、消耗的 Token 数量和配额、调用状态等信息。</p>
+                <h3 id="usage-filter-title">搜索与过滤</h3>
+                <h4 id="usage-filter-set">设置过滤条件</h4>
+                <img src="log.png" class="imagehelp" />
+                <ol>
+                    <li id="usage-filter-s1">在日志页顶部点击「筛选」按钮，展开过滤条件区域</li>
+                    <li id="usage-filter-s2">可设置以下过滤条件：时间范围（选择开始和结束日期）、模型（输入模型名称关键词）、令牌名（选择或输入令牌名称）</li>
+                </ol>
+                <h4 id="usage-filter-result">查看过滤结果</h4>
+                <p id="usage-filter-result-d">设置完成后点击「查询」，列表自动刷新显示过滤结果</p>
+                <h3 id="usage-stats-title">数据统计</h3>
+                <h4 id="usage-stats-access">访问数据看板</h4>
+                <img src="dasboard.png" class="imagehelp" />
+                <p id="usage-stats-access-d">左侧导航点击「数据看板」，或直接访问 /console</p>
+                <h4 id="usage-stats-view">查看统计图表</h4>
+                <p id="usage-stats-view-d">数据看板页面以折线图或柱状图展示每日 API 调用量和配额消耗趋势。将鼠标悬停在图表上可查看具体日期的详细数据。</p>
+            </section>
+
+            <section id="quota" class="content-section">
+                <div class="content-header">
+                    <h2 id="quota-title">配额与充值</h2>
+                    <p id="quota-subtitle">配额是平台内部计费单位，消耗量 = 实际 Token 数 × 模型倍率</p>
+                </div>
+                <p id="quota-intro">配额是平台内部计费单位，消耗量 = 实际 Token 数 × 模型倍率。左侧导航点击「钱包管理」，或直接访问 /console/topup。支持在线支付充值和兑换码两种方式增加账户配额。</p>
+                <h3 id="quota-methods-title">充值方式</h3>
+                <table>
+                    <tr><th id="th-method">充值方式</th><th id="th-desc3">说明</th></tr>
+                    <tr><td id="quota-redeem">兑换码</td><td id="quota-redeem-d">输入管理员生成的兑换码，直接增加配额</td></tr>
+                    
+                </table>
+                <h3 id="quota-online-title">在线支付充值</h3>
+                <h4 id="quota-online-amount">选择充值金额</h4>
+                <p id="quota-online-amount-d">在充值页选择充值金额，或手动输入自定义金额</p>
+                <h4 id="quota-online-pay">完成支付</h4>
+                <img src="pay.png" class="imagehelp" />
+                <ol>
+                    <li id="quota-online-s1">选择支付方式（SBP / MIR ）</li>
+                    <li id="quota-online-s2">点击「充值」按钮，页面跳转至对应支付平台</li>
+                    <li id="quota-online-s3">在支付平台完成付款后，自动跳回平台，账户余额更新</li>
+                </ol>
+                <img src="pay2.png" class="imagehelp" />
+                <h3 id="quota-code-title">兑换码充值</h3>
+                <h4 id="quota-code-input">输入兑换码</h4>
+                 <img src="card.png" class="imagehelp" />
+                <ol>
+                    <li id="quota-code-s1">在充值页找到「兑换码」输入区域</li>
+                    <li id="quota-code-s2">在输入框中粘贴或输入管理员提供的兑换码</li>
+                </ol>
+                <h4 id="quota-code-redeem">完成兑换</h4>
+                <ol>
+                    <li id="quota-code-s3">点击「兑换」按钮，系统验证兑换码有效性</li>
+                    <li id="quota-code-s4">兑换成功后页面提示获得的配额数量，账户余额同步更新</li>
+                </ol>
+                <h3 id="quota-invite-title">邀请返利</h3>
+                <p id="quota-invite-intro">每个账号都有唯一的邀请码，邀请他人注册并消费后可获得返利配额。</p>
+                <h4 id="quota-invite-get">获取邀请码</h4>
+                <p id="quota-invite-get-d">在充值页或个人设置页找到「邀请」区域，复制你的专属邀请码</p>
+                <h4 id="quota-invite-use">使用返利配额</h4>
+                <ol>
+                    <li id="quota-invite-s1">将邀请码分享给他人，对方注册时填写邀请码</li>
+                    <li id="quota-invite-s2">被邀请用户消费后，你的返利配额余额自动增加</li>
+                    <li id="quota-invite-s3">点击「转入余额」按钮，将返利配额转入账户主余额后即可使用</li>
+                </ol>
+            </section>
+
+        
+        </main>
+    </div>
+
+    <script>
+        const translations = {
+            zh: {
+                "nav-doc": "用户文档", "nav-intro": "介绍", "nav-features": "功能指南概述", "nav-register": "注册与登录",
+                "nav-profile": "个人设置", "nav-tokens": "令牌管理", "nav-api": "使用 API", "nav-chat": "聊天应用集成",
+                "nav-pricing": "定价", "nav-usage": "使用记录", "nav-quota": "配额与充值", "nav-subscription": "订阅计划",
+                "nav-tasks": "任务管理", "nav-privacy": "隐私政策", "nav-terms": "服务条款", "nav-support": "联系支持",
+                "intro-title": "介绍", "intro-subtitle": "欢迎使用91Token文档",
+                "intro-p1": "91Token 是一个统一的 LLM 网关平台，将多个 AI 服务商的接口聚合为标准的 OpenAI 兼容 API，让你通过一个地址访问数十种模型。",
+                "intro-p2": "本指南按角色分为用户指南与管理员指南两部分，帮助你快速上手并充分发挥平台功能。",
+                "intro-features-title": "平台特点", "intro-f1": "统一 API 接口：使用标准 OpenAI 格式调用所有服务",
+                "intro-f2": "多提供商支持：同时支持 40+ AI 服务提供商", "intro-f3": "智能路由：自动选择最佳提供商",
+                "intro-f4": "实时计费：精确到 token 级别的计费系统", "intro-f5": "灵活配额管理：支持充值、兑换码、邀请返利",
+                "intro-quick-title": "快速开始", "intro-q1": "注册账号并登录", "intro-q2": "创建 API 令牌",
+                "intro-q3": "充值配额", "intro-q4": "开始调用 API",
+                "features-title": "功能指南概述", "features-subtitle": "了解平台提供的核心功能",
+                "features-intro": "91Token 是一个统一的 LLM 网关平台，将多个 AI 服务商的接口聚合为标准的 OpenAI 兼容 API，让你通过一个地址访问数十种模型。本指南按角色分为用户指南与管理员指南两部分。",
+                "features-core-title": "核心功能", "features-c1": "多提供商支持：同时支持 40+ AI 服务提供商",
+                "features-c2": "统一 API 接口：使用标准 OpenAI 格式调用所有服务", "features-c3": "智能路由：自动选择最佳提供商",
+                "features-c4": "实时计费：精确到 token 级别的计费系统", "features-c5": "访问控制：灵活的 API 令牌管理",
+                "features-svc-title": "支持的服务类型", "features-s1": "文本生成：GPT、Claude、Gemini 等大语言模型",
+                "features-s2": "图像生成：DALL-E、Midjourney、Stable Diffusion", "features-s3": "语音合成与识别",
+                "features-s4": "嵌入模型：文本向量化服务",
+                "reg-title": "注册与登录", "reg-subtitle": "支持账号密码注册，以及多种第三方 OAuth 一键登录",
+                "reg-intro": "支持账号密码注册，以及多种第三方 OAuth 一键登录。首次使用请先完成注册。",
+                "reg-login-title": "登录", "reg-login-acc": "账号密码登录",
+                "reg-login-s1": "打开平台首页，点击右上角「登录」按钮，或直接访问 /login",
+                "reg-login-s2": "在登录页输入用户名和密码，点击「登录」完成登录",
+                "reg-login-oauth": "第三方 OAuth 登录",
+                "reg-login-oauth-desc": "如需使用第三方账号登录，点击页面下方对应平台的图标（GitHub、Discord、LinuxDO 等），跳转至第三方授权页面完成授权后自动登录",
+                "reg-forgot": "忘记密码",
+                "reg-forgot-desc": "忘记密码时，点击登录页的「忘记密码」链接，输入注册邮箱后系统会发送重置链接，点击链接设置新密码，原密码随即失效。",
+                "reg-signup-title": "注册", "reg-signup-flow": "注册流程",
+                "reg-signup-s1": "在登录页点击「注册」链接，或直接访问 /register",
+                "reg-signup-s2": "填写用户名、密码",
+                "reg-signup-s3": "填写邮箱地址，点击「发送验证码」，将收到的验证码填入输入框",
+                "reg-signup-s4": "点击「注册」完成账号创建，注册成功后自动跳转至首页",
+                "profile-title": "个人设置", "profile-subtitle": "管理账号基本信息、安全设置和第三方账号绑定",
+                "profile-intro": "管理账号基本信息、安全设置和第三方账号绑定。登录后点击右上角头像，在下拉菜单中选择「个人设置」，或直接访问 /console/personal。",
+                "profile-basic-title": "基本信息", "profile-username": "修改用户名",
+                "profile-username-desc": "在用户名输入框中输入新用户名，点击「保存」",
+                "profile-email": "绑定邮箱", "profile-email-desc": "填写邮箱地址，点击「发送验证码」，输入验证码后点击「绑定」",
+                "profile-password": "更改密码", "profile-password-desc": "依次填写当前密码、新密码、确认新密码，点击「修改密码」",
+                "profile-2fa-title": "双因素认证（2FA）",
+                "profile-2fa-desc": "开启 2FA 后，每次登录时除密码外还需输入验证器 App 中的动态码，有效防止账号被盗。",
+                "profile-2fa-enable": "开启 2FA",
+                "profile-2fa-s1": "在手机上安装验证器 App（推荐 Google Authenticator 或 Microsoft Authenticator）",
+                "profile-2fa-s2": "在个人设置页找到「双因素认证」区域，点击「开启 2FA」",
+                "profile-2fa-s3": "用验证器 App 扫描页面上显示的二维码，App 中会出现一个 6 位动态码",
+                "profile-2fa-s4": "将 App 中显示的 6 位动态码填入验证框，点击「确认开启」",
+                "profile-2fa-s5": "系统显示一组备用码，请立即截图或抄写保存，用于无法使用验证器时的紧急登录",
+                "warning": "警告：", "profile-2fa-warn": "备用码只显示一次，关闭弹窗后无法再次查看。丢失备用码且无法使用验证器时，需联系管理员重置。",
+                "profile-passkey-title": "Passkey 无密码登录",
+                "profile-passkey-desc": "Passkey 支持使用设备指纹、面容识别或硬件安全密钥登录，无需输入密码。",
+                "profile-passkey-reg": "注册 Passkey",
+                "profile-passkey-s1": "在个人设置页向下滚动，找到「Passkey」区域",
+                "profile-passkey-s2": "点击「注册 Passkey」按钮",
+                "profile-passkey-s3": "浏览器弹出系统验证提示，按提示完成指纹、面容或安全密钥验证",
+                "profile-passkey-s4": "验证通过后 Passkey 注册完成，下次登录时可直接使用",
+                "profile-oauth-title": "第三方账号绑定",
+                "profile-oauth-desc": "将 GitHub、Discord 等第三方账号与当前账号绑定后，可直接用第三方账号登录，无需输入密码。",
+                "profile-oauth-bind": "绑定第三方账号",
+                "profile-oauth-s1": "在个人设置页向下滚动，找到「第三方账号绑定」区域",
+                "profile-oauth-s2": "点击要绑定的平台对应的「绑定」按钮",
+                "profile-oauth-s3": "页面跳转至该平台的授权页面，登录并点击「授权」",
+                "profile-oauth-s4": "授权完成后自动跳回，绑定状态变为「已绑定」",
+                "profile-models-title": "可用模型查看",
+                "profile-models-desc": "查看当前账户可以调用的所有模型，方便复制模型名称用于 API 调用。",
+                "profile-models-view": "查看和复制模型",
+                "profile-models-s1": "在个人设置页向下滚动，找到「可用模型」区域",
+                "profile-models-s2": "列表展示所有可用模型的名称",
+                "profile-models-s3": "点击模型名称即可复制到剪贴板",
+                "profile-models-s4": "可在搜索框中输入关键词快速筛选模型",
+                "profile-notify-title": "通知设置",
+                "profile-notify-desc": "配置接收系统通知的方式，支持邮件和 Webhook 两种方式。",
+                "profile-notify-email": "邮件通知",
+                "profile-notify-e1": "在个人设置页找到「通知设置」区域",
+                "profile-notify-e2": "勾选「启用邮件通知」",
+                "profile-notify-e3": "选择要接收通知的事件类型：配额不足提醒、令牌即将过期、系统公告",
+                "profile-notify-e4": "点击「保存」完成配置",
+                "profile-notify-webhook": "Webhook 通知",
+                "profile-notify-w1": "在通知设置区域勾选「启用 Webhook」",
+                "profile-notify-w2": "填写 Webhook URL（接收通知的接口地址）",
+                "profile-notify-w3": "选择要推送的事件类型",
+                "profile-notify-w4": "点击「测试」验证 Webhook 是否可用",
+                "profile-notify-w5": "点击「保存」完成配置",
+                "profile-notify-webhook-desc": "Webhook 推送的数据格式为 JSON，包含事件类型、时间戳和详细信息。",
+                "profile-price-title": "价格设置", "profile-price-desc": "控制是否允许调用未设置价格的模型。",
+                "profile-price-config": "配置价格策略",
+                "profile-price-s1": "在个人设置页找到「价格设置」区域",
+                "profile-price-s2": "选择以下策略之一：拒绝未定价模型（只能调用已设置价格的模型）或允许未定价模型（可以调用所有模型，未定价模型按默认倍率计费）",
+                "profile-price-s3": "点击「保存」",
+                "profile-price-warn": "允许未定价模型可能导致意外的高额消耗，建议保持默认的「拒绝未定价模型」设置",
+                "profile-ip-title": "IP 记录设置", "profile-ip-desc": "控制是否在日志中记录 API 调用的来源 IP 地址。",
+                "profile-ip-enable": "开启 IP 记录",
+                "profile-ip-s1": "在个人设置页找到「IP 记录」区域",
+                "profile-ip-s2": "勾选「启用 IP 记录」",
+                "profile-ip-s3": "点击「保存」",
+                "profile-ip-s4": "开启后，在使用记录页面可以看到每次调用的来源 IP",
+                "profile-ip-benefit": "IP 记录有助于：监控异常访问、排查安全问题、分析流量来源",
+                "profile-security-title": "安全设置", "profile-security-reset": "重置 API 密钥",
+                "profile-security-desc": "如果怀疑 API 密钥泄露，可以重置密钥。",
+                "profile-security-s1": "在个人设置页找到「安全设置」区域",
+                "profile-security-s2": "点击「重置 API 密钥」按钮",
+                "profile-security-s3": "确认操作后，系统生成新的密钥",
+                "profile-security-s4": "旧密钥立即失效，所有使用旧密钥的令牌需要重新创建",
+                "profile-security-warn": "重置 API 密钥后，所有现有令牌将失效，需要重新创建令牌",
+                "tokens-title": "令牌管理", "tokens-subtitle": "令牌是调用 API 的凭证，每个令牌可独立配置权限范围和配额上限",
+                "tokens-intro": "令牌是调用 API 的凭证，每个令牌可独立配置权限范围和配额上限。左侧导航点击「令牌」，或直接访问 /console/token。令牌列表展示所有已创建的令牌，包含名称、状态、已用配额、剩余配额、过期时间等信息。",
+                "tokens-create-title": "创建令牌", "tokens-create-basic": "基本配置",
+                "tokens-create-s1": "在令牌列表页点击右上角「创建令牌」按钮，弹出创建弹窗",
+                "tokens-create-s2": "填写令牌名称（建议按用途命名，如「生产环境」「测试用」）",
+                "tokens-create-adv": "高级配置选项",
+                "th-config": "配置项", "th-desc": "说明",
+                "tokens-expire": "过期时间", "tokens-expire-d": "设置有效期，留空或设为 -1 表示永不过期",
+                "tokens-quota": "剩余配额", "tokens-quota-d": "限制该令牌可消耗的最大配额，超出后自动失效",
+                "tokens-unlimited": "无限配额", "tokens-unlimited-d": "开启后不受配额限制（仍受账户总配额约束）",
+                "tokens-model": "模型限制", "tokens-model-d": "限定该令牌只能调用指定模型，留空表示不限制",
+                "tokens-ip": "IP 白名单", "tokens-ip-d": "限定允许使用该令牌的来源 IP，留空表示不限制",
+                "tokens-group": "分组", "tokens-group-d": "指定该令牌使用的渠道分组",
+                "tokens-save-key": "保存令牌 Key",
+                "tokens-save-desc": "点击「提交」，弹窗显示完整的令牌 Key，立即复制保存，关闭弹窗后无法再次查看完整 Key",
+                "warning2": "警告：", "tokens-warn": "令牌 Key 仅在创建时完整显示一次，请立即复制保存。令牌 Key 具有完整的 API 调用权限，请勿泄露给他人，不要提交到代码仓库。",
+                "tokens-edit-title": "编辑令牌", "tokens-edit-desc": "在令牌列表中找到目标令牌，点击右侧「编辑」按钮，可修改令牌的配置选项（不包括令牌 Key 本身）。",
+                "tokens-del-title": "删除令牌", "tokens-del-desc": "在令牌列表中找到目标令牌，点击右侧「删除」按钮，确认后该令牌立即失效，无法恢复。",
+                "api-title": "使用 API", "api-subtitle": "将平台地址替换 OpenAI 的 base_url，使用平台颁发的令牌作为 api_key，即可开始调用",
+                "api-intro": "将平台地址替换 OpenAI 的 <code>base_url</code>，使用平台颁发的令牌作为 <code>api_key</code>，即可开始调用。",
+                "api-playground-title": "操练场在线测试",
+                "api-playground-desc": "操练场是内置的在线测试工具，无需编写代码即可直接与模型对话，适合快速验证令牌是否可用。",
+                "api-playground-access": "访问操练场", "api-playground-access-d": "左侧导航点击「操练场」，或直接访问 /console/playground",
+                "api-playground-use": "使用操练场",
+                "api-playground-s1": "在左侧选择要测试的模型",
+                "api-playground-s2": "在底部输入框输入消息内容，点击发送",
+                "api-playground-s3": "右侧对话区域显示模型的回复结果",
+                "api-url-title": "获取 API 地址", "api-url-copy": "复制 API 地址",
+                "api-url-s1": "访问平台首页",
+                "api-url-s2": "在页面中部找到 API Base URL 显示区域",
+                "api-url-s3": "点击复制按钮，将地址复制到剪贴板",
+                "api-url-config": "配置客户端",
+                "api-url-config-d": "将复制的地址填入你的客户端或代码中作为 <code>base_url</code>，配合令牌即可开始调用。",
+                "api-code-title": "代码示例", "api-code-py": "Python（OpenAI SDK）",
+                "api-code-claude": "Claude 原生格式", "api-code-gemini": "Gemini 原生格式",
+                "api-endpoints-title": "支持的接口端点", "th-api": "接口", "th-api-desc": "说明",
+                "api-chat": "聊天补全", "api-chat-d": "对话生成，支持流式输出",
+                "api-text": "文本补全", "api-text-d": "传统补全接口",
+                "api-embed": "向量嵌入", "api-embed-d": "文本向量化",
+                "api-image": "图像生成", "api-image-d": "文生图",
+                "api-image-edit": "图像编辑", "api-image-edit-d": "图像编辑",
+                "api-stt": "语音转文字", "api-stt-d": "Whisper 等",
+                "api-tts": "文字转语音", "api-tts-d": "TTS",
+                "api-rerank": "重排序", "api-rerank-d": "文档重排序",
+                "api-models": "模型列表", "api-models-d": "查询可用模型",
+                "chat-title": "聊天应用集成", "chat-subtitle": "91Token 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用",
+                "chat-intro": "91Token 支持快速导入配置到多种 AI 聊天应用，方便测试和日常使用。",
+                "chat-import-title": "一键导入配置",
+                "chat-import-desc": "在控制台→令牌页面可以一键导入配置到支持的聊天应用中。",
+                "chat-import-how": "使用方法",
+                "chat-import-s1": "在令牌列表页找到要使用的令牌",
+                "chat-import-s2": "点击令牌右侧的「导入」或「配置」按钮",
+                "chat-import-s3": "选择目标聊天应用",
+                "chat-import-s4": "系统自动跳转到对应应用并填充配置信息",
+                "chat-lobe-title": "Lobe Chat",
+                "chat-lobe-desc": "Lobe Chat 是一款开源的多模态对话应用，支持多种大语言模型（LLM）和插件扩展。它不仅可以实现文本对话，还支持图片、音频等多模态交互，适用于个人助理、知识问答、内容创作等多种场景。",
+                "chat-lobe-cfg": "配置步骤",
+                "chat-lobe-s1": "打开 Lobe Chat 应用",
+                "chat-lobe-s2": "进入设置页面，找到「语言模型」配置区域",
+                "chat-lobe-s3": "填写 API 地址和 API Key",
+                "chat-lobe-s4": "点击「保存」完成配置",
+                "chat-lobe-s5": "在模型选择中即可看到 91Token 提供的所有可用模型",
+                "chat-ws-title": "AI as Workspace",
+                "chat-ws-desc": "AI as Workspace 是一种将人工智能能力集成到工作空间中的创新方式。通过将 AI 助手与日常办公、协作、知识管理等场景深度结合，用户可以更高效地处理信息、自动化重复任务。",
+                "chat-ws-import": "支持从 91Token 一键导入配置",
+                "chat-ama-title": "AMA 问天",
+                "chat-ama-desc": "AMA 问天是 91Token 提供的智能问答助手，支持多轮对话和复杂问题解答。用户可以通过自然语言与 AMA 问天进行交流，获取知识、技术支持或业务咨询。",
+                "chat-ama-req": "需要先安装 AMA 问天 app",
+                "chat-opencat-title": "OpenCat",
+                "chat-opencat-desc": "OpenCat 是一款开源的多平台 AI 聊天客户端，支持多种大语言模型接入。用户可以通过简洁的界面与 AI 进行自然语言对话，适用于日常交流、知识问答和内容创作等多种场景。",
+                "chat-opencat-req": "需要先安装 OpenCat app",
+                "chat-manual-title": "手动配置其他应用",
+                "chat-manual-desc": "对于不支持一键导入的应用，可以手动配置：",
+                "th-config2": "配置项", "th-desc2": "说明", "th-loc": "获取位置",
+                "chat-cfg-url-d": "API 接口地址", "chat-cfg-url-l": "平台首页或令牌页面",
+                "chat-cfg-key-d": "令牌密钥", "chat-cfg-key-l": "创建令牌时显示（仅一次）",
+                "chat-cfg-models": "可用模型", "chat-cfg-models-d": "支持的模型列表",
+                "chat-cfg-models-l": "个人设置→可用模型 或 定价页面",
+                "price-title": "定价", "price-subtitle": "了解平台计费方式和模型价格",
+                "price-view-title": "查看定价", "price-view-access": "访问定价页",
+                "price-view-p": "点击左侧导航栏的「定价」，或直接访问 /pricing",
+                "price-view-browse": "浏览模型价格",
+                "price-view-browse-d": "页面列出所有可用模型，每行显示模型名称、输入价格和输出价格",
+                "price-view-search": "搜索模型",
+                "price-view-search-d": "可在页面顶部搜索框输入模型名称关键词，快速定位特定模型的价格",
+                "price-rules-title": "价格说明", "price-billing-title": "计费规则",
+                "price-billing-in": "输入价格：每 1K 输入 Token 消耗的配额",
+                "price-billing-out": "输出价格：每 1K 输出 Token 消耗的配额",
+                "price-billing-calc": "实际消耗 = Token 数量 ÷ 1000 × 对应单价",
+                "price-group-title": "分组差异",
+                "price-group-desc": "不同分组的用户可能享有不同的计费倍率，具体以实际扣减为准，可在充值页查看当前余额变化",
+                "usage-title": "使用记录", "usage-subtitle": "查看每次 API 调用的详细信息，支持按时间、模型、令牌等条件过滤",
+                "usage-intro": "查看每次 API 调用的详细信息，支持按时间、模型、令牌等条件过滤。左侧导航点击「日志」，或直接访问 /console/log。普通用户只能看到自己的调用记录。日志列表每行展示一次调用记录，包含调用时间、使用的模型、消耗的 Token 数量和配额、调用状态等信息。",
+                "usage-filter-title": "搜索与过滤", "usage-filter-set": "设置过滤条件",
+                "usage-filter-s1": "在日志页顶部点击「筛选」按钮，展开过滤条件区域",
+                "usage-filter-s2": "可设置以下过滤条件：时间范围（选择开始和结束日期）、模型（输入模型名称关键词）、令牌名（选择或输入令牌名称）",
+                "usage-filter-result": "查看过滤结果",
+                "usage-filter-result-d": "设置完成后点击「查询」，列表自动刷新显示过滤结果",
+                "usage-stats-title": "数据统计", "usage-stats-access": "访问数据看板",
+                "usage-stats-access-d": "左侧导航点击「数据看板」，或直接访问 /console",
+                "usage-stats-view": "查看统计图表",
+                "usage-stats-view-d": "数据看板页面以折线图或柱状图展示每日 API 调用量和配额消耗趋势。将鼠标悬停在图表上可查看具体日期的详细数据。",
+                "quota-title": "配额与充值", "quota-subtitle": "配额是平台内部计费单位，消耗量 = 实际 Token 数 × 模型倍率",
+                "quota-intro": "配额是平台内部计费单位，消耗量 = 实际 Token 数 × 模型倍率。左侧导航点击「钱包管理」，或直接访问 /console/topup。支持在线支付充值和兑换码两种方式增加账户配额。",
+                "quota-methods-title": "充值方式", "th-method": "充值方式", "th-desc3": "说明",
+                "quota-redeem": "兑换码", "quota-redeem-d": "输入管理员生成的兑换码，直接增加配额",
+                "quota-epay-d": "国内聚合支付（支付宝、微信等）",
+                "quota-stripe-d": "国际信用卡支付",
+                "quota-creem-d": "国际支付平台",
+                "quota-online-title": "在线支付充值", "quota-online-amount": "选择充值金额",
+                "quota-online-amount-d": "在充值页选择充值金额，或手动输入自定义金额",
+                "quota-online-pay": "完成支付",
+                "quota-online-s1": "选择支付方式（SBP / MIR）",
+                "quota-online-s2": "点击「充值」按钮，页面跳转至对应支付平台",
+                "quota-online-s3": "在支付平台完成付款后，自动跳回平台，账户余额更新",
+                "quota-code-title": "兑换码充值", "quota-code-input": "输入兑换码",
+                "quota-code-s1": "在充值页找到「兑换码」输入区域",
+                "quota-code-s2": "在输入框中粘贴或输入管理员提供的兑换码",
+                "quota-code-redeem": "完成兑换",
+                "quota-code-s3": "点击「兑换」按钮，系统验证兑换码有效性",
+                "quota-code-s4": "兑换成功后页面提示获得的配额数量，账户余额同步更新",
+                "quota-invite-title": "邀请返利",
+                "quota-invite-intro": "每个账号都有唯一的邀请码，邀请他人注册并消费后可获得返利配额。",
+                "quota-invite-get": "获取邀请码",
+                "quota-invite-get-d": "在充值页或个人设置页找到「邀请」区域，复制你的专属邀请码",
+                "quota-invite-use": "使用返利配额",
+                "quota-invite-s1": "将邀请码分享给他人，对方注册时填写邀请码",
+                "quota-invite-s2": "被邀请用户消费后，你的返利配额余额自动增加",
+                "quota-invite-s3": "点击「转入余额」按钮，将返利配额转入账户主余额后即可使用",
+                "sub-title": "订阅计划", "sub-subtitle": "选择适合您的订阅方案，解锁更多功能",
+                "th-plan": "计划", "th-features": "功能", "th-scene": "适用场景",
+                "sub-free": "免费版", "sub-free-f": "基础 API 访问、有限配额",
+                "sub-free-s": "个人用户、小型项目测试",
+                "sub-pro": "专业版", "sub-pro-f": "更高配额、优先支持、高级模型",
+                "sub-pro-s": "专业开发者、小型团队",
+                "sub-ent": "企业版", "sub-ent-f": "无限配额、专属支持、定制服务",
+                "sub-ent-s": "大型企业、批量用户",
+                "sub-benefits-title": "订阅优势",
+                "sub-b1": "享受更低的 API 调用价格",
+                "sub-b2": "获得更高的配额限制",
+                "sub-b3": "优先访问新功能和新模型",
+                "sub-b4": "获得技术支持优先响应",
+                "task-title": "任务管理", "task-subtitle": "管理异步任务和长时间运行的请求",
+                "task-async-title": "异步任务",
+                "task-async-desc": "对于需要长时间处理的请求（如图像生成、长文本生成），我们使用异步任务系统。",
+                "task-status-title": "任务状态", "th-status": "状态", "th-desc4": "说明",
+                "task-pending": "等待处理", "task-running": "处理中",
+                "task-completed": "已完成", "task-failed": "失败",
+                "task-query-title": "查询任务",
+                "task-query-desc": "使用任务 ID 查询任务状态和结果："
+            },
+            en: {
+                "nav-doc": "User Documentation", "nav-intro": "Introduction", "nav-features": "Features Overview", "nav-register": "Registration & Login",
+                "nav-profile": "Profile Settings", "nav-tokens": "Token Management", "nav-api": "Using API", "nav-chat": "Chat App Integration",
+                "nav-pricing": "Pricing", "nav-usage": "Usage History", "nav-quota": "Quota & Top-up", "nav-subscription": "Subscription Plans",
+                "nav-tasks": "Task Management", "nav-privacy": "Privacy Policy", "nav-terms": "Terms of Service", "nav-support": "Contact Support",
+                "intro-title": "Introduction", "intro-subtitle": "Welcome to 91Token Documentation",
+                "intro-p1": "91Token is a unified LLM gateway platform that aggregates multiple AI service providers into a standard OpenAI-compatible API, allowing you to access dozens of models through a single endpoint.",
+                "intro-p2": "This guide is divided into User Guide and Admin Guide sections to help you get started quickly and make the most of the platform.",
+                "intro-features-title": "Platform Features", "intro-f1": "Unified API: Call all services using standard OpenAI format",
+                "intro-f2": "Multi-provider support: Supports 40+ AI service providers simultaneously", "intro-f3": "Smart routing: Automatically selects the best provider",
+                "intro-f4": "Real-time billing: Token-level billing system", "intro-f5": "Flexible quota management: Supports top-up, redeem codes, referral rewards",
+                "intro-quick-title": "Quick Start", "intro-q1": "Register and login", "intro-q2": "Create API token",
+                "intro-q3": "Top up quota", "intro-q4": "Start calling API",
+                "features-title": "Features Overview", "features-subtitle": "Learn about the core features of the platform",
+                "features-intro": "91Token is a unified LLM gateway platform that aggregates multiple AI service providers into a standard OpenAI-compatible API, allowing you to access dozens of models through a single endpoint. This guide is divided into User Guide and Admin Guide sections.",
+                "features-core-title": "Core Features", "features-c1": "Multi-provider support: Supports 40+ AI service providers",
+                "features-c2": "Unified API: Call all services using standard OpenAI format", "features-c3": "Smart routing: Automatically selects the best provider",
+                "features-c4": "Real-time billing: Token-level billing system", "features-c5": "Access control: Flexible API token management",
+                "features-svc-title": "Supported Services", "features-s1": "Text generation: GPT, Claude, Gemini and other LLMs",
+                "features-s2": "Image generation: DALL-E, Midjourney, Stable Diffusion", "features-s3": "Speech synthesis and recognition",
+                "features-s4": "Embedding models: Text vectorization services",
+                "reg-title": "Registration & Login", "reg-subtitle": "Supports account registration and multiple OAuth login options",
+                "reg-intro": "Supports account registration and multiple OAuth login options. Please register first if you are using for the first time.",
+                "reg-login-title": "Login", "reg-login-acc": "Account Password Login",
+                "reg-login-s1": "Open the platform homepage, click the \"Login\" button in the upper right corner, or visit /login directly",
+                "reg-login-s2": "Enter username and password on the login page, click \"Login\" to complete",
+                "reg-login-oauth": "Third-party OAuth Login",
+                "reg-login-oauth-desc": "To login with a third-party account, click the corresponding platform icon (GitHub, Discord, LinuxDO, etc.) at the bottom of the page, redirect to the third-party authorization page to complete authorization and automatically login",
+                "reg-forgot": "Forgot Password",
+                "reg-forgot-desc": "When you forget your password, click the \"Forgot Password\" link on the login page, enter your registered email, and the system will send a reset link. Click the link to set a new password, and the original password will become invalid.",
+                "reg-signup-title": "Registration", "reg-signup-flow": "Registration Process",
+                "reg-signup-s1": "Click the \"Register\" link on the login page, or visit /register directly",
+                "reg-signup-s2": "Fill in username and password",
+                "reg-signup-s3": "Fill in email address, click \"Send Verification Code\", enter the received verification code",
+                "reg-signup-s4": "Click \"Register\" to complete account creation, and automatically redirect to the homepage after successful registration",
+                "profile-title": "Profile Settings", "profile-subtitle": "Manage account information, security settings, and third-party account bindings",
+                "profile-intro": "Manage account information, security settings, and third-party account bindings. After login, click the avatar in the upper right corner, select \"Profile Settings\" from the dropdown menu, or visit /console/personal directly.",
+                "profile-basic-title": "Basic Information", "profile-username": "Change Username",
+                "profile-username-desc": "Enter a new username in the input box and click \"Save\"",
+                "profile-email": "Bind Email", "profile-email-desc": "Fill in email address, click \"Send Verification Code\", enter the code and click \"Bind\"",
+                "profile-password": "Change Password", "profile-password-desc": "Fill in current password, new password, confirm new password in order, click \"Change Password\"",
+                "profile-2fa-title": "Two-Factor Authentication (2FA)",
+                "profile-2fa-desc": "After enabling 2FA, you need to enter a dynamic code from the authenticator app in addition to your password each time you login, effectively preventing account theft.",
+                "profile-2fa-enable": "Enable 2FA",
+                "profile-2fa-s1": "Install an authenticator app on your phone (recommended: Google Authenticator or Microsoft Authenticator)",
+                "profile-2fa-s2": "Find the \"Two-Factor Authentication\" section in profile settings, click \"Enable 2FA\"",
+                "profile-2fa-s3": "Scan the QR code displayed on the page with the authenticator app, a 6-digit dynamic code will appear in the app",
+                "profile-2fa-s4": "Enter the 6-digit dynamic code displayed in the app into the verification box, click \"Confirm Enable\"",
+                "profile-2fa-s5": "The system displays a set of backup codes, please screenshot or write them down immediately for emergency login when you cannot use the authenticator",
+                "warning": "Warning: ", "profile-2fa-warn": "Backup codes are only displayed once and cannot be viewed again after closing the popup. If you lose the backup codes and cannot use the authenticator, you need to contact the administrator for reset.",
+                "profile-passkey-title": "Passkey Passwordless Login",
+                "profile-passkey-desc": "Passkey supports login using device fingerprint, face recognition, or hardware security key without entering a password.",
+                "profile-passkey-reg": "Register Passkey",
+                "profile-passkey-s1": "Scroll down in profile settings to find the \"Passkey\" section",
+                "profile-passkey-s2": "Click \"Register Passkey\" button",
+                "profile-passkey-s3": "Browser pops up system verification prompt, complete fingerprint, face, or security key verification as prompted",
+                "profile-passkey-s4": "Passkey registration is complete after verification, can be used directly for next login",
+                "profile-oauth-title": "Third-Party Account Binding",
+                "profile-oauth-desc": "After binding third-party accounts like GitHub, Discord, etc., you can login directly with the third-party account without entering a password.",
+                "profile-oauth-bind": "Bind Third-Party Account",
+                "profile-oauth-s1": "Scroll down in profile settings to find the \"Third-Party Account Binding\" section",
+                "profile-oauth-s2": "Click the \"Bind\" button corresponding to the platform you want to bind",
+                "profile-oauth-s3": "Page redirects to the platform's authorization page, login and click \"Authorize\"",
+                "profile-oauth-s4": "Automatically redirects back after authorization, binding status becomes \"Bound\"",
+                "profile-models-title": "Available Models",
+                "profile-models-desc": "View all models available for your account, convenient for copying model names for API calls.",
+                "profile-models-view": "View and Copy Models",
+                "profile-models-s1": "Scroll down in profile settings to find the \"Available Models\" section",
+                "profile-models-s2": "List shows all available model names",
+                "profile-models-s3": "Click on the model name to copy to clipboard",
+                "profile-models-s4": "Enter keywords in the search box to quickly filter models",
+                "profile-notify-title": "Notification Settings",
+                "profile-notify-desc": "Configure how to receive system notifications, supports email and Webhook.",
+                "profile-notify-email": "Email Notifications",
+                "profile-notify-e1": "Find the \"Notification Settings\" section in profile settings",
+                "profile-notify-e2": "Check \"Enable Email Notifications\"",
+                "profile-notify-e3": "Select the event types to receive notifications: Low Quota Alert, Token Expiring Soon, System Announcements",
+                "profile-notify-e4": "Click \"Save\" to complete configuration",
+                "profile-notify-webhook": "Webhook Notifications",
+                "profile-notify-w1": "Check \"Enable Webhook\" in the notification settings section",
+                "profile-notify-w2": "Fill in Webhook URL (endpoint address to receive notifications)",
+                "profile-notify-w3": "Select the event types to push",
+                "profile-notify-w4": "Click \"Test\" to verify if Webhook is working",
+                "profile-notify-w5": "Click \"Save\" to complete configuration",
+                "profile-notify-webhook-desc": "Webhook pushes data in JSON format, including event type, timestamp, and detailed information.",
+                "profile-price-title": "Price Settings", "profile-price-desc": "Control whether to allow calling models without price settings.",
+                "profile-price-config": "Configure Price Strategy",
+                "profile-price-s1": "Find the \"Price Settings\" section in profile settings",
+                "profile-price-s2": "Select one of the following strategies: Reject Unpriced Models (only allow calling priced models - recommended) or Allow Unpriced Models (can call all models, unpriced models are charged at default rate)",
+                "profile-price-s3": "Click \"Save\"",
+                "profile-price-warn": "Allowing unpriced models may lead to unexpected high consumption, it is recommended to keep the default \"Reject Unpriced Models\" setting",
+                "profile-ip-title": "IP Log Settings", "profile-ip-desc": "Control whether to record the source IP address of API calls in logs.",
+                "profile-ip-enable": "Enable IP Logging",
+                "profile-ip-s1": "Find the \"IP Log\" section in profile settings",
+                "profile-ip-s2": "Check \"Enable IP Logging\"",
+                "profile-ip-s3": "Click \"Save\"",
+                "profile-ip-s4": "After enabling, you can see the source IP of each call on the usage history page",
+                "profile-ip-benefit": "IP logging helps: Monitor abnormal access, Troubleshoot security issues, Analyze traffic sources",
+                "profile-security-title": "Security Settings", "profile-security-reset": "Reset API Key",
+                "profile-security-desc": "If you suspect the API key has been leaked, you can reset it.",
+                "profile-security-s1": "Find the \"Security Settings\" section in profile settings",
+                "profile-security-s2": "Click \"Reset API Key\" button",
+                "profile-security-s3": "After confirming, the system generates a new key",
+                "profile-security-s4": "The old key becomes invalid immediately, all tokens using the old key need to be recreated",
+                "profile-security-warn": "After resetting the API key, all existing tokens will become invalid and need to be recreated",
+                "tokens-title": "Token Management", "tokens-subtitle": "Tokens are credentials for calling the API, each token can independently configure permission scope and quota limit",
+                "tokens-intro": "Tokens are credentials for calling the API, each token can independently configure permission scope and quota limit. Click \"Tokens\" in the left navigation, or visit /console/token directly. The token list shows all created tokens, including name, status, used quota, remaining quota, expiration time, etc.",
+                "tokens-create-title": "Create Token", "tokens-create-basic": "Basic Configuration",
+                "tokens-create-s1": "Click the \"Create Token\" button in the upper right corner of the token list page to open the creation popup",
+                "tokens-create-s2": "Fill in the token name (recommended to name by purpose, such as \"Production\", \"Testing\")",
+                "tokens-create-adv": "Advanced Configuration Options",
+                "th-config": "Configuration", "th-desc": "Description",
+                "tokens-expire": "Expiration Time", "tokens-expire-d": "Set validity period, leave blank or set to -1 for never expires",
+                "tokens-quota": "Remaining Quota", "tokens-quota-d": "Limit the maximum quota this token can consume, automatically invalid when exceeded",
+                "tokens-unlimited": "Unlimited Quota", "tokens-unlimited-d": "When enabled, not limited by quota (still constrained by account total quota)",
+                "tokens-model": "Model Restriction", "tokens-model-d": "Restrict this token to call only specified models, leave blank for no restriction",
+                "tokens-ip": "IP Whitelist", "tokens-ip-d": "Restrict source IPs allowed to use this token, leave blank for no restriction",
+                "tokens-group": "Group", "tokens-group-d": "Specify the channel group for this token",
+                "tokens-save-key": "Save Token Key",
+                "tokens-save-desc": "Click \"Submit\", the popup displays the complete token key, copy and save immediately, the complete key cannot be viewed again after closing the popup",
+                "warning2": "Warning: ", "tokens-warn": "The token key is only displayed once upon creation, please copy and save immediately. The token key has full API access permissions, do not disclose it to others and do not commit it to code repositories.",
+                "tokens-edit-title": "Edit Token", "tokens-edit-desc": "Find the target token in the token list, click the \"Edit\" button on the right to modify the token's configuration options (excluding the token key itself).",
+                "tokens-del-title": "Delete Token", "tokens-del-desc": "Find the target token in the token list, click the \"Delete\" button on the right, confirm to immediately invalidate the token, cannot be recovered.",
+                "api-title": "Using API", "api-subtitle": "Replace OpenAI's base_url with the platform address, use the token issued by the platform as api_key, and start calling",
+                "api-intro": "Replace OpenAI's <code>base_url</code> with the platform address, use the token issued by the platform as <code>api_key</code>, and start calling.",
+                "api-playground-title": "Playground Online Testing",
+                "api-playground-desc": "Playground is a built-in online testing tool that allows you to directly chat with models without writing code, suitable for quickly verifying if tokens work.",
+                "api-playground-access": "Access Playground", "api-playground-access-d": "Click \"Playground\" in the left navigation, or visit /console/playground",
+                "api-playground-use": "Using Playground",
+                "api-playground-s1": "Select the model to test on the left",
+                "api-playground-s2": "Enter message content in the input box at the bottom, click send",
+                "api-playground-s3": "The model's response is displayed in the chat area on the right",
+                "api-url-title": "Get API Address", "api-url-copy": "Copy API Address",
+                "api-url-s1": "Visit the platform homepage",
+                "api-url-s2": "Find the API Base URL display area in the middle of the page",
+                "api-url-s3": "Click the copy button to copy the address to clipboard",
+                "api-url-config": "Configure Client",
+                "api-url-config-d": "Fill the copied address as <code>base_url</code> in your client or code, and start calling with the token.",
+                "api-code-title": "Code Examples", "api-code-py": "Python (OpenAI SDK)",
+                "api-code-claude": "Claude Native Format", "api-code-gemini": "Gemini Native Format",
+                "api-endpoints-title": "Supported Endpoints", "th-api": "Endpoint", "th-api-desc": "Description",
+                "api-chat": "Chat Completions", "api-chat-d": "Dialogue generation, supports streaming",
+                "api-text": "Text Completions", "api-text-d": "Traditional completion endpoint",
+                "api-embed": "Embeddings", "api-embed-d": "Text vectorization",
+                "api-image": "Image Generation", "api-image-d": "Text-to-image",
+                "api-image-edit": "Image Edit", "api-image-edit-d": "Image editing",
+                "api-stt": "Speech to Text", "api-stt-d": "Whisper, etc.",
+                "api-tts": "Text to Speech", "api-tts-d": "TTS",
+                "api-rerank": "Rerank", "api-rerank-d": "Document reranking",
+                "api-models": "Model List", "api-models-d": "Query available models",
+                "chat-title": "Chat App Integration", "chat-subtitle": "91Token supports quick import configuration to multiple AI chat applications for testing and daily use",
+                "chat-intro": "91Token supports quick import configuration to multiple AI chat applications for testing and daily use.",
+                "chat-import-title": "One-click Import Configuration",
+                "chat-import-desc": "Configuration can be imported to supported chat applications with one click in Console → Tokens page.",
+                "chat-import-how": "Usage",
+                "chat-import-s1": "Find the token to use in the token list",
+                "chat-import-s2": "Click the \"Import\" or \"Configure\" button on the right side of the token",
+                "chat-import-s3": "Select the target chat application",
+                "chat-import-s4": "The system automatically redirects to the corresponding application and fills in the configuration",
+                "chat-lobe-title": "Lobe Chat",
+                "chat-lobe-desc": "Lobe Chat is an open-source multimodal dialogue application that supports multiple large language models (LLM) and plugin extensions. It not only enables text dialogue but also supports multimodal interactions such as images and audio, suitable for personal assistants, knowledge Q&A, content creation, and other scenarios.",
+                "chat-lobe-cfg": "Configuration Steps",
+                "chat-lobe-s1": "Open Lobe Chat application",
+                "chat-lobe-s2": "Go to settings page, find the \"Language Model\" configuration section",
+                "chat-lobe-s3": "Fill in API address and API Key",
+                "chat-lobe-s4": "Click \"Save\" to complete configuration",
+                "chat-lobe-s5": "All available models provided by 91Token will be available in the model selection",
+                "chat-ws-title": "AI as Workspace",
+                "chat-ws-desc": "AI as Workspace is an innovative way to integrate AI capabilities into the workspace. By deeply integrating AI assistants with daily office, collaboration, knowledge management and other scenarios, users can process information more efficiently, automate repetitive tasks.",
+                "chat-ws-import": "Supports one-click import from 91Token",
+                "chat-ama-title": "AMA Assistant",
+                "chat-ama-desc": "AMA is 91Token's intelligent Q&A assistant that supports multi-turn dialogue and complex question answering. Users can communicate with AMA through natural language to obtain knowledge, technical support or business consulting.",
+                "chat-ama-req": "Need to install AMA app first",
+                "chat-opencat-title": "OpenCat",
+                "chat-opencat-desc": "OpenCat is an open-source multi-platform AI chat client that supports multiple large language model integrations. Users can have natural language conversations with AI through a clean interface, suitable for daily communication, knowledge Q&A, content creation and other scenarios.",
+                "chat-opencat-req": "Need to install OpenCat app first",
+                "chat-manual-title": "Manual Configuration for Other Apps",
+                "chat-manual-desc": "For applications that do not support one-click import, you can configure manually:",
+                "th-config2": "Configuration", "th-desc2": "Description", "th-loc": "Location",
+                "chat-cfg-url-d": "API endpoint address", "chat-cfg-url-l": "Platform homepage or token page",
+                "chat-cfg-key-d": "Token key", "chat-cfg-key-l": "Displayed when creating token (only once)",
+                "chat-cfg-models": "Available Models", "chat-cfg-models-d": "Supported model list",
+                "chat-cfg-models-l": "Profile → Available Models or Pricing page",
+                "price-title": "Pricing", "price-subtitle": "Understand platform billing methods and model prices",
+                "price-view-title": "View Pricing", "price-view-access": "Access Pricing Page",
+                "price-view-p": "Click \"Pricing\" in the left navigation, or visit /pricing",
+                "price-view-browse": "Browse Model Prices",
+                "price-view-browse-d": "The page lists all available models, each row shows model name, input price, and output price",
+                "price-view-search": "Search Models",
+                "price-view-search-d": "Enter model name keywords in the search box at the top of the page to quickly locate the price of a specific model",
+                "price-rules-title": "Price Description", "price-billing-title": "Billing Rules",
+                "price-billing-in": "Input Price: Quota consumed per 1K input tokens",
+                "price-billing-out": "Output Price: Quota consumed per 1K output tokens",
+                "price-billing-calc": "Actual consumption = Token count ÷ 1000 × corresponding unit price",
+                "price-group-title": "Group Differences",
+                "price-group-desc": "Users in different groups may enjoy different billing rates, subject to actual deduction. You can view the current balance change on the top-up page",
+                "usage-title": "Usage History", "usage-subtitle": "View detailed information of each API call, supports filtering by time, model, token, etc.",
+                "usage-intro": "View detailed information of each API call, supports filtering by time, model, token, etc. Click \"Logs\" in the left navigation, or visit /console/log directly. Regular users can only see their own call records. Each row in the log list shows a call record, including call time, model used, token and quota consumed, call status, etc.",
+                "usage-filter-title": "Search & Filter", "usage-filter-set": "Set Filter Conditions",
+                "usage-filter-s1": "Click the \"Filter\" button at the top of the log page to expand the filter conditions section",
+                "usage-filter-s2": "The following filter conditions can be set: Time range (select start and end dates), Model (enter model name keywords), Token name (select or enter token name)",
+                "usage-filter-result": "View Filter Results",
+                "usage-filter-result-d": "Click \"Query\" after setting, the list automatically refreshes to show filtered results",
+                "usage-stats-title": "Data Statistics", "usage-stats-access": "Access Data Dashboard",
+                "usage-stats-access-d": "Click \"Data Dashboard\" in the left navigation, or visit /console",
+                "usage-stats-view": "View Statistics Chart",
+                "usage-stats-view-d": "The data dashboard page displays daily API call volume and quota consumption trends with line charts or bar charts. Hover the mouse over the chart to view detailed data for specific dates.",
+                "quota-title": "Quota & Top-up", "quota-subtitle": "Quota is the platform's internal billing unit, consumption = actual token count × model multiplier",
+                "quota-intro": "Quota is the platform's internal billing unit, consumption = actual token count × model multiplier. Click \"Wallet\" in the left navigation, or visit /console/topup directly. Supports online payment top-up and redeem codes to increase account quota.",
+                "quota-methods-title": "Top-up Methods", "th-method": "Top-up Method", "th-desc3": "Description",
+                "quota-redeem": "Redeem Code", "quota-redeem-d": "Enter the redeem code generated by the administrator to directly increase quota",
+                "quota-epay-d": "Domestic payment aggregator (Alipay, WeChat, etc.)",
+                "quota-stripe-d": "International credit card payment",
+                "quota-creem-d": "International payment platforms",
+                "quota-online-title": "Online Payment Top-up", "quota-online-amount": "Select Top-up Amount",
+                "quota-online-amount-d": "Select top-up amount on the top-up page, or manually enter a custom amount",
+                "quota-online-pay": "Complete Payment",
+                "quota-online-s1": "Select payment method (BSP / MIR)",
+                "quota-online-s2": "Click \"Top-up\" button, page redirects to the corresponding payment platform",
+                "quota-online-s3": "After completing payment on the payment platform, automatically redirect back to the platform, account balance updates",
+                "quota-code-title": "Redeem Code Top-up", "quota-code-input": "Enter Redeem Code",
+                "quota-code-s1": "Find the \"Redeem Code\" input section on the top-up page",
+                "quota-code-s2": "Paste or enter the redeem code provided by the administrator in the input box",
+                "quota-code-redeem": "Complete Redemption",
+                "quota-code-s3": "Click \"Redeem\" button, the system verifies the validity of the redeem code",
+                "quota-code-s4": "After successful redemption, the page displays the amount of quota obtained, account balance updates synchronously",
+                "quota-invite-title": "Referral Rewards",
+                "quota-invite-intro": "Each account has a unique referral code. After inviting others to register and consume, you can receive referral rewards.",
+                "quota-invite-get": "Get Referral Code",
+                "quota-invite-get-d": "Find the \"Invite\" section on the top-up page or profile settings, copy your exclusive referral code",
+                "quota-invite-use": "Use Referral Rewards",
+                "quota-invite-s1": "Share your referral code with others, they fill it in when registering",
+                "quota-invite-s2": "After the invited user consumes, your referral reward balance automatically increases",
+                "quota-invite-s3": "Click \"Transfer to Balance\" button to transfer referral rewards to the main account balance for use",
+                "sub-title": "Subscription Plans", "sub-subtitle": "Choose the subscription plan that suits you, unlock more features",
+                "th-plan": "Plan", "th-features": "Features", "th-scene": "Suitable For",
+                "sub-free": "Free", "sub-free-f": "Basic API access, limited quota",
+                "sub-free-s": "Personal users, small project testing",
+                "sub-pro": "Pro", "sub-pro-f": "Higher quota, priority support, advanced models",
+                "sub-pro-s": "Professional developers, small teams",
+                "sub-ent": "Enterprise", "sub-ent-f": "Unlimited quota, dedicated support, custom services",
+                "sub-ent-s": "Large enterprises, bulk users",
+                "sub-benefits-title": "Subscription Benefits",
+                "sub-b1": "Enjoy lower API call prices",
+                "sub-b2": "Get higher quota limits",
+                "sub-b3": "Priority access to new features and models",
+                "sub-b4": "Get priority response for technical support",
+                "task-title": "Task Management", "task-subtitle": "Manage asynchronous tasks and long-running requests",
+                "task-async-title": "Asynchronous Tasks",
+                "task-async-desc": "For requests that require long processing time (such as image generation, long text generation), we use an asynchronous task system.",
+                "task-status-title": "Task Status", "th-status": "Status", "th-desc4": "Description",
+                "task-pending": "Pending", "task-running": "Running",
+                "task-completed": "Completed", "task-failed": "Failed",
+                "task-query-title": "Query Task",
+                "task-query-desc": "Query task status and results using task ID:"
+            },
+            ru: {
+                "nav-doc": "Документация пользователя", "nav-intro": "Введение", "nav-features": "Обзор функций", "nav-register": "Регистрация и вход",
+                "nav-profile": "Настройки профиля", "nav-tokens": "Управление токенами", "nav-api": "Использование API", "nav-chat": "Интеграция с чат-приложениями",
+                "nav-pricing": "Цены", "nav-usage": "История использования", "nav-quota": "Квота и пополнение", "nav-subscription": "Подписки",
+                "nav-tasks": "Управление задачами", "nav-privacy": "Политика конфиденциальности", "nav-terms": "Условия обслуживания", "nav-support": "Связаться с поддержкой",
+                "intro-title": "Введение", "intro-subtitle": "Добро пожаловать в документацию 91Token",
+                "intro-p1": "91Token — это унифицированная платформа-шлюз LLM, которая агрегирует несколько провайдеров AI-услуг в стандартный API, совместимый с OpenAI, позволяя вам обращаться к десяткам моделей через один адрес.",
+                "intro-p2": "Это руководство разделено на Руководство пользователя и Руководство администратора, чтобы помочь вам быстро начать работу и максимально использовать возможности платформы.",
+                "intro-features-title": "Особенности платформы", "intro-f1": "Унифицированный API: вызов всех сервисов в стандартном формате OpenAI",
+                "intro-f2": "Многопровайдерская поддержка: одновременно поддерживается 40+ провайдеров AI-услуг", "intro-f3": "Умный роутинг: автоматический выбор лучшего провайдера",
+                "intro-f4": "Реальное время биллинга: система биллинга на уровне токенов", "intro-f5": "Гибкое управление квотой: поддержка пополнения, промокодов, реферальных вознаграждений",
+                "intro-quick-title": "Быстрый старт", "intro-q1": "Зарегистрируйтесь и войдите", "intro-q2": "Создайте API-токен",
+                "intro-q3": "Пополните квоту", "intro-q4": "Начните вызывать API",
+                "features-title": "Обзор функций", "features-subtitle": "Ознакомьтесь с основными функциями платформы",
+                "features-intro": "91Token — это унифицированная платформа-шлюз LLM, которая агрегирует несколько провайдеров AI-услуг в стандартный API, совместимый с OpenAI, позволяя вам обращаться к десяткам моделей через один адрес. Это руководство разделено на Руководство пользователя и Руководство администратора.",
+                "features-core-title": "Основные функции", "features-c1": "Многопровайдерская поддержка: одновременно поддерживается 40+ провайдеров AI-услуг",
+                "features-c2": "Унифицированный API: вызов всех сервисов в стандартном формате OpenAI", "features-c3": "Умный роутинг: автоматический выбор лучшего провайдера",
+                "features-c4": "Реальное время биллинга: система биллинга на уровне токенов", "features-c5": "Управление доступом: гибкое управление API-токенами",
+                "features-svc-title": "Поддерживаемые сервисы", "features-s1": "Текст生成: GPT, Claude, Gemini и другие языковые модели",
+                "features-s2": "Генерация изображений: DALL-E, Midjourney, Stable Diffusion", "features-s3": "Речь и распознавание речи",
+                "features-s4": "Модели встраивания: сервисы векторизации текста",
+                "reg-title": "Регистрация и вход", "reg-subtitle": "Поддерживает регистрацию и несколько вариантов входа через OAuth",
+                "reg-intro": "Поддерживает регистрацию и несколько вариантов входа через OAuth. Если вы используете впервые, пожалуйста, сначала зарегистрируйтесь.",
+                "reg-login-title": "Вход", "reg-login-acc": "Вход по логину и паролю",
+                "reg-login-s1": "Откройте домашнюю страницу платформы, нажмите кнопку «Вход» в правом верхнем углу или перейдите по адресу /login",
+                "reg-login-s2": "Введите имя пользователя и пароль на странице входа, нажмите «Вход»",
+                "reg-login-oauth": "Вход через OAuth",
+                "reg-login-oauth-desc": "Чтобы войти через сторонний аккаунт, нажмите иконку соответствующей платформы (GitHub, Discord, LinuxDO и т.д.) внизу страницы, перейдите на страницу авторизации и завершите авторизацию",
+                "reg-forgot": "Забыли пароль",
+                "reg-forgot-desc": "Если вы забыли пароль, нажмите ссылку «Забыли пароль» на странице входа, введите зарегистрированный адрес электронной почты, система отправит ссылку для сброса. Нажмите на ссылку и установите новый пароль.",
+                "reg-signup-title": "Регистрация", "reg-signup-flow": "Процесс регистрации",
+                "reg-signup-s1": "На странице входа нажмите ссылку «Регистрация» или перейдите по адресу /register",
+                "reg-signup-s2": "Заполните имя пользователя и пароль",
+                "reg-signup-s3": "Заполните адрес электронной почты, нажмите «Отправить код подтверждения», введите полученный код",
+                "reg-signup-s4": "Нажмите «Зарегистрироваться» для завершения создания аккаунта, после успешной регистрации автоматически перенаправит на домашнюю страницу",
+                "profile-title": "Настройки профиля", "profile-subtitle": "Управление данными аккаунта, безопасностью и привязанными аккаунтами",
+                "profile-intro": "Управление данными аккаунта, безопасностью и привязанными аккаунтами. После входа нажмите на аватар в правом верхнем углу, выберите «Настройки профиля» или перейдите по адресу /console/personal.",
+                "profile-basic-title": "Основная информация", "profile-username": "Изменить имя пользователя",
+                "profile-username-desc": "Введите новое имя пользователя в поле ввода и нажмите «Сохранить»",
+                "profile-email": "Привязать почту", "profile-email-desc": "Заполните адрес электронной почты, нажмите «Отправить код подтверждения», введите код и нажмите «Привязать»",
+                "profile-password": "Сменить пароль", "profile-password-desc": "Заполните текущий пароль, новый пароль, подтвердите новый пароль, нажмите «Сменить пароль»",
+                "profile-2fa-title": "Двухфакторная аутентификация (2FA)",
+                "profile-2fa-desc": "После включения 2FA при каждом входе помимо пароля необходимо вводить динамический код из приложения-генератора, что эффективно защищает от кражи аккаунта.",
+                "profile-2fa-enable": "Включить 2FA",
+                "profile-2fa-s1": "Установите приложение-генератор на телефон (рекомендуется Google Authenticator или Microsoft Authenticator)",
+                "profile-2fa-s2": "В настройках профиля найдите раздел «Двухфакторная аутентификация», нажмите «Включить 2FA»",
+                "profile-2fa-s3": "Отсканируйте QR-код на странице приложением-генератором, в приложении появится 6-значный динамический код",
+                "profile-2fa-s4": "Введите 6-значный код из приложения в поле подтверждения, нажмите «Подтвердить включение»",
+                "profile-2fa-s5": "Система отобразит резервные коды, сразу сделайте скриншот или запишите их для экстренного входа",
+                "warning": "Предупреждение: ", "profile-2fa-warn": "Резервные коды отображаются только один раз. Если вы потеряете резервные коды и не сможете использовать генератор, свяжитесь с администратором для сброса.",
+                "profile-passkey-title": "Вход без пароля через Passkey",
+                "profile-passkey-desc": "Passkey поддерживает вход с использованием отпечатка пальца, распознавания лица или аппаратного ключа безопасности без ввода пароля.",
+                "profile-passkey-reg": "Зарегистрировать Passkey",
+                "profile-passkey-s1": "Прокрутите вниз в настройках профиля, найдите раздел «Passkey»",
+                "profile-passkey-s2": "Нажмите кнопку «Зарегистрировать Passkey»",
+                "profile-passkey-s3": "Браузер отобразит системное окно подтверждения, выполните проверку по отпечатку пальца, лицу или ключу безопасности",
+                "profile-passkey-s4": "После подтверждения регистрация Passkey завершена, можно использовать при следующем входе",
+                "profile-oauth-title": "Привязка сторонних аккаунтов",
+                "profile-oauth-desc": "После привязки сторонних аккаунтов (GitHub, Discord и т.д.) можно входить напрямую через них без ввода пароля.",
+                "profile-oauth-bind": "Привязать сторонний аккаунт",
+                "profile-oauth-s1": "Прокрутите вниз в настройках профиля, найдите раздел «Привязка сторонних аккаунтов»",
+                "profile-oauth-s2": "Нажмите кнопку «Привязать» для нужной платформы",
+                "profile-oauth-s3": "Страница перенаправит на страницу авторизации платформы, войдите и нажмите «Авторизовать»",
+                "profile-oauth-s4": "После авторизации автоматически вернется назад, статус привязки станет «Привязано»",
+                "profile-models-title": "Доступные модели",
+                "profile-models-desc": "Просмотрите все модели, доступные для вашего аккаунта, удобно для копирования названий моделей для вызовов API.",
+                "profile-models-view": "Просмотр и копирование моделей",
+                "profile-models-s1": "Прокрутите вниз в настройках профиля, найдите раздел «Доступные модели»",
+                "profile-models-s2": "Список отображает все названия доступных моделей",
+                "profile-models-s3": "Нажмите на название модели для копирования в буфер обмена",
+                "profile-models-s4": "Введите ключевые слова в поисковое поле для быстрого фильтра моделей",
+                "profile-notify-title": "Настройки уведомлений",
+                "profile-notify-desc": "Настройте способ получения системных уведомлений, поддерживаются email и Webhook.",
+                "profile-notify-email": "Email-уведомления",
+                "profile-notify-e1": "Найдите раздел «Настройки уведомлений» в настройках профиля",
+                "profile-notify-e2": "Отметьте «Включить email-уведомления»",
+                "profile-notify-e3": "Выберите типы событий для уведомлений: предупреждение о низкой квоте, токен истекает, системные объявления",
+                "profile-notify-e4": "Нажмите «Сохранить» для завершения конфигурации",
+                "profile-notify-webhook": "Webhook-уведомления",
+                "profile-notify-w1": "Отметьте «Включить Webhook» в разделе настроек уведомлений",
+                "profile-notify-w2": "Заполните URL Webhook (адрес для приема уведомлений)",
+                "profile-notify-w3": "Выберите типы событий для отправки",
+                "profile-notify-w4": "Нажмите «Тест» для проверки работоспособности Webhook",
+                "profile-notify-w5": "Нажмите «Сохранить» для завершения конфигурации",
+                "profile-notify-webhook-desc": "Webhook отправляет данные в формате JSON, включая тип события, временную метку и детальную информацию.",
+                "profile-price-title": "Настройки цен", "profile-price-desc": "Управление разрешением на вызов моделей без установленной цены.",
+                "profile-price-config": "Настроить стратегию цен",
+                "profile-price-s1": "Найдите раздел «Настройки цен» в настройках профиля",
+                "profile-price-s2": "Выберите одну из стратегий: Отклонять неоплаченные модели (только вызов моделей с установленной ценой — рекомендуется) или Разрешить неоплаченные модели (можно вызывать все модели, неоплаченные модели тарифицируются по умолчанию)",
+                "profile-price-s3": "Нажмите «Сохранить»",
+                "profile-price-warn": "Разрешение неоплаченных моделей может привести к неожиданно высоким расходам, рекомендуется оставить по умолчанию «Отклонять неоплаченные модели»",
+                "profile-ip-title": "Настройки регистрации IP", "profile-ip-desc": "Управление регистрацией IP-адресов источников вызовов API в логах.",
+                "profile-ip-enable": "Включить регистрацию IP",
+                "profile-ip-s1": "Найдите раздел «IP-регистрация» в настройках профиля",
+                "profile-ip-s2": "Отметьте «Включить IP-регистрацию»",
+                "profile-ip-s3": "Нажмите «Сохранить»",
+                "profile-ip-s4": "После включения на странице истории использования можно увидеть IP-источник каждого вызова",
+                "profile-ip-benefit": "IP-регистрация помогает: мониторинг аномальных обращений, устранение проблем безопасности, анализ источников трафика",
+                "profile-security-title": "Безопасность", "profile-security-reset": "Сбросить API-ключ",
+                "profile-security-desc": "Если вы подозреваете утечку API-ключа, его можно сбросить.",
+                "profile-security-s1": "Найдите раздел «Безопасность» в настройках профиля",
+                "profile-security-s2": "Нажмите кнопку «Сбросить API-ключ»",
+                "profile-security-s3": "После подтверждения система генерирует новый ключ",
+                "profile-security-s4": "Старый ключ сразу становится недействительным, все токены с использованием старого ключа нужно заново создать",
+                "profile-security-warn": "После сброса API-ключа все существующие токены становятся недействительными и нужно заново создать",
+                "tokens-title": "Управление токенами", "tokens-subtitle": "Токены — это учетные данные для вызова API, каждый токен может независимо конфигурировать область разрешений и лимит квоты",
+                "tokens-intro": "Токены — это учетные данные для вызова API, каждый токен может независимо конфигурировать область разрешений и лимит квоты. Нажмите «Токены» в левом меню или перейдите по адресу /console/token. Список токенов отображает все созданные токены, включая имя, статус, использованную квоту, оставшуюся квоту, срок истечения и т.д.",
+                "tokens-create-title": "Создать токен", "tokens-create-basic": "Базовая конфигурация",
+                "tokens-create-s1": "Нажмите кнопку «Создать токен» в правом верхнем углу страницы списка токенов, откроется всплывающее окно",
+                "tokens-create-s2": "Заполните имя токена (рекомендуется называть по назначению, например «Производство», «Тестирование»)",
+                "tokens-create-adv": "Расширенные параметры",
+                "th-config": "Параметр", "th-desc": "Описание",
+                "tokens-expire": "Срок истечения", "tokens-expire-d": "Установите срок действия, оставьте пустым или установите -1 для бесконечного срока",
+                "tokens-quota": "Оставшаяся квота", "tokens-quota-d": "Ограничьте максимальную квоту, которую может израсходовать этот токен",
+                "tokens-unlimited": "Бесконечная квота", "tokens-unlimited-d": "При включении не ограничивается квотой (все еще ограничено общей квотой аккаунта)",
+                "tokens-model": "Ограничение модели", "tokens-model-d": "Ограничьте вызов только указанными моделями, оставьте пустым для отсутствия ограничений",
+                "tokens-ip": "Белый список IP", "tokens-ip-d": "Ограничьте IP-источники, которые могут использовать этот токен",
+                "tokens-group": "Группа", "tokens-group-d": "Укажите группу каналов для этого токена",
+                "tokens-save-key": "Сохранить ключ токена",
+                "tokens-save-desc": "Нажмите «Отправить», всплывающее окно отображает полный ключ токена, скопируйте и сохраните немедленно",
+                "warning2": "Предупреждение: ", "tokens-warn": "Ключ токена отображается только при создании, скопируйте и сохраните немедленно. Ключ токена имеет полные права доступа к API, не раскрывайте его и не коммитьте в репозиторий.",
+                "tokens-edit-title": "Редактировать токен", "tokens-edit-desc": "Найдите целевой токен в списке, нажмите кнопку «Редактировать» справа, чтобы изменить параметры токена (кроме ключа)",
+                "tokens-del-title": "Удалить токен", "tokens-del-desc": "Найдите целевой токен в списке, нажмите кнопку «Удалить» справа, подтвердите удаление, токен немедленно становится недействительным",
+                "api-title": "Использование API", "api-subtitle": "Замените base_url OpenAI адресом платформы, используйте токен в качестве api_key и начните вызывать",
+                "api-intro": "Замените <code>base_url</code> OpenAI адресом платформы, используйте токен в качестве <code>api_key</code> и начните вызывать.",
+                "api-playground-title": "Тестирование в Плейграунде",
+                "api-playground-desc": "Плейграунд — это встроенный инструмент для онлайн-тестирования, позволяющий напрямую общаться с моделями без написания кода.",
+                "api-playground-access": "Доступ к Плейграунду", "api-playground-access-d": "Нажмите «Плейграунд» в левом меню или перейдите по адресу /console/playground",
+                "api-playground-use": "Использование Плейграунда",
+                "api-playground-s1": "Слева выберите модель для тестирования",
+                "api-playground-s2": "Введите сообщение в поле ввода внизу, нажмите отправить",
+                "api-playground-s3": "Ответ модели отображается в области чата справа",
+                "api-url-title": "Получить адрес API", "api-url-copy": "Скопировать адрес API",
+                "api-url-s1": "Перейдите на домашнюю страницу платформы",
+                "api-url-s2": "Найдите область отображения API Base URL в центре страницы",
+                "api-url-s3": "Нажмите кнопку копирования, чтобы скопировать адрес в буфер обмена",
+                "api-url-config": "Настроить клиент",
+                "api-url-config-d": "Вставьте скопированный адрес как <code>base_url</code> в клиент или код, используйте токен для вызова.",
+                "api-code-title": "Примеры кода", "api-code-py": "Python (OpenAI SDK)",
+                "api-code-claude": "Нативный формат Claude", "api-code-gemini": "Нативный формат Gemini",
+                "api-endpoints-title": "Поддерживаемые эндпоинты", "th-api": "Эндпоинт", "th-api-desc": "Описание",
+                "api-chat": "Чат-комплит", "api-chat-d": "Генерация диалога, поддерживает потоковое выполнение",
+                "api-text": "Текст-комплит", "api-text-d": "Традиционный эндпоинт для дополнения",
+                "api-embed": "Встраивание", "api-embed-d": "Векторизация текста",
+                "api-image": "Генерация изображений", "api-image-d": "Текст в изображение",
+                "api-image-edit": "Редактирование изображений", "api-image-edit-d": "Редактирование изображений",
+                "api-stt": "Речь в текст", "api-stt-d": "Whisper и другие",
+                "api-tts": "Текст в речь", "api-tts-d": "TTS",
+                "api-rerank": "Переранжирование", "api-rerank-d": "Переранжирование документов",
+                "api-models": "Список моделей", "api-models-d": "Запрос доступных моделей",
+                "chat-title": "Интеграция с чат-приложениями", "chat-subtitle": "91Token поддерживает быструю импорт конфигурации в несколько AI-чат приложений",
+                "chat-intro": "91Token поддерживает быструю импорт конфигурации в несколько AI-чат приложений.",
+                "chat-import-title": "Однократный импорт конфигурации",
+                "chat-import-desc": "В консоли → странице токенов можно одним кликом импортировать конфигурацию в поддерживаемые чат-приложения.",
+                "chat-import-how": "Использование",
+                "chat-import-s1": "Найдите токен для использования в списке токенов",
+                "chat-import-s2": "Нажмите кнопку «Импорт» или «Настроить» справа от токена",
+                "chat-import-s3": "Выберите целевое чат-приложение",
+                "chat-import-s4": "Система автоматически перенаправляет в приложение и заполняет конфигурацию",
+                "chat-lobe-title": "Lobe Chat",
+                "chat-lobe-desc": "Lobe Chat — это открытое приложение для многоуровневых диалогов, поддерживающее несколько больших языковых моделей и плагины.",
+                "chat-lobe-cfg": "Шаги конфигурации",
+                "chat-lobe-s1": "Откройте приложение Lobe Chat",
+                "chat-lobe-s2": "Перейдите в настройки, найдите раздел «Языковая модель»",
+                "chat-lobe-s3": "Заполните адрес API и API Key",
+                "chat-lobe-s4": "Нажмите «Сохранить» для завершения конфигурации",
+                "chat-lobe-s5": "Все доступные модели 91Token появятся в списке моделей",
+                "chat-ws-title": "AI as Workspace",
+                "chat-ws-desc": "AI as Workspace — это инновационный способ интеграции AI в рабочее пространство. Благодаря глубокой интеграции AI-помощников с повседневными задачами, пользователи могут эффективнее обрабатывать информацию.",
+                "chat-ws-import": "Поддерживает однокlickный импорт из 91Token",
+                "chat-ama-title": "AMA Assistant",
+                "chat-ama-desc": "AMA — это интеллектуальный помощник 91Token, поддерживающий многоразовые диалоги и сложные вопросы.",
+                "chat-ama-req": "Требуется установить приложение AMA",
+                "chat-opencat-title": "OpenCat",
+                "chat-opencat-desc": "OpenCat — это открытое многоплатформенное приложение для чата с AI, поддерживающее несколько языковых моделей.",
+                "chat-opencat-req": "Требуется установить приложение OpenCat",
+                "chat-manual-title": "Ручная конфигурация других приложений",
+                "chat-manual-desc": "Для приложений, не поддерживающих однокlickный импорт, можно настроить вручную:",
+                "th-config2": "Параметр", "th-desc2": "Описание", "th-loc": "Местоположение",
+                "chat-cfg-url-d": "Адрес API", "chat-cfg-url-l": "Домашняя страница или страница токенов",
+                "chat-cfg-key-d": "Ключ токена", "chat-cfg-key-l": "Отображается при создании токена (только один раз)",
+                "chat-cfg-models": "Доступные модели", "chat-cfg-models-d": "Список поддерживаемых моделей",
+                "chat-cfg-models-l": "Профиль → Доступные модели или страница цен",
+                "price-title": "Цены", "price-subtitle": "Ознакомьтесь с методами биллинга и ценами на модели",
+                "price-view-title": "Просмотр цен", "price-view-access": "Доступ к странице цен",
+                "price-view-p": "Нажмите «Цены» в левом меню или перейдите по адресу /pricing",
+                "price-view-browse": "Обзор цен на модели",
+                "price-view-browse-d": "Страница перечисляет все доступные модели, каждая строка показывает имя модели, цену за вход и выход",
+                "price-view-search": "Поиск моделей",
+                "price-view-search-d": "Введите ключевые слова в поисковое поле вверху страницы, чтобы быстро найти цену конкретной модели",
+                "price-rules-title": "Описание цен", "price-billing-title": "Правила биллинга",
+                "price-billing-in": "Цена за вход: квота за 1K входных токенов",
+                "price-billing-out": "Цена за выход: квота за 1K выходных токенов",
+                "price-billing-calc": "Фактическое потребление = количество токенов ÷ 1000 × соответствующая цена",
+                "price-group-title": "Различия между группами",
+                "price-group-desc": "Пользователи в разных группах могут иметь разные тарифные коэффициенты, точные суммы указаны при списании",
+                "usage-title": "История использования", "usage-subtitle": "Просмотр детальной информации о каждом вызове API",
+                "usage-intro": "Просмотр детальной информации о каждом вызове API, поддерживает фильтрацию по времени, модели, токену и т.д. Нажмите «Логи» в левом меню или перейдите по адресу /console/log.",
+                "usage-filter-title": "Поиск и фильтрация", "usage-filter-set": "Установить фильтры",
+                "usage-filter-s1": "Нажмите кнопку «Фильтр» вверху страницы логов, чтобы развернуть секцию фильтров",
+                "usage-filter-s2": "Можно установить следующие фильтры: временной диапазон, модель, имя токена",
+                "usage-filter-result": "Просмотр результатов фильтрации",
+                "usage-filter-result-d": "После установки нажмите «Запрос», список автоматически обновится",
+                "usage-stats-title": "Статистика", "usage-stats-access": "Доступ к дашборду",
+                "usage-stats-access-d": "Нажмите «Дашборд» в левом меню или перейдите по адресу /console",
+                "usage-stats-view": "Просмотр статистики",
+                "usage-stats-view-d": "Дашборд отображает дневной объем вызовов API и динамику потребления квоты.",
+                "quota-title": "Квота и пополнение", "quota-subtitle": "Квота — это внутренняя единица биллинга",
+                "quota-intro": "Квота — это внутренняя единица биллинга, потребление = фактическое количество токенов × множитель модели. Нажмите «Кошелек» в левом меню или перейдите по адресу /console/topup.",
+                "quota-methods-title": "Способы пополнения", "th-method": "Способ пополнения", "th-desc3": "Описание",
+                "quota-redeem": "Промокод", "quota-redeem-d": "Введите промокод, чтобы увеличить квоту",
+                "quota-epay-d": "Китайские платежные системы (Alipay, WeChat и т.д.)",
+                "quota-stripe-d": "Международные кредитные карты",
+                "quota-creem-d": "Международные платежные платформы",
+                "quota-online-title": "Пополнение онлайн", "quota-online-amount": "Выберите сумму",
+                "quota-online-amount-d": "Выберите сумму пополнения или введите пользовательскую сумму",
+                "quota-online-pay": "Завершить платеж",
+                "quota-online-s1": "Выберите способ оплаты (СБП / МИР)",
+                "quota-online-s2": "Нажмите «Пополнить», страница перенаправит на платежную систему",
+                "quota-online-s3": "После завершения платежа автоматически вернется на платформу, баланс обновится",
+                "quota-code-title": "Пополнение промокодом", "quota-code-input": "Ввести промокод",
+                "quota-code-s1": "Найдите секцию ввода промокода на странице пополнения",
+                "quota-code-s2": "Вставьте или введите промокод в поле ввода",
+                "quota-code-redeem": "Завершить активацию",
+                "quota-code-s3": "Нажмите «Активировать», система проверяет валидность промокода",
+                "quota-code-s4": "После успешной активации отображается полученная квота",
+                "quota-invite-title": "Реферальные вознаграждения",
+                "quota-invite-intro": "Каждый аккаунт имеет уникальный реферальный код. При приглашении других пользователей вы получаете вознаграждение.",
+                "quota-invite-get": "Получить реферальный код",
+                "quota-invite-get-d": "Найдите раздел «Приглашения» на странице пополнения или в настройках профиля",
+                "quota-invite-use": "Использовать реферальные вознаграждения",
+                "quota-invite-s1": "Поделитесь реферальным кодом с другими, они вводят его при регистрации",
+                "quota-invite-s2": "После расходов приглашенного пользователя ваш баланс реферальных вознаграждений автоматически увеличивается",
+                "quota-invite-s3": "Нажмите «Перевести на баланс», чтобы перевести реферальные вознаграждения на основной баланс",
+                "sub-title": "Подписки", "sub-subtitle": "Выберите подходящий план подписки",
+                "th-plan": "План", "th-features": "Функции", "th-scene": "Подходит для",
+                "sub-free": "Бесплатный", "sub-free-f": "Базовый доступ API, ограниченная квота",
+                "sub-free-s": "Личные пользователи, тестирование",
+                "sub-pro": "Профессиональный", "sub-pro-f": "Большая квота, приоритетная поддержка",
+                "sub-pro-s": "Профессиональные разработчики, небольшие команды",
+                "sub-ent": "Корпоративный", "sub-ent-f": "Бесконечная квота, персональная поддержка",
+                "sub-ent-s": "Крупные компании, массовые пользователи",
+                "sub-benefits-title": "Преимущества подписки",
+                "sub-b1": "Ниже цены за вызовы API",
+                "sub-b2": "Больший лимит квоты",
+                "sub-b3": "Приоритетный доступ к новым функциям",
+                "sub-b4": "Приоритетная поддержка",
+                "task-title": "Управление задачами", "task-subtitle": "Управление асинхронными задачами",
+                "task-async-title": "Асинхронные задачи",
+                "task-async-desc": "Для запросов, требующих длительной обработки, используется система асинхронных задач.",
+                "task-status-title": "Статусы задач", "th-status": "Статус", "th-desc4": "Описание",
+                "task-pending": "В ожидании", "task-running": "Выполняется",
+                "task-completed": "Завершена", "task-failed": "Не удалась",
+                "task-query-title": "Запрос задачи",
+                "task-query-desc": "Запрос статуса и результатов задачи по ID:"
+            }
+        };
+
+        let currentLang = 'ru';
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+            
+            document.querySelectorAll('[id]').forEach(element => {
+                const id = element.id;
+                if (translations[lang] && translations[lang][id]) {
+                    element.textContent = translations[lang][id];
+                }
+            });
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        changeLanguage(currentLang);
+    </script>
+</body>
+</html>

@@ -78,6 +78,11 @@ interface RechargeFormCardProps {
   waffoMinTopup?: number
   onWaffoMethodSelect?: (method: WaffoPayMethod, index: number) => void
   enableWaffoPancakeTopup?: boolean
+  enableSilkroadTopup?: boolean
+  onSilkroadMethodSelect?: () => void
+  enableUsdtTopup?: boolean
+  onUsdtMethodSelect?: () => void
+  usdtMinTopup?: number
 }
 
 export function RechargeFormCard({
@@ -108,6 +113,11 @@ export function RechargeFormCard({
   waffoMinTopup,
   onWaffoMethodSelect,
   enableWaffoPancakeTopup,
+  enableSilkroadTopup,
+  onSilkroadMethodSelect,
+  enableUsdtTopup,
+  onUsdtMethodSelect,
+  usdtMinTopup,
 }: RechargeFormCardProps) {
   const { t } = useTranslation()
   const [localAmount, setLocalAmount] = useState(topupAmount.toString())
@@ -128,7 +138,9 @@ export function RechargeFormCard({
     topupInfo?.enable_online_topup ||
     topupInfo?.enable_stripe_topup ||
     enableWaffoTopup ||
-    enableWaffoPancakeTopup
+    enableWaffoPancakeTopup ||
+    enableSilkroadTopup ||
+    enableUsdtTopup
   const hasAnyTopup = hasConfigurableTopup || enableCreemTopup
   const hasStandardPaymentMethods =
     Array.isArray(topupInfo?.pay_methods) && topupInfo.pay_methods.length > 0
@@ -420,6 +432,67 @@ export function RechargeFormCard({
                     </div>
                   </div>
                 )}
+
+              {enableSilkroadTopup && onSilkroadMethodSelect && (
+                <div className='space-y-2.5 sm:space-y-3'>
+                  <Label className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
+                    {t('Gwiff Pay')}
+                  </Label>
+                  <Button
+                    variant='outline'
+                    onClick={onSilkroadMethodSelect}
+                    disabled={!!paymentLoading}
+                    className='h-9 min-w-0 justify-start gap-2 rounded-lg px-3'
+                  >
+                    {paymentLoading === 'silkroad' ? (
+                      <Loader2 className='h-4 w-4 animate-spin' />
+                    ) : (
+                      getPaymentIcon('silkroad')
+                    )}
+                    <span className='truncate'>{t('Gwiff Pay')}</span>
+                  </Button>
+                </div>
+              )}
+
+              {enableUsdtTopup && onUsdtMethodSelect && (
+                <div className='space-y-2.5 sm:space-y-3'>
+                  <Label className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
+                    USDT
+                  </Label>
+                  {(() => {
+                    const usdtDisabled = (usdtMinTopup || 1) > topupAmount
+                    const button = (
+                      <Button
+                        variant='outline'
+                        onClick={onUsdtMethodSelect}
+                        disabled={usdtDisabled || !!paymentLoading}
+                        className='h-9 min-w-0 justify-start gap-2 rounded-lg px-3'
+                      >
+                        {paymentLoading === 'usdt' ? (
+                          <Loader2 className='h-4 w-4 animate-spin' />
+                        ) : (
+                          getPaymentIcon('usdt')
+                        )}
+                        <span className='truncate'>USDT</span>
+                      </Button>
+                    )
+                    return usdtDisabled ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger render={button}></TooltipTrigger>
+                          <TooltipContent>
+                            {t('Minimum topup amount: {{amount}}', {
+                              amount: usdtMinTopup || 1,
+                            })}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      button
+                    )
+                  })()}
+                </div>
+              )}
             </>
           )}
         </div>

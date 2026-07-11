@@ -14,6 +14,8 @@ const SilkroadPaymentModal = ({ t, visible, onClose, amount, currency }) => {
     { name: 'SBP', type: 'sbp', icon: '/custom/sbp.png' },
   ];
   const pollingRef = useRef(null);
+  const pollingCountRef = useRef(0);
+  const MAX_POLLING_ATTEMPTS = 100; // 3s * 100 = 5 minutes
 
   useEffect(() => {
     if (visible) {
@@ -26,11 +28,17 @@ const SilkroadPaymentModal = ({ t, visible, onClose, amount, currency }) => {
     }
   }, [visible]);
 
+  // cleanup on unmount
+  useEffect(() => {
+    return () => cleanup();
+  }, []);
+
   const cleanup = useCallback(() => {
     if (pollingRef.current) {
       clearInterval(pollingRef.current);
       pollingRef.current = null;
     }
+    pollingCountRef.current = 0;
   }, []);
 
   const createOrder = async (method) => {
@@ -68,8 +76,15 @@ const SilkroadPaymentModal = ({ t, visible, onClose, amount, currency }) => {
     if (pollingRef.current) {
       clearInterval(pollingRef.current);
     }
+    pollingCountRef.current = 0;
     pollingRef.current = setInterval(async () => {
       try {
+        pollingCountRef.current++;
+        if (pollingCountRef.current > MAX_POLLING_ATTEMPTS) {
+          cleanup();
+          showError(t('支付超时，请稍后查询订单状态'));
+          return;
+        }
         const res = await API.get(`/api/user/silkroad/query`, {
           params: { trade_no: tradeNo },
         });

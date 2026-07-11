@@ -12,6 +12,7 @@ import (
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/service"
 	"github.com/QuantumNous/new-api/setting/system_setting"
 
 	"github.com/gin-contrib/sessions"
@@ -150,6 +151,9 @@ func DiscordOAuth(c *gin.Context) {
 				user.DisplayName = discordUser.Name
 			} else {
 				user.DisplayName = "Discord User"
+			}
+			if defaultGroup := service.GetDomainDefaultUserGroup(service.ExtractDomainHost(c)); defaultGroup != "" {
+				user.Group = defaultGroup
 			}
 			err := user.Insert(0)
 			if err != nil {

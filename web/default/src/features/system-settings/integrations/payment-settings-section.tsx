@@ -78,6 +78,15 @@ import {
   type WaffoSettingsValues,
 } from './waffo-settings-section'
 import {
+  SilkroadSettingsSection,
+  type SilkroadSettingsValues,
+} from './silkroad-settings-section'
+import {
+  type UsdtWallet,
+  UsdtSettingsSection,
+  type UsdtSettingsValues,
+} from './usdt-settings-section'
+import {
   WepaySettingsSection,
   type WepaySettingsValues,
 } from './wepay-settings-section'
@@ -163,13 +172,37 @@ const paymentSchema = z.object({
   WaffoPancakeMerchantID: z.string(),
   WaffoPancakePrivateKey: z.string(),
   WaffoPancakeReturnURL: z.string(),
+  pay_silkroad_enable: z.boolean(),
+  pay_silkroad_sandbox: z.boolean(),
+  pay_silkroad_mch_id: z.string(),
+  pay_silkroad_app_id: z.string(),
+  pay_silkroad_gateway_url: z.string(),
+  pay_silkroad_sandbox_url: z.string(),
+  pay_silkroad_notify_url: z.string(),
+  pay_silkroad_private_key: z.string(),
+  pay_silkroad_platform_public_key: z.string(),
+  pay_silkroad_payment_method: z.string(),
+  pay_silkroad_category: z.coerce.number().min(1).max(2),
+  pay_silkroad_currency: z.string(),
+  pay_silkroad_serial_no: z.string(),
+  UsdtEnabled: z.boolean(),
+  UsdtMinTopUp: z.coerce.number().min(1),
+  TronGridApiKey: z.string(),
+  EtherscanApiKey: z.string(),
 })
 
 type PaymentFormValues = z.infer<typeof paymentSchema>
 type WaffoFormFieldValues = Omit<WaffoSettingsValues, 'WaffoPayMethods'>
+type SilkroadFormFieldValues = Omit<
+  SilkroadSettingsValues,
+  'pay_silkroad_payment_method' | 'pay_silkroad_category'
+>
 type PaymentBaseFormValues = Omit<
   PaymentFormValues,
-  keyof WaffoFormFieldValues | keyof WaffoPancakeSettingsValues
+  | keyof WaffoFormFieldValues
+  | keyof WaffoPancakeSettingsValues
+  | keyof SilkroadFormFieldValues
+  | keyof UsdtSettingsValues
 >
 
 const CURRENT_COMPLIANCE_TERMS_VERSION = 'v1'
@@ -186,6 +219,9 @@ type PaymentSettingsSectionProps = {
   waffoDefaultValues: WaffoSettingsValues
   waffoPancakeDefaultValues: WaffoPancakeSettingsValues
   wepayDefaultValues: WepaySettingsValues
+  silkroadDefaultValues: SilkroadSettingsValues
+  usdtDefaultValues: UsdtSettingsValues
+  usdtDefaultWallets: UsdtWallet[]
   waffoPancakeProvisionedStoreID?: string
   waffoPancakeProvisionedProductID?: string
   complianceDefaults: PaymentComplianceDefaults
@@ -205,6 +241,9 @@ export function PaymentSettingsSection({
   waffoDefaultValues,
   waffoPancakeDefaultValues,
   wepayDefaultValues,
+  silkroadDefaultValues,
+  usdtDefaultValues,
+  usdtDefaultWallets,
   waffoPancakeProvisionedStoreID,
   waffoPancakeProvisionedProductID,
   complianceDefaults,
@@ -217,8 +256,10 @@ export function PaymentSettingsSection({
       ...defaultValues,
       ...waffoDefaultValues,
       ...waffoPancakeDefaultValues,
+      ...silkroadDefaultValues,
+      ...usdtDefaultValues,
     }),
-    [defaultValues, waffoDefaultValues, waffoPancakeDefaultValues]
+    [defaultValues, waffoDefaultValues, waffoPancakeDefaultValues, silkroadDefaultValues, usdtDefaultValues]
   )
   const initialRef = React.useRef(initialFormValues)
   const defaultsSignature = React.useMemo(
@@ -237,6 +278,8 @@ export function PaymentSettingsSection({
   const [waffoPayMethods, setWaffoPayMethods] = React.useState<PayMethod[]>(
     () => parseWaffoPayMethods(waffoDefaultValues.WaffoPayMethods)
   )
+  const [usdtWallets, setUsdtWallets] =
+    React.useState<UsdtWallet[]>(usdtDefaultWallets)
   const [waffoPancakeSelection, setWaffoPancakeSelection] =
     React.useState<WaffoPancakeBinding>({
       storeID: waffoPancakeProvisionedStoreID ?? '',
@@ -392,6 +435,32 @@ export function PaymentSettingsSection({
     [setPaymentValue]
   )
 
+  const setSilkroadValue = React.useCallback(
+    <K extends keyof SilkroadFormFieldValues>(
+      key: K,
+      value: SilkroadFormFieldValues[K]
+    ) => {
+      setPaymentValue(
+        key as keyof PaymentFormValues,
+        value as PaymentFormValues[keyof PaymentFormValues]
+      )
+    },
+    [setPaymentValue]
+  )
+
+  const setUsdtValue = React.useCallback(
+    <K extends keyof UsdtSettingsValues>(
+      key: K,
+      value: UsdtSettingsValues[K]
+    ) => {
+      setPaymentValue(
+        key as keyof PaymentFormValues,
+        value as PaymentFormValues[keyof PaymentFormValues]
+      )
+    },
+    [setPaymentValue]
+  )
+
   React.useEffect(() => {
     const parsedDefaults = JSON.parse(defaultsSignature) as PaymentFormValues
     initialRef.current = parsedDefaults
@@ -445,6 +514,31 @@ export function PaymentSettingsSection({
       WaffoPancakeReturnURL: removeTrailingSlash(
         values.WaffoPancakeReturnURL.trim()
       ),
+      pay_silkroad_enable: values.pay_silkroad_enable,
+      pay_silkroad_sandbox: values.pay_silkroad_sandbox,
+      pay_silkroad_mch_id: values.pay_silkroad_mch_id.trim(),
+      pay_silkroad_app_id: values.pay_silkroad_app_id.trim(),
+      pay_silkroad_gateway_url: removeTrailingSlash(
+        values.pay_silkroad_gateway_url
+      ),
+      pay_silkroad_sandbox_url: removeTrailingSlash(
+        values.pay_silkroad_sandbox_url
+      ),
+      pay_silkroad_notify_url: removeTrailingSlash(
+        values.pay_silkroad_notify_url
+      ),
+      pay_silkroad_private_key: values.pay_silkroad_private_key.trim(),
+      pay_silkroad_platform_public_key:
+        values.pay_silkroad_platform_public_key.trim(),
+      pay_silkroad_payment_method: values.pay_silkroad_payment_method,
+      pay_silkroad_category: values.pay_silkroad_category,
+      pay_silkroad_currency: values.pay_silkroad_currency.trim() || 'RUB',
+      pay_silkroad_serial_no: values.pay_silkroad_serial_no.trim(),
+      UsdtEnabled: values.UsdtEnabled,
+      UsdtMinTopUp: values.UsdtMinTopUp,
+      TronGridApiKey: values.TronGridApiKey.trim(),
+      EtherscanApiKey: values.EtherscanApiKey.trim(),
+      UsdtWallets: JSON.stringify(usdtWallets),
     }
 
     const initial = {
@@ -492,6 +586,35 @@ export function PaymentSettingsSection({
       WaffoPancakeReturnURL: removeTrailingSlash(
         initialRef.current.WaffoPancakeReturnURL.trim()
       ),
+      pay_silkroad_enable: initialRef.current.pay_silkroad_enable,
+      pay_silkroad_sandbox: initialRef.current.pay_silkroad_sandbox,
+      pay_silkroad_mch_id: initialRef.current.pay_silkroad_mch_id.trim(),
+      pay_silkroad_app_id: initialRef.current.pay_silkroad_app_id.trim(),
+      pay_silkroad_gateway_url: removeTrailingSlash(
+        initialRef.current.pay_silkroad_gateway_url
+      ),
+      pay_silkroad_sandbox_url: removeTrailingSlash(
+        initialRef.current.pay_silkroad_sandbox_url
+      ),
+      pay_silkroad_notify_url: removeTrailingSlash(
+        initialRef.current.pay_silkroad_notify_url
+      ),
+      pay_silkroad_private_key:
+        initialRef.current.pay_silkroad_private_key.trim(),
+      pay_silkroad_platform_public_key:
+        initialRef.current.pay_silkroad_platform_public_key.trim(),
+      pay_silkroad_payment_method:
+        initialRef.current.pay_silkroad_payment_method,
+      pay_silkroad_category: initialRef.current.pay_silkroad_category,
+      pay_silkroad_currency:
+        initialRef.current.pay_silkroad_currency.trim() || 'RUB',
+      pay_silkroad_serial_no:
+        initialRef.current.pay_silkroad_serial_no.trim(),
+      UsdtEnabled: initialRef.current.UsdtEnabled,
+      UsdtMinTopUp: initialRef.current.UsdtMinTopUp,
+      TronGridApiKey: initialRef.current.TronGridApiKey.trim(),
+      EtherscanApiKey: initialRef.current.EtherscanApiKey.trim(),
+      UsdtWallets: JSON.stringify(usdtDefaultWallets),
     }
 
     const updates: Array<{ key: string; value: string | number | boolean }> = []
@@ -689,6 +812,141 @@ export function PaymentSettingsSection({
       updates.push({ key: 'WaffoPayMethods', value: sanitized.WaffoPayMethods })
     }
 
+    // Silkroad (Gwiff Pay) options
+    if (sanitized.pay_silkroad_enable !== initial.pay_silkroad_enable) {
+      updates.push({
+        key: 'pay_silkroad_enable',
+        value: sanitized.pay_silkroad_enable ? 'true' : 'false',
+      })
+    }
+    if (sanitized.pay_silkroad_sandbox !== initial.pay_silkroad_sandbox) {
+      updates.push({
+        key: 'pay_silkroad_sandbox',
+        value: sanitized.pay_silkroad_sandbox ? 'true' : 'false',
+      })
+    }
+    if (sanitized.pay_silkroad_mch_id !== initial.pay_silkroad_mch_id) {
+      updates.push({
+        key: 'pay_silkroad_mch_id',
+        value: sanitized.pay_silkroad_mch_id,
+      })
+    }
+    if (sanitized.pay_silkroad_app_id !== initial.pay_silkroad_app_id) {
+      updates.push({
+        key: 'pay_silkroad_app_id',
+        value: sanitized.pay_silkroad_app_id,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_gateway_url !== initial.pay_silkroad_gateway_url
+    ) {
+      updates.push({
+        key: 'pay_silkroad_gateway_url',
+        value: sanitized.pay_silkroad_gateway_url,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_sandbox_url !== initial.pay_silkroad_sandbox_url
+    ) {
+      updates.push({
+        key: 'pay_silkroad_sandbox_url',
+        value: sanitized.pay_silkroad_sandbox_url,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_notify_url !== initial.pay_silkroad_notify_url
+    ) {
+      updates.push({
+        key: 'pay_silkroad_notify_url',
+        value: sanitized.pay_silkroad_notify_url,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_private_key &&
+      sanitized.pay_silkroad_private_key !== initial.pay_silkroad_private_key
+    ) {
+      updates.push({
+        key: 'pay_silkroad_private_key',
+        value: sanitized.pay_silkroad_private_key,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_platform_public_key !==
+      initial.pay_silkroad_platform_public_key
+    ) {
+      updates.push({
+        key: 'pay_silkroad_platform_public_key',
+        value: sanitized.pay_silkroad_platform_public_key,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_payment_method !==
+      initial.pay_silkroad_payment_method
+    ) {
+      updates.push({
+        key: 'pay_silkroad_payment_method',
+        value: sanitized.pay_silkroad_payment_method,
+      })
+    }
+    if (sanitized.pay_silkroad_category !== initial.pay_silkroad_category) {
+      updates.push({
+        key: 'pay_silkroad_category',
+        value: String(sanitized.pay_silkroad_category),
+      })
+    }
+    if (sanitized.pay_silkroad_currency !== initial.pay_silkroad_currency) {
+      updates.push({
+        key: 'pay_silkroad_currency',
+        value: sanitized.pay_silkroad_currency,
+      })
+    }
+    if (
+      sanitized.pay_silkroad_serial_no !== initial.pay_silkroad_serial_no
+    ) {
+      updates.push({
+        key: 'pay_silkroad_serial_no',
+        value: sanitized.pay_silkroad_serial_no,
+      })
+    }
+
+    // USDT options
+    if (sanitized.UsdtEnabled !== initial.UsdtEnabled) {
+      updates.push({
+        key: 'UsdtEnabled',
+        value: sanitized.UsdtEnabled ? 'true' : 'false',
+      })
+    }
+    if (sanitized.UsdtMinTopUp !== initial.UsdtMinTopUp) {
+      updates.push({
+        key: 'UsdtMinTopUp',
+        value: String(sanitized.UsdtMinTopUp),
+      })
+    }
+    if (
+      sanitized.TronGridApiKey &&
+      sanitized.TronGridApiKey !== initial.TronGridApiKey
+    ) {
+      updates.push({
+        key: 'TronGridApiKey',
+        value: sanitized.TronGridApiKey,
+      })
+    }
+    if (
+      sanitized.EtherscanApiKey &&
+      sanitized.EtherscanApiKey !== initial.EtherscanApiKey
+    ) {
+      updates.push({
+        key: 'EtherscanApiKey',
+        value: sanitized.EtherscanApiKey,
+      })
+    }
+    if (
+      normalizeJsonForComparison(sanitized.UsdtWallets) !==
+      normalizeJsonForComparison(initial.UsdtWallets)
+    ) {
+      updates.push({ key: 'UsdtWallets', value: sanitized.UsdtWallets })
+    }
+
     const hasWaffoPancakeChanges =
       sanitized.WaffoPancakeMerchantID !== initial.WaffoPancakeMerchantID ||
       sanitized.WaffoPancakePrivateKey.length > 0 ||
@@ -782,6 +1040,29 @@ export function PaymentSettingsSection({
     WaffoPancakeMerchantID: currentFormValues.WaffoPancakeMerchantID,
     WaffoPancakePrivateKey: currentFormValues.WaffoPancakePrivateKey,
     WaffoPancakeReturnURL: currentFormValues.WaffoPancakeReturnURL,
+  }
+  const silkroadValues: SilkroadSettingsValues = {
+    pay_silkroad_enable: currentFormValues.pay_silkroad_enable,
+    pay_silkroad_sandbox: currentFormValues.pay_silkroad_sandbox,
+    pay_silkroad_mch_id: currentFormValues.pay_silkroad_mch_id,
+    pay_silkroad_app_id: currentFormValues.pay_silkroad_app_id,
+    pay_silkroad_gateway_url: currentFormValues.pay_silkroad_gateway_url,
+    pay_silkroad_sandbox_url: currentFormValues.pay_silkroad_sandbox_url,
+    pay_silkroad_notify_url: currentFormValues.pay_silkroad_notify_url,
+    pay_silkroad_private_key: currentFormValues.pay_silkroad_private_key,
+    pay_silkroad_platform_public_key:
+      currentFormValues.pay_silkroad_platform_public_key,
+    pay_silkroad_payment_method:
+      currentFormValues.pay_silkroad_payment_method,
+    pay_silkroad_category: currentFormValues.pay_silkroad_category,
+    pay_silkroad_currency: currentFormValues.pay_silkroad_currency,
+    pay_silkroad_serial_no: currentFormValues.pay_silkroad_serial_no,
+  }
+  const usdtValues: UsdtSettingsValues = {
+    UsdtEnabled: currentFormValues.UsdtEnabled,
+    UsdtMinTopUp: currentFormValues.UsdtMinTopUp,
+    TronGridApiKey: currentFormValues.TronGridApiKey,
+    EtherscanApiKey: currentFormValues.EtherscanApiKey,
   }
 
   return (
@@ -1517,6 +1798,28 @@ export function PaymentSettingsSection({
               )}
             />
           </div>
+
+          <Separator />
+
+          <SilkroadSettingsSection
+            values={silkroadValues}
+            onValueChange={setSilkroadValue}
+            onPaymentMethodChange={(val) =>
+              setPaymentValue('pay_silkroad_payment_method', val)
+            }
+            onCategoryChange={(val) =>
+              setPaymentValue('pay_silkroad_category', val)
+            }
+          />
+
+          <Separator />
+
+          <UsdtSettingsSection
+            values={usdtValues}
+            onValueChange={setUsdtValue}
+            wallets={usdtWallets}
+            onWalletsChange={setUsdtWallets}
+          />
 
           <Separator />
 

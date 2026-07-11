@@ -56,6 +56,14 @@ func GetPricing(c *gin.Context) {
 	}
 
 	usableGroup = service.GetUserUsableGroups(group)
+	// 域名级"可用资源组"白名单收窄
+	if domainSet, configured := service.GetDomainUsableGroupSet(service.ExtractDomainHost(c)); configured {
+		for groupName := range usableGroup {
+			if _, ok := domainSet[groupName]; !ok {
+				delete(usableGroup, groupName)
+			}
+		}
+	}
 	pricing = filterPricingByUsableGroups(pricing, usableGroup)
 	// check groupRatio contains usableGroup
 	for group := range ratio_setting.GetGroupRatioCopy() {

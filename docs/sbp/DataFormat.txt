@@ -1,0 +1,80 @@
+# Data Format
+
+Uses HTTPS POST protocol. To ensure the recipient receives the correct data, all data must be signed
+```
+<xml>
+<auth_code><![CDATA[xxxxxxxxxxxxxxx]]></auth_code>
+<body><![CDATA[SALES]]></body>
+<device_info><![CDATA[31786672]]></device_info>
+<mch_create_ip><![CDATA[127.0.0.1]]></mch_create_ip>
+<mch_id><![CDATA[7551000001]]></mch_id>
+nonce_str><![CDATA[1234567890]]></nonce_str>
+<op_device_id><![CDATA[31786672]]></op_device_id>
+<out_trade_no><![CDATA[755100000178667220230210180221A]]></out_trade_no>
+<service><![CDATA[unified.trade.micropay]]></service> 
+<sign><![CDATA[B05969B99574F74A37C44D01DC86FE6040E2C46C4DCEB1B283C52A0F7941351D]]></sign>
+<sign_type><![CDATA[SHA256]]></sign_type>
+<total_fee><![CDATA[12400]]></total_fee>
+</xml>
+```
+
+XML Data Format
+
+Uses Standard XML protocol. All parameters exist only in first-level node and needs to be included in CDATA. No nested nodes will be used.
+
+Protocol error return:
+```
+<xml>
+<status>500</status>
+<message><![CDATA[SYSERR]]></message>
+</xml>
+```
+
+Successful response:
+```
+<xml>
+<alipay_buyer_login_id><![CDATA[888-****8888]]></alipay_buyer_login_id>  
+<alipay_buyer_user_id><![CDATA[2088632237018888]]></alipay_buyer_user_id>  
+<appid><![CDATA[-]]></appid>  
+<bank_type><![CDATA[ALIPAYHK]]></bank_type>  
+<charset><![CDATA[UTF-8]]></charset>  
+<coupon_fee><![CDATA[0]]></coupon_fee>  
+<device_info><![CDATA[31786672]]></device_info>  
+<fee_type><![CDATA[HKD]]></fee_type>  
+<local_fee_type><![CDATA[HKD]]></local_fee_type>  
+<local_total_fee><![CDATA[12400]]></local_total_fee>  
+<mch_id><![CDATA[991530003201]]></mch_id>  
+<nonce_str><![CDATA[1676023347103]]></nonce_str>  
+<openid><![CDATA[2088632237018404]]></openid>  
+<order_fee><![CDATA[12400]]></order_fee>  
+<out_trade_no><![CDATA[300032013178667220230210180221A]]></out_trade_no>  
+<out_transaction_id><![CDATA[2023021022001418401410080599]]></out_transaction_id>  
+<pay_result><![CDATA[0]]></pay_result>  
+<payment_inst><![CDATA[ALIPAYHK]]></payment_inst>  
+<result_code><![CDATA[0]]></result_code>  
+<sign><![CDATA[5F6CCAC7A16ACC087664E8ED49576A1A]]></sign>  
+<sign_type><![CDATA[MD5]]></sign_type>  
+<status><![CDATA[0]]></status>  
+<time_end><![CDATA[20230210180227]]></time_end>  
+<total_fee><![CDATA[12400]]></total_fee>  
+<trade_type><![CDATA[pay.alipay.micropay]]></trade_type>  
+<transaction_id><![CDATA[991530003201202302101165615820]]></transaction_id>  
+<uuid><![CDATA[144985b240585ecfa5b824012448bd041]]></uuid>  
+<version><![CDATA[2.0]]></version>
+</xml>
+```
+
+Normal error return:
+```
+<xml>
+<status>0</status>
+<message><![CDATA[OK]]></message>
+<mch_id><![CDATA[10000100]]></mch_id>
+<device_info><![CDATA[1000]]></device_info>
+<nonce_str><![CDATA[sthBJ9QyUG6vkrjJ]]></nonce_str>
+<sign><![CDATA[6277A96D7875D4FF23AA7B6A4C3046AB]]></sign>
+<result_code>1</result_code>
+<err_code><![CDATA[AUTHCODE_EXPIRE]]></err_code>
+<err_code_des><![CDATA[Invalid QR Code]]></err_code_des>
+</xml>
+```

@@ -160,6 +160,14 @@ export interface TopupInfo {
   payment_compliance_confirmed?: boolean
   /** Current compliance terms version */
   payment_compliance_terms_version?: string
+  /** Whether Silkroad (Gwiff Pay) topup is enabled */
+  enable_silkroad_topup?: boolean
+  /** Whether USDT topup is enabled */
+  enable_usdt_topup?: boolean
+  /** Minimum topup amount for USDT */
+  usdt_min_topup?: number
+  /** Available USDT blockchain types */
+  usdt_blockchain_types?: string[]
 }
 
 /**

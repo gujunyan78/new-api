@@ -148,6 +148,17 @@ const EditTokenModal = (props) => {
         }
       }
       setGroups(localGroupOptions);
+      // 仅有一个可用组时,自动填入该组
+      if (localGroupOptions.length === 1 && formApiRef.current) {
+        const onlyGroup = localGroupOptions[0].value;
+        const currentGroup = formApiRef.current.getValue('group');
+        if (currentGroup !== onlyGroup) {
+          formApiRef.current.setValue('group', onlyGroup);
+          if (currentGroup === 'auto' && onlyGroup !== 'auto') {
+            formApiRef.current.setValue('cross_group_retry', false);
+          }
+        }
+      }
       // if (statusState?.status?.default_use_auto_group && formApiRef.current) {
       //   formApiRef.current.setValue('group', 'auto');
       // }
