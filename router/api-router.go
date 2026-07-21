@@ -17,9 +17,10 @@ func SetApiRouter(router *gin.Engine) {
 	apiRouter.Use(gzip.Gzip(gzip.DefaultCompression))
 	apiRouter.Use(middleware.BodyStorageCleanup()) // 清理请求体存储
 	apiRouter.Use(middleware.GlobalAPIRateLimit())
+	anonymousRequestBodyLimit := middleware.AnonymousRequestBodyLimit()
 	{
 		apiRouter.GET("/setup", controller.GetSetup)
-		apiRouter.POST("/setup", controller.PostSetup)
+		apiRouter.POST("/setup", anonymousRequestBodyLimit, controller.PostSetup)
 		apiRouter.GET("/status", controller.GetStatus)
 		apiRouter.GET("/uptime/status", controller.GetUptimeKumaStatus)
 		apiRouter.GET("/models", middleware.UserAuth(), controller.DashboardListModels)
@@ -40,13 +41,13 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.GET("/rankings", middleware.HeaderNavModuleAuth("rankings"), controller.GetRankings)
 		apiRouter.GET("/verification", middleware.EmailVerificationRateLimit(), middleware.TurnstileCheck(), controller.SendEmailVerification)
 		apiRouter.GET("/reset_password", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.SendPasswordResetEmail)
-		apiRouter.POST("/user/reset", middleware.CriticalRateLimit(), controller.ResetPassword)
+		apiRouter.POST("/user/reset", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.ResetPassword)
 		// OAuth routes - specific routes must come before :provider wildcard
 		apiRouter.GET("/oauth/state", middleware.CriticalRateLimit(), controller.GenerateOAuthCode)
-		apiRouter.POST("/oauth/email/bind", middleware.CriticalRateLimit(), controller.EmailBind)
+		apiRouter.POST("/oauth/email/bind", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.EmailBind)
 		// Non-standard OAuth (WeChat, Telegram) - keep original routes
 		apiRouter.GET("/oauth/wechat", middleware.CriticalRateLimit(), controller.WeChatAuth)
-		apiRouter.POST("/oauth/wechat/bind", middleware.CriticalRateLimit(), controller.WeChatBind)
+		apiRouter.POST("/oauth/wechat/bind", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.WeChatBind)
 		apiRouter.GET("/oauth/telegram/login", middleware.CriticalRateLimit(), controller.TelegramLogin)
 		apiRouter.GET("/oauth/telegram/bind", middleware.CriticalRateLimit(), controller.TelegramBind)
 		// Standard OAuth providers (GitHub, Discord, OIDC, LinuxDO) - unified route
@@ -59,23 +60,26 @@ func SetApiRouter(router *gin.Engine) {
 		apiRouter.POST("/sbp/notify", controller.SbpNotify)
 		apiRouter.POST("/silkroad/notify", controller.SilkroadNotify)
 		//apiRouter.POST("/waffo-pancake/webhook", controller.WaffoPancakeWebhook)
+		apiRouter.POST("/stripe/webhook", anonymousRequestBodyLimit, controller.StripeWebhook)
+		apiRouter.POST("/creem/webhook", anonymousRequestBodyLimit, controller.CreemWebhook)
+		apiRouter.POST("/waffo/webhook", anonymousRequestBodyLimit, controller.WaffoWebhook)
 		// :env separates test vs prod URLs so the operator can register each
 		// in Pancake's matching webhook slot; handler enforces env match.
-		apiRouter.POST("/waffo-pancake/webhook/:env", controller.WaffoPancakeWebhook)
+		apiRouter.POST("/waffo-pancake/webhook/:env", anonymousRequestBodyLimit, controller.WaffoPancakeWebhook)
 
 		// Universal secure verification routes
 		apiRouter.POST("/verify", middleware.UserAuth(), middleware.CriticalRateLimit(), controller.UniversalVerify)
 
 		userRoute := apiRouter.Group("/user")
 		{
-			userRoute.POST("/register", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.Register)
-			userRoute.POST("/login", middleware.CriticalRateLimit(), middleware.TurnstileCheck(), controller.Login)
-			userRoute.POST("/login/2fa", middleware.CriticalRateLimit(), controller.Verify2FALogin)
-			userRoute.POST("/passkey/login/begin", middleware.CriticalRateLimit(), controller.PasskeyLoginBegin)
-			userRoute.POST("/passkey/login/finish", middleware.CriticalRateLimit(), controller.PasskeyLoginFinish)
+			userRoute.POST("/register", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, middleware.TurnstileCheck(), controller.Register)
+			userRoute.POST("/login", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, middleware.TurnstileCheck(), controller.Login)
+			userRoute.POST("/login/2fa", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.Verify2FALogin)
+			userRoute.POST("/passkey/login/begin", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.PasskeyLoginBegin)
+			userRoute.POST("/passkey/login/finish", middleware.CriticalRateLimit(), anonymousRequestBodyLimit, controller.PasskeyLoginFinish)
 			//userRoute.POST("/tokenlog", middleware.CriticalRateLimit(), controller.TokenLog)
 			userRoute.GET("/logout", controller.Logout)
-			userRoute.POST("/epay/notify", controller.EpayNotify)
+			userRoute.POST("/epay/notify", anonymousRequestBodyLimit, controller.EpayNotify)
 			userRoute.GET("/epay/notify", controller.EpayNotify)
 			userRoute.GET("/groups", controller.GetUserGroups)
 
@@ -85,7 +89,7 @@ func SetApiRouter(router *gin.Engine) {
 				selfRoute.GET("/self/groups", controller.GetUserGroups)
 				selfRoute.GET("/self", controller.GetSelf)
 				selfRoute.GET("/models", controller.GetUserModels)
-				selfRoute.PUT("/self", controller.UpdateSelf)
+				selfRoute.PUT("/self", middleware.CriticalRateLimit(), controller.UpdateSelf)
 				selfRoute.DELETE("/self", controller.DeleteSelf)
 				selfRoute.GET("/token", controller.GenerateAccessToken)
 				selfRoute.GET("/passkey", controller.PasskeyStatus)
@@ -180,19 +184,21 @@ func SetApiRouter(router *gin.Engine) {
 			subscriptionAdminRoute.PUT("/plans/:id", controller.AdminUpdateSubscriptionPlan)
 			subscriptionAdminRoute.PATCH("/plans/:id", controller.AdminUpdateSubscriptionPlanStatus)
 			subscriptionAdminRoute.POST("/bind", controller.AdminBindSubscription)
+			subscriptionAdminRoute.POST("/plans/:id/subscriptions/reset", controller.AdminResetPlanSubscriptions)
 
 			// User subscription management (admin)
 			subscriptionAdminRoute.GET("/users/:id/subscriptions", controller.AdminListUserSubscriptions)
 			subscriptionAdminRoute.POST("/users/:id/subscriptions", controller.AdminCreateUserSubscription)
+			subscriptionAdminRoute.POST("/users/:id/subscriptions/reset", controller.AdminResetUserSubscriptionsByPlan)
 			subscriptionAdminRoute.POST("/user_subscriptions/:id/invalidate", controller.AdminInvalidateUserSubscription)
 			subscriptionAdminRoute.DELETE("/user_subscriptions/:id", controller.AdminDeleteUserSubscription)
 		}
 
 		// Subscription payment callbacks (no auth)
-		apiRouter.POST("/subscription/epay/notify", controller.SubscriptionEpayNotify)
+		apiRouter.POST("/subscription/epay/notify", anonymousRequestBodyLimit, controller.SubscriptionEpayNotify)
 		apiRouter.GET("/subscription/epay/notify", controller.SubscriptionEpayNotify)
 		apiRouter.GET("/subscription/epay/return", controller.SubscriptionEpayReturn)
-		apiRouter.POST("/subscription/epay/return", controller.SubscriptionEpayReturn)
+		apiRouter.POST("/subscription/epay/return", anonymousRequestBodyLimit, controller.SubscriptionEpayReturn)
 		optionRoute := apiRouter.Group("/option")
 		optionRoute.Use(middleware.RootAuth())
 		{
@@ -203,11 +209,11 @@ func SetApiRouter(router *gin.Engine) {
 			optionRoute.DELETE("/channel_affinity_cache", controller.ClearChannelAffinityCache)
 			optionRoute.POST("/rest_model_ratio", controller.ResetModelRatio)
 			optionRoute.POST("/migrate_console_setting", controller.MigrateConsoleSetting) // 用于迁移检测的旧键，下个版本会删除
-			optionRoute.POST("/waffo-pancake/catalog", controller.ListWaffoPancakeCatalog)
+			optionRoute.GET("/waffo-pancake/catalog", controller.ListWaffoPancakeCatalog)
 			optionRoute.POST("/waffo-pancake/pair", controller.CreateWaffoPancakePair)
 			optionRoute.POST("/waffo-pancake/save", controller.SaveWaffoPancake)
 			optionRoute.POST("/waffo-pancake/subscription-product", controller.CreateWaffoPancakeSubscriptionProduct)
-			optionRoute.POST("/waffo-pancake/subscription-product-options", controller.ListWaffoPancakeSubscriptionProductOptions)
+			optionRoute.GET("/waffo-pancake/subscription-product-options", controller.ListWaffoPancakeSubscriptionProductOptions)
 		}
 
 		// Domain branding management (root only)
@@ -291,6 +297,8 @@ func SetApiRouter(router *gin.Engine) {
 			channelRoute.POST("/upstream_updates/detect_all", controller.DetectAllChannelUpstreamModelUpdates)
 			channelRoute.GET("/channelslist", controller.ChannelList)
 		}
+		registerChannelRoutes(apiRouter)
+		registerAuthzRoutes(apiRouter)
 		tokenRoute := apiRouter.Group("/token")
 		tokenRoute.Use(middleware.UserAuth())
 		{
@@ -328,7 +336,9 @@ func SetApiRouter(router *gin.Engine) {
 		}
 		logRoute := apiRouter.Group("/log")
 		logRoute.GET("/", middleware.AdminAuth(), controller.GetAllLogs)
-		logRoute.DELETE("/", middleware.AdminAuth(), controller.DeleteHistoryLogs)
+		// Legacy synchronous direct-delete route used only by the classic frontend.
+		// TODO: remove once the classic frontend is removed; the default frontend uses /system-task/log-cleanup.
+		logRoute.DELETE("/", middleware.RootAuth(), controller.DeleteHistoryLogs)
 		logRoute.GET("/stat", middleware.AdminAuth(), controller.GetLogsStat)
 		logRoute.GET("/self/stat", middleware.UserAuth(), controller.GetLogsSelfStat)
 		logRoute.GET("/channel_affinity_usage_cache", middleware.AdminAuth(), controller.GetChannelAffinityUsageCacheStats)
@@ -336,10 +346,28 @@ func SetApiRouter(router *gin.Engine) {
 		logRoute.GET("/self", middleware.UserAuth(), controller.GetUserLogs)
 		logRoute.GET("/self/search", middleware.UserAuth(), middleware.SearchRateLimit(), controller.SearchUserLogs)
 
+		systemTaskRoute := apiRouter.Group("/system-task")
+		systemTaskRoute.Use(middleware.RootAuth())
+		{
+			systemTaskRoute.POST("/log-cleanup", controller.CreateLogCleanupSystemTask)
+			systemTaskRoute.GET("/list", controller.ListSystemTasks)
+			systemTaskRoute.GET("/current", controller.GetCurrentSystemTask)
+			systemTaskRoute.GET("/:task_id", controller.GetSystemTask)
+		}
+		systemInfoRoute := apiRouter.Group("/system-info")
+		systemInfoRoute.Use(middleware.RootAuth())
+		{
+			systemInfoRoute.GET("/instances", controller.ListSystemInstances)
+			systemInfoRoute.DELETE("/stale-instances", controller.DeleteStaleSystemInstances)
+			systemInfoRoute.DELETE("/instances/:node_name", controller.DeleteStaleSystemInstance)
+		}
+
 		dataRoute := apiRouter.Group("/data")
 		dataRoute.GET("/", middleware.AdminAuth(), controller.GetAllQuotaDates)
 		dataRoute.GET("/users", middleware.AdminAuth(), controller.GetQuotaDatesByUser)
 		dataRoute.GET("/self", middleware.UserAuth(), controller.GetUserQuotaDates)
+		dataRoute.GET("/flow", middleware.AdminAuth(), controller.GetAllFlowQuotaDates)
+		dataRoute.GET("/flow/self", middleware.UserAuth(), controller.GetUserFlowQuotaDates)
 
 		logRoute.Use(middleware.CORS(), middleware.CriticalRateLimit())
 		{
