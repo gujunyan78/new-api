@@ -221,6 +221,20 @@ const DomainBrandingSettings = () => {
             autosize={{ minRows: 3, maxRows: 8 }}
             style={{ fontFamily: 'JetBrains Mono, Consolas' }}
           />
+          <Form.TextArea
+            field='header_analytics'
+            label={t('页面统计代码（HEAD）')}
+            placeholder={t('插入到首页 <head> 中的统计代码，例如 Google Analytics / Umami，留空则不注入')}
+            autosize={{ minRows: 3, maxRows: 8 }}
+            style={{ fontFamily: 'JetBrains Mono, Consolas' }}
+          />
+          <Form.TextArea
+            field='body_analytics'
+            label={t('页面统计代码（BODY）')}
+            placeholder={t('插入到首页 </body> 之前的统计代码，例如 noscript 像素，留空则不注入')}
+            autosize={{ minRows: 3, maxRows: 8 }}
+            style={{ fontFamily: 'JetBrains Mono, Consolas' }}
+          />
           <Form.Input
             field='default_user_group'
             label={t('新用户缺省用户组')}

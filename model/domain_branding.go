@@ -13,6 +13,10 @@ type DomainBranding struct {
 	HomePageContent string `json:"home_page_content" gorm:"type:text"`
 	About           string `json:"about" gorm:"type:text"`
 	Footer          string `json:"footer" gorm:"type:text"`
+	// HeaderAnalytics / BodyAnalytics 页面统计代码,分别注入到该域名首页的 <head> 与 </body> 之前。
+	// 留空则不注入。仅在域名品牌管理(管理员)中可配置,因此属于受信任的管理员输入。
+	HeaderAnalytics string `json:"header_analytics" gorm:"type:text"`
+	BodyAnalytics   string `json:"body_analytics" gorm:"type:text"`
 	// DefaultUserGroup 该域名注册新用户时缺省写入的 User.Group;为空则使用 model 默认值。
 	DefaultUserGroup string `json:"default_user_group" gorm:"type:varchar(64);default:''"`
 	// UsableGroups 逗号分隔的资源组白名单,用于模型广场与令牌可选组过滤;为空表示不过滤。

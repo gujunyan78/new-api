@@ -3,17 +3,15 @@ package router
 import (
 	"bytes"
 	"embed"
-	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
-	"time"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/controller"
 	"github.com/QuantumNous/new-api/middleware"
+	"github.com/QuantumNous/new-api/model"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -83,161 +81,231 @@ func (c *customStaticFS) Open(name string) (http.File, error) {
 	return os.Open(filePath)
 }
 
-// analyticsFileSystem wraps a static.ServeFileSystem and injects external
-// analytics snippets into the served index.html at request time.
-//
-// Snippets are read from the theme's custom directory:
-//   - web/{theme}/custom/analytics_head.html  -> inserted into <head>
-//   - web/{theme}/custom/analytics_body.html  -> inserted before </body>
-//
-// Because injection happens on every request (cached by file mtime), changing
-// the tracking scripts only requires editing those files on disk — no Go
-// recompile and no frontend rebuild needed.
-type analyticsFileSystem struct {
-	inner       static.ServeFileSystem
-	defaultBase []byte
-	classicBase []byte
-	cache       sync.Map // theme -> *cachedAnalytics
+// indexExcludingFS wraps a static.ServeFileSystem but reports the index page
+// (root "/" and "index.html") as non-existent, so the static middleware does
+// not serve it. This lets the NoRoute handler serve the index with per-domain
+// analytics injected — which requires the request host (unavailable in Open).
+type indexExcludingFS struct {
+	inner static.ServeFileSystem
 }
 
-type cachedAnalytics struct {
-	headData  []byte
-	bodyData  []byte
-	headMod   time.Time
-	bodyMod   time.Time
-	headFound bool
-	bodyFound bool
-	base      []byte
-	baseMod   time.Time
-}
-
-func (a *analyticsFileSystem) Exists(prefix, path string) bool {
-	return a.inner.Exists(prefix, path)
-}
-
-func (a *analyticsFileSystem) Open(name string) (http.File, error) {
-	if filepath.Base(name) != "index.html" {
-		return a.inner.Open(name)
-	}
-	theme := common.GetTheme()
-	base := a.defaultBase
-	if theme == "classic" {
-		base = a.classicBase
-	}
-	rendered := renderIndexPage(a, theme, base)
-	return &memFile{Reader: bytes.NewReader(rendered), name: "index.html", size: int64(len(rendered))}, nil
-}
-
-// snippetPaths returns the head/body snippet file paths for the given theme.
-func snippetPaths(theme string) (head, body string) {
-	dir := "web/default/custom"
-	if theme == "classic" {
-		dir = "web/classic/custom"
-	}
-	return filepath.Join(dir, "analytics_head.html"), filepath.Join(dir, "analytics_body.html")
-}
-
-// loadSnippet reads a snippet file, using an mtime-based cache so disk is only
-// hit when the file changes.
-func loadSnippet(path string, cached *cachedAnalytics, isHead bool) ([]byte, bool) {
-	info, err := os.Stat(path)
-	if err != nil {
-		if isHead {
-			cached.headFound = false
-		} else {
-			cached.bodyFound = false
-		}
-		return nil, false
-	}
-	if isHead {
-		if cached.headFound && !info.ModTime().After(cached.headMod) {
-			return cached.headData, true
-		}
-	} else {
-		if cached.bodyFound && !info.ModTime().After(cached.bodyMod) {
-			return cached.bodyData, true
-		}
-	}
-	data, err := os.ReadFile(path)
-	if err != nil || len(data) == 0 {
-		if isHead {
-			cached.headFound = false
-		} else {
-			cached.bodyFound = false
-		}
-		return nil, false
-	}
-	if isHead {
-		cached.headData = data
-		cached.headMod = info.ModTime()
-		cached.headFound = true
-	} else {
-		cached.bodyData = data
-		cached.bodyMod = info.ModTime()
-		cached.bodyFound = true
-	}
-	return data, true
-}
-
-// renderIndexPage merges the base index.html with the external snippets.
-func renderIndexPage(a *analyticsFileSystem, theme string, base []byte) []byte {
-	cacheAny, _ := a.cache.LoadOrStore(theme, &cachedAnalytics{})
-	cached := cacheAny.(*cachedAnalytics)
-	if cached.baseMod.IsZero() || !sameBytes(cached.base, base) {
-		cached.base = append([]byte(nil), base...)
-		cached.baseMod = time.Now()
-	}
-
-	headPath, bodyPath := snippetPaths(theme)
-	html := string(base)
-	if head, ok := loadSnippet(headPath, cached, true); ok {
-		marker := "<!--Google Analytics-->"
-		if strings.Contains(html, marker) {
-			html = strings.Replace(html, marker, string(head)+"\n    "+marker, 1)
-		} else {
-			html = strings.Replace(html, "</head>", string(head)+"\n</head>", 1)
-		}
-	}
-	if body, ok := loadSnippet(bodyPath, cached, false); ok {
-		html = strings.Replace(html, "</body>", string(body)+"\n</body>", 1)
-	}
-	return []byte(html)
-}
-
-func sameBytes(a, b []byte) bool {
-	if len(a) != len(b) {
+func (f *indexExcludingFS) Exists(prefix, path string) bool {
+	clean := strings.TrimPrefix(path, prefix)
+	clean = strings.Trim(clean, "/")
+	if clean == "" || clean == "index.html" {
 		return false
 	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
+	return f.inner.Exists(prefix, path)
+}
+
+func (f *indexExcludingFS) Open(name string) (http.File, error) {
+	return f.inner.Open(name)
+}
+
+// excludePathsFS wraps a ServeFileSystem and reports the given paths as
+// non-existent, so the static middleware passes through to explicit handlers
+// (e.g. /robots.txt and /sitemap.xml which are generated/overridden at
+// request time rather than served from the build output).
+type excludePathsFS struct {
+	inner static.ServeFileSystem
+	paths map[string]bool
+}
+
+func (f *excludePathsFS) Exists(prefix, path string) bool {
+	clean := strings.TrimPrefix(path, prefix)
+	clean = strings.Trim(clean, "/")
+	if f.paths[clean] {
+		return false
+	}
+	return f.inner.Exists(prefix, path)
+}
+
+func (f *excludePathsFS) Open(name string) (http.File, error) {
+	return f.inner.Open(name)
+}
+
+// injectAnalytics injects per-domain analytics (from DomainBranding) into an
+// HTML document: HeaderAnalytics -> <head>, BodyAnalytics -> before </body>.
+// host is the request host (may include a port).
+func injectAnalytics(html []byte, host string) []byte {
+	s := string(html)
+
+	// Per-domain analytics configured in 域名品牌管理.
+	if host != "" {
+		if idx := strings.LastIndex(host, ":"); idx != -1 {
+			host = host[:idx]
+		}
+		if branding := model.GetCachedDomainBranding(host); branding != nil {
+			if branding.HeaderAnalytics != "" {
+				s = injectHead(s, branding.HeaderAnalytics)
+			}
+			if branding.BodyAnalytics != "" {
+				s = strings.Replace(s, "</body>", branding.BodyAnalytics+"\n</body>", 1)
+			}
 		}
 	}
-	return true
+
+	return []byte(s)
 }
 
-// memFile is an in-memory http.File used to serve the injected index.html.
-type memFile struct {
-	*bytes.Reader
-	name string
-	size int64
+// injectHead inserts analytics code into <head>. If the page still carries the
+// <!--Google Analytics--> placeholder marker it is inserted right after it
+// (early in head); otherwise it is appended just before </head>.
+func injectHead(html, code string) string {
+	const marker = "<!--Google Analytics-->"
+	if strings.Contains(html, marker) {
+		return strings.Replace(html, marker, code+"\n    "+marker, 1)
+	}
+	return strings.Replace(html, "</head>", code+"\n</head>", 1)
 }
 
-func (m *memFile) Close() error                       { return nil }
-func (m *memFile) Readdir(int) ([]fs.FileInfo, error) { return nil, fs.ErrInvalid }
-func (m *memFile) Stat() (fs.FileInfo, error)         { return &memFileInfo{name: m.name, size: m.size}, nil }
-
-type memFileInfo struct {
-	name string
-	size int64
+// analyticsResponseWriter buffers text/html responses so per-domain analytics
+// can be injected just before the body is written to the client. Non-HTML
+// responses pass through unchanged.
+type analyticsResponseWriter struct {
+	gin.ResponseWriter
+	host     string
+	status   int
+	html     bool
+	wroteHdr bool
+	buf      bytes.Buffer
 }
 
-func (i *memFileInfo) Name() string       { return i.name }
-func (i *memFileInfo) Size() int64        { return i.size }
-func (i *memFileInfo) Mode() fs.FileMode  { return 0o444 }
-func (i *memFileInfo) ModTime() time.Time { return time.Time{} }
-func (i *memFileInfo) IsDir() bool        { return false }
-func (i *memFileInfo) Sys() any           { return nil }
+func (w *analyticsResponseWriter) WriteHeader(code int) {
+	if w.wroteHdr {
+		return
+	}
+	w.status = code
+	ct := w.Header().Get("Content-Type")
+	if code == http.StatusOK && strings.Contains(ct, "text/html") {
+		w.html = true
+		return // defer writing until flush()
+	}
+	w.ResponseWriter.WriteHeader(code)
+	w.wroteHdr = true
+}
+
+func (w *analyticsResponseWriter) Write(b []byte) (int, error) {
+	if w.html {
+		return w.buf.Write(b)
+	}
+	if !w.wroteHdr {
+		w.ResponseWriter.WriteHeader(w.status)
+		w.wroteHdr = true
+	}
+	return w.ResponseWriter.Write(b)
+}
+
+// flush injects analytics into a buffered HTML response and writes it out.
+func (w *analyticsResponseWriter) flush() {
+	if !w.html {
+		return
+	}
+	body := injectAnalytics(w.buf.Bytes(), w.host)
+	w.ResponseWriter.WriteHeader(w.status)
+	w.ResponseWriter.Write(body)
+	w.wroteHdr = true
+}
+
+// analyticsInjector injects per-domain analytics (HeaderAnalytics / BodyAnalytics
+// from 域名品牌管理) into every text/html response served by the web router, so
+// all frontend pages — SPA routes and any other HTML documents — carry the
+// configured tracking code.
+func analyticsInjector() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		w := &analyticsResponseWriter{ResponseWriter: c.Writer, host: c.Request.Host, status: http.StatusOK}
+		c.Writer = w
+		c.Next()
+		w.flush()
+	}
+}
+
+// sitemapPaths are the public, indexable routes of the classic web template.
+// Auth-required console/* routes are intentionally excluded from the sitemap.
+var sitemapPaths = []string{
+	"/",
+	"/about",
+	"/user-agreement",
+	"/privacy-policy",
+	"/pricing",
+	"/login",
+	"/register",
+	"/reset",
+	"/user/reset",
+	"/setup",
+}
+
+// customDomainFilePath resolves the path to a domain-specific custom file of
+// the form "{domain}_{filename}" inside the current theme's custom directory.
+// The port (if any) is stripped from the host. The returned path may not exist.
+func customDomainFilePath(c *gin.Context, filename string) string {
+	host := c.Request.Host
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		host = host[:idx]
+	}
+	dir := "web/default/custom"
+	if common.GetTheme() == "classic" {
+		dir = "web/classic/custom"
+	}
+	return filepath.Join(dir, host+"_"+filename)
+}
+
+// serveCustomOrGenerated first tries to return a domain-specific custom file
+// ({domain}_{filename}); if it does not exist, it falls back to content.
+func serveCustomOrGenerated(c *gin.Context, filename, contentType string, generated func() []byte) {
+	if p := customDomainFilePath(c, filename); fileExists(p) {
+		c.File(p)
+		return
+	}
+	c.Data(http.StatusOK, contentType, generated())
+}
+
+// fileExists reports whether the given path exists on the filesystem.
+func fileExists(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil
+}
+
+const defaultRobots = `# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:
+
+Sitemap: /sitemap.xml
+`
+
+// robotsHandler returns the domain-specific {domain}_robots.txt if present,
+// otherwise falls back to the default robots.txt with a sitemap reference.
+func robotsHandler(c *gin.Context) {
+	serveCustomOrGenerated(c, "robots.txt", "text/plain; charset=utf-8", func() []byte {
+		return []byte(defaultRobots)
+	})
+}
+
+// sitemapHandler returns the domain-specific {domain}_sitemap.xml if present,
+// otherwise auto-generates a sitemap.xml based on the request host. This makes
+// it work for any self-hosted domain without manual configuration.
+func sitemapHandler(c *gin.Context) {
+	serveCustomOrGenerated(c, "sitemap.xml", "application/xml; charset=utf-8", func() []byte {
+		scheme := "https"
+		if proto := c.GetHeader("X-Forwarded-Proto"); proto != "" {
+			scheme = proto
+		} else if c.Request.TLS == nil {
+			scheme = "http"
+		}
+		base := scheme + "://" + c.Request.Host
+
+		var b strings.Builder
+		b.WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+		b.WriteString("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
+		for _, p := range sitemapPaths {
+			b.WriteString("  <url>\n")
+			b.WriteString("    <loc>" + base + p + "</loc>\n")
+			b.WriteString("  </url>\n")
+		}
+		b.WriteString("</urlset>\n")
+		return []byte(b.String())
+	})
+}
 
 func SetWebRouter(router *gin.Engine, assets ThemeAssets) {
 	defaultFS := common.EmbedFolder(assets.DefaultBuildFS, "web/default/dist")
@@ -245,6 +313,9 @@ func SetWebRouter(router *gin.Engine, assets ThemeAssets) {
 	themeFS := common.NewThemeAwareFS(defaultFS, classicFS)
 
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
+	// Inject per-domain analytics into every text/html response so all
+	// frontend pages carry the configured tracking code.
+	router.Use(analyticsInjector())
 	router.Use(middleware.GlobalWebRateLimit())
 	router.Use(middleware.Cache())
 
@@ -256,12 +327,12 @@ func SetWebRouter(router *gin.Engine, assets ThemeAssets) {
 		classicDir: "web/classic/custom",
 	}))
 
-	analyticsFS := &analyticsFileSystem{
-		inner:       themeFS,
-		defaultBase: assets.DefaultIndexPage,
-		classicBase: assets.ClassicIndexPage,
-	}
-	router.Use(static.Serve("/", analyticsFS))
+	router.Use(static.Serve("/", &excludePathsFS{
+		inner: &indexExcludingFS{inner: themeFS},
+		paths: map[string]bool{"robots.txt": true, "sitemap.xml": true},
+	}))
+	router.GET("/robots.txt", robotsHandler)
+	router.GET("/sitemap.xml", sitemapHandler)
 	router.NoRoute(func(c *gin.Context) {
 		c.Set(middleware.RouteTagKey, "web")
 		if strings.HasPrefix(c.Request.RequestURI, "/v1") || strings.HasPrefix(c.Request.RequestURI, "/api") || strings.HasPrefix(c.Request.RequestURI, "/assets") {
@@ -274,6 +345,6 @@ func SetWebRouter(router *gin.Engine, assets ThemeAssets) {
 		if theme == "classic" {
 			base = assets.ClassicIndexPage
 		}
-		c.Data(http.StatusOK, "text/html; charset=utf-8", renderIndexPage(analyticsFS, theme, base))
+		c.Data(http.StatusOK, "text/html; charset=utf-8", base)
 	})
 }
