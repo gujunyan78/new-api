@@ -130,6 +130,28 @@ const defaultBillingSettings: BillingSettings = {
   MirSandboxUrl: '',
   MirLogo: '',
 
+  // Silkroad (Gwiff Pay) payment settings
+  pay_silkroad_enable: false,
+  pay_silkroad_sandbox: false,
+  pay_silkroad_mch_id: '',
+  pay_silkroad_app_id: '',
+  pay_silkroad_gateway_url: '',
+  pay_silkroad_sandbox_url: '',
+  pay_silkroad_notify_url: '',
+  pay_silkroad_private_key: '',
+  pay_silkroad_platform_public_key: '',
+  pay_silkroad_payment_method: '',
+  pay_silkroad_category: 1,
+  pay_silkroad_currency: 'RUB',
+  pay_silkroad_serial_no: '',
+
+  // USDT payment settings
+  UsdtEnabled: false,
+  UsdtMinTopUp: 0,
+  TronGridApiKey: '',
+  EtherscanApiKey: '',
+  UsdtWallets: '[]',
+
   'checkin_setting.enabled': false,
   'checkin_setting.min_quota': 1000,
   'checkin_setting.max_quota': 10000,

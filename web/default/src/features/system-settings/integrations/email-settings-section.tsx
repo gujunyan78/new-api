@@ -64,6 +64,8 @@ const createEmailSchema = (t: (key: string) => string) =>
     SMTPStartTLSEnabled: z.boolean(),
     SMTPInsecureSkipVerify: z.boolean(),
     SMTPForceAuthLogin: z.boolean(),
+    ResendAPIKey: z.string(),
+    ResendFrom: z.string(),
   })
 
 type EmailFormValues = z.infer<ReturnType<typeof createEmailSchema>>
@@ -109,6 +111,8 @@ export function EmailSettingsSection({
       SMTPStartTLSEnabled: securityMode === 'starttls',
       SMTPInsecureSkipVerify: values.SMTPInsecureSkipVerify,
       SMTPForceAuthLogin: values.SMTPForceAuthLogin,
+      ResendAPIKey: values.ResendAPIKey.trim(),
+      ResendFrom: values.ResendFrom.trim(),
     }
 
     const initial = {
@@ -121,6 +125,8 @@ export function EmailSettingsSection({
       SMTPStartTLSEnabled: defaultValues.SMTPStartTLSEnabled,
       SMTPInsecureSkipVerify: defaultValues.SMTPInsecureSkipVerify,
       SMTPForceAuthLogin: defaultValues.SMTPForceAuthLogin,
+      ResendAPIKey: defaultValues.ResendAPIKey.trim(),
+      ResendFrom: defaultValues.ResendFrom.trim(),
     }
 
     const updates: Array<{ key: string; value: string | boolean }> = []
@@ -171,6 +177,14 @@ export function EmailSettingsSection({
         key: 'SMTPForceAuthLogin',
         value: sanitized.SMTPForceAuthLogin,
       })
+    }
+
+    if (sanitized.ResendAPIKey !== initial.ResendAPIKey) {
+      updates.push({ key: 'ResendAPIKey', value: sanitized.ResendAPIKey })
+    }
+
+    if (sanitized.ResendFrom !== initial.ResendFrom) {
+      updates.push({ key: 'ResendFrom', value: sanitized.ResendFrom })
     }
 
     for (const update of updates) {
@@ -405,6 +419,60 @@ export function EmailSettingsSection({
               </FormItem>
             )}
           />
+
+          <div className='border-t pt-6 mt-4'>
+            <h3 className='text-base font-semibold mb-1'>{t('Resend')}</h3>
+            <p className='text-muted-foreground text-sm mb-4'>
+              {t('Send emails via Resend')}
+            </p>
+
+            <div className='grid gap-6 md:grid-cols-2'>
+              <FormField
+                control={form.control}
+                name='ResendAPIKey'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Resend API Key')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoComplete='off'
+                        type='password'
+                        placeholder={t('re_...')}
+                        {...field}
+                        onChange={(event) => field.onChange(event.target.value)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('Sensitive key — never shown on reload')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='ResendFrom'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Resend From Address')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        autoComplete='off'
+                        placeholder='no-reply@example.com'
+                        {...field}
+                        onChange={(event) => field.onChange(event.target.value)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('Sender address registered in your Resend account')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
         </SettingsForm>
       </Form>
     </SettingsSection>

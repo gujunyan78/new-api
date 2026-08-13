@@ -17,8 +17,10 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { SystemBehaviorSection } from '../general/system-behavior-section'
+import { DomainBrandingSettingsSection } from '../integrations/domain-branding-settings-section'
 import { EmailSettingsSection } from '../integrations/email-settings-section'
 import { MonitoringSettingsSection } from '../integrations/monitoring-settings-section'
+import { SEOSettingsSection } from '../integrations/seo-settings-section'
 import { WorkerSettingsSection } from '../integrations/worker-settings-section'
 import { LogSettingsSection } from '../maintenance/log-settings-section'
 import { PerformanceSection } from '../maintenance/performance-section'
@@ -74,6 +76,8 @@ const OPERATIONS_SECTIONS = [
           SMTPStartTLSEnabled: settings.SMTPStartTLSEnabled,
           SMTPInsecureSkipVerify: settings.SMTPInsecureSkipVerify,
           SMTPForceAuthLogin: settings.SMTPForceAuthLogin,
+          ResendAPIKey: settings.ResendAPIKey ?? '',
+          ResendFrom: settings.ResendFrom ?? '',
         }}
       />
     ),
@@ -126,6 +130,16 @@ const OPERATIONS_SECTIONS = [
         }}
       />
     ),
+  },
+  {
+    id: 'seo',
+    titleKey: 'SEO Settings',
+    build: () => <SEOSettingsSection />,
+  },
+  {
+    id: 'domain-branding',
+    titleKey: 'Domain Branding',
+    build: () => <DomainBrandingSettingsSection />,
   },
   {
     id: 'update-checker',

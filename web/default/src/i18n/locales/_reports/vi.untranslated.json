@@ -1,4 +1,12 @@
 {
   "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.": "External documentation URL. If set, the Docs navigation link will open this URL in a new tab.",
-  "Obtain the merchant ID and RSA key pair from the RUPAY dashboard, and configure the callback and return URLs.": "Obtain the merchant ID and RSA key pair from the RUPAY dashboard, and configure the callback and return URLs."
+  "Obtain the merchant ID and RSA key pair from the RUPAY dashboard, and configure the callback and return URLs.": "Obtain the merchant ID and RSA key pair from the RUPAY dashboard, and configure the callback and return URLs.",
+  "Leave empty for all models, or use gpt-* for prefix match": "Leave empty for all models, or use gpt-* for prefix match",
+  "Are you sure you want to delete this discount rule? This action cannot be undone.": "Are you sure you want to delete this discount rule? This action cannot be undone.",
+  "Failed to create discount rule": "Failed to create discount rule",
+  "Failed to update discount rule": "Failed to update discount rule",
+  "Failed to delete discount rule": "Failed to delete discount rule",
+  "Discount must be between 0 and 1": "Discount must be between 0 and 1",
+  "Configure discount rates for specific users, groups, or models. More specific rules take priority.": "Configure discount rates for specific users, groups, or models. More specific rules take priority.",
+  "Leave fields empty to apply to all. For example, set only User ID for a user-wide discount, or set only Model ID for a model-wide discount.": "Leave fields empty to apply to all. For example, set only User ID for a user-wide discount, or set only Model ID for a model-wide discount."
 }

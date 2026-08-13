@@ -146,7 +146,16 @@ export function RechargeFormCard({
     enableUsdtTopup
   const hasAnyTopup = hasConfigurableTopup || enableCreemTopup
   const hasStandardPaymentMethods =
-    Array.isArray(topupInfo?.pay_methods) && topupInfo.pay_methods.length > 0
+    (topupInfo?.pay_methods?.filter((m) => {
+      const type = m.type?.toLowerCase()
+      return type !== 'silkroad' && type !== 'waffo' && type !== 'usdt'
+    })?.length ?? 0) > 0
+  const hasAnyDedicatedPayment =
+    !!enableWaffoTopup ||
+    !!enableWaffoPancakeTopup ||
+    !!enableSilkroadTopup ||
+    !!enableUsdtTopup
+  const hasAnyPaymentMethod = hasStandardPaymentMethods || hasAnyDedicatedPayment
   const hasWaffoPaymentMethods =
     Array.isArray(waffoPayMethods) && waffoPayMethods.length > 0
   const minTopup = getMinTopupAmount(topupInfo)
@@ -328,7 +337,17 @@ export function RechargeFormCard({
                 </Label>
                 {hasStandardPaymentMethods ? (
                   <div className='grid grid-cols-2 gap-1.5 sm:gap-3 lg:grid-cols-3'>
-                    {topupInfo?.pay_methods?.map((method) => {
+                    {topupInfo?.pay_methods
+                      ?.filter((m) => {
+                        // Dedicated sections handle these types separately
+                        const type = m.type?.toLowerCase()
+                        return (
+                          type !== 'silkroad' &&
+                          type !== 'waffo' &&
+                          type !== 'usdt'
+                        )
+                      })
+                      .map((method) => {
                       const minTopup = method.min_topup || 0
                       const disabled = minTopup > topupAmount
                       const isWepay = method.type === 'wepay'
@@ -396,7 +415,7 @@ export function RechargeFormCard({
                     })}
                   </div>
                 ) : null}
-                {!hasStandardPaymentMethods && !hasWaffoPaymentMethods && (
+                {!hasAnyPaymentMethod && (
                   <Alert>
                     <AlertDescription>
                       {t(

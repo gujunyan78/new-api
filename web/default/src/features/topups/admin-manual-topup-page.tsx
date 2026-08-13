@@ -43,6 +43,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { getAllBillingHistory, completeOrder, isApiSuccess } from '@/features/wallet/api'
 import type { TopupRecord } from '@/features/wallet/types'
+import { AdminManualTopUpModal } from './admin-manual-topup-modal'
 
 const PAGE_SIZE = 20
 
@@ -51,6 +52,7 @@ export function AdminManualTopUpPage() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(1)
   const [keyword, setKeyword] = useState('')
+  const [showTopupModal, setShowTopupModal] = useState(false)
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['admin-topups', page, keyword],
@@ -118,6 +120,19 @@ export function AdminManualTopUpPage() {
             <Button variant='outline' onClick={() => refetch()}>
               {t('Search')}
             </Button>
+            <button
+              type='button'
+              onClick={() => {
+                document.title = 'CLICKED at ' + Date.now();
+                setShowTopupModal(true);
+              }}
+              style={{ border: '1px solid #ccc', borderRadius: 4, padding: '8px 12px', cursor: 'pointer' }}
+            >
+              {t('新建手工充值')}
+            </button>
+            <span style={{fontSize:20,fontWeight:'bold',color:(showTopupModal?'green':'red')}}>
+              OPEN={String(showTopupModal)}
+            </span>
           </div>
 
           <div className='rounded-md border'>
@@ -218,6 +233,14 @@ export function AdminManualTopUpPage() {
           )}
         </div>
       </SectionPageLayout.Content>
+      <AdminManualTopUpModal
+        open={showTopupModal}
+        onOpenChange={setShowTopupModal}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['admin-topups'] })
+          refetch()
+        }}
+      />
     </SectionPageLayout>
   )
 }

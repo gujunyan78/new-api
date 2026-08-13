@@ -47,6 +47,8 @@ import { useEmailVerification } from '@/features/auth/hooks/use-email-verificati
 import { useTurnstile } from '@/features/auth/hooks/use-turnstile'
 import {
   getAffiliateCode,
+  getChannel,
+  handleChannelParam,
   saveAffiliateCode,
 } from '@/features/auth/lib/storage'
 import { useStatus } from '@/hooks/use-status'
@@ -133,6 +135,8 @@ export function SignUpForm({
     if (aff) {
       saveAffiliateCode(aff)
     }
+    // Handle channel parameter from URL (registration channel / traffic source)
+    handleChannelParam()
   }, [])
 
   async function onSubmit(data: z.infer<typeof registerFormSchema>) {
@@ -163,6 +167,7 @@ export function SignUpForm({
         email: data.email || undefined,
         verification_code: verificationCode || undefined,
         aff_code: getAffiliateCode(),
+        channel: getChannel() || undefined,
         turnstile: turnstileToken,
       })
 

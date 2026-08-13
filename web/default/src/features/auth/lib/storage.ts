@@ -27,6 +27,7 @@ For commercial licensing, please contact support@quantumnous.com
 const STORAGE_KEYS = {
   USER_ID: 'uid',
   AFFILIATE: 'aff',
+  CHANNEL: 'channel',
   STATUS: 'status',
 } as const
 
@@ -103,4 +104,59 @@ export function saveAffiliateCode(code: string): void {
     // eslint-disable-next-line no-console
     console.error('Failed to save affiliate code:', error)
   }
+}
+
+// ============================================================================
+// Channel Storage
+// ============================================================================
+
+/**
+ * Get channel from localStorage (persists across browser sessions).
+ * The channel parameter identifies the traffic source / registration channel.
+ * Using localStorage so that the channel is preserved even if the user closes
+ * and reopens the browser before completing registration.
+ */
+export function getChannel(): string {
+  if (typeof window === 'undefined') return ''
+  try {
+    return window.localStorage.getItem(STORAGE_KEYS.CHANNEL) ?? ''
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to get channel:', error)
+    return ''
+  }
+}
+
+/**
+ * Save channel to localStorage from URL query parameter.
+ * Called on any page load that carries ?channel=xxx.
+ */
+export function saveChannel(channel: string): void {
+  if (typeof window === 'undefined') return
+  if (!channel) return
+  try {
+    window.localStorage.setItem(STORAGE_KEYS.CHANNEL, channel.trim())
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to save channel:', error)
+  }
+}
+
+/**
+ * Read channel from URL query params and persist to localStorage.
+ * Returns the channel value (from URL or existing localStorage).
+ * Mirrors classic's handleChannelParam() in helpers/index.js.
+ */
+export function handleChannelParam(): string {
+  if (typeof window === 'undefined') return ''
+  try {
+    const urlParams = new URLSearchParams(window.location.search)
+    const channelFromUrl = urlParams.get('channel')?.trim()
+    if (channelFromUrl) {
+      saveChannel(channelFromUrl)
+    }
+  } catch {
+    /* empty */
+  }
+  return getChannel()
 }

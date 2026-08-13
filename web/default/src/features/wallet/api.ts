@@ -33,6 +33,7 @@ import type {
   AffiliateTransferResponse,
   BillingHistoryResponse,
   CompleteOrderRequest,
+  AdminManualTopUpRequest,
   CreemPaymentRequest,
   CreemPaymentResponse,
   WaffoPaymentRequest,
@@ -275,6 +276,16 @@ export async function completeOrder(
   request: CompleteOrderRequest
 ): Promise<ApiResponse> {
   const res = await api.post('/api/user/topup/complete', request)
+  return res.data
+}
+
+/**
+ * Admin manual top-up: directly adjust a user's balance (recharge or reversal)
+ */
+export async function adminTopup(
+  request: AdminManualTopUpRequest
+): Promise<ApiResponse> {
+  const res = await api.post('/api/user/topup/admin', request)
   return res.data
 }
 

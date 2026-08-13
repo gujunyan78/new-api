@@ -302,6 +302,7 @@ func migrateDB() error {
 		&SystemTaskLock{},
 		&CasbinRule{},
 		&AuthzRole{},
+		&UserDiscount{},
 	)
 	if err != nil {
 		return err
@@ -355,6 +356,7 @@ func migrateDBFast() error {
 		{&SystemTask{}, "SystemTask"},
 		{&SystemTaskLock{}, "SystemTaskLock"},
 		{&DomainBranding{}, "DomainBranding"},
+		{&UserDiscount{}, "UserDiscount"},
 	}
 	// 动态计算migration数量，确保errChan缓冲区足够大
 	errChan := make(chan error, len(migrations))

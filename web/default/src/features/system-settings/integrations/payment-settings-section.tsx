@@ -1164,13 +1164,16 @@ export function PaymentSettingsSection({
           />
           <Tabs defaultValue='general' className='min-w-0'>
             <div className='overflow-x-auto pb-1'>
-              <TabsList className='grid min-w-[44rem] grid-cols-6'>
+              <TabsList className='grid min-w-[60rem] grid-cols-9'>
                 <TabsTrigger value='general'>{t('General')}</TabsTrigger>
                 <TabsTrigger value='epay'>Epay</TabsTrigger>
                 <TabsTrigger value='stripe'>{t('Stripe')}</TabsTrigger>
                 <TabsTrigger value='creem'>Creem</TabsTrigger>
                 <TabsTrigger value='waffo-pancake'>Waffo Pancake</TabsTrigger>
                 <TabsTrigger value='waffo'>Waffo</TabsTrigger>
+                <TabsTrigger value='gwiff-pay'>Gwiff Pay</TabsTrigger>
+                <TabsTrigger value='usdt'>USDT</TabsTrigger>
+                <TabsTrigger value='wepay'>Wepay</TabsTrigger>
               </TabsList>
             </div>
 
@@ -1192,7 +1195,7 @@ export function PaymentSettingsSection({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {t('Price (local currency / USD)')}
+                          {t('Price Ratio (local currency / USD)')}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -1204,7 +1207,7 @@ export function PaymentSettingsSection({
                         </FormControl>
                         <FormDescription>
                           {t(
-                            'How much to charge for each US dollar of balance (Epay)'
+                            'Price multiplier for wallet top-up. Pay amount = Quota × Price Ratio × Discount. Applies to all payment methods.'
                           )}
                         </FormDescription>
                         <FormMessage />
@@ -1227,7 +1230,7 @@ export function PaymentSettingsSection({
                           />
                         </FormControl>
                         <FormDescription>
-                          {t('Smallest USD amount users can recharge (Epay)')}
+                          {t('Smallest USD amount users can recharge')}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -1875,42 +1878,7 @@ export function PaymentSettingsSection({
               </div>
             </TabsContent>
 
-          <Separator />
-
-          <SilkroadSettingsSection
-            values={silkroadValues}
-            onValueChange={setSilkroadValue}
-            onPaymentMethodChange={(val) =>
-              setPaymentValue('pay_silkroad_payment_method', val)
-            }
-            onCategoryChange={(val) =>
-              setPaymentValue('pay_silkroad_category', val)
-            }
-          />
-
-          <Separator />
-
-          <UsdtSettingsSection
-            values={usdtValues}
-            onValueChange={setUsdtValue}
-            wallets={usdtWallets}
-            onWalletsChange={setUsdtWallets}
-          />
-
-          <Separator />
-
-          <WaffoPancakeSettingsSection
-            defaultValues={waffoPancakeDefaultValues}
-            values={waffoPancakeValues}
-            onValueChange={setWaffoPancakeValue}
-            selectedBinding={waffoPancakeSelection}
-            savedBinding={waffoPancakeSavedBinding}
-            onSelectedBindingChange={setWaffoPancakeSelection}
-          />
-            <TabsContent
-              value='waffo-pancake'
-              className={paymentTabContentClassName}
-            >
+            <TabsContent value='waffo-pancake' className={paymentTabContentClassName}>
               <WaffoPancakeSettingsSection
                 defaultValues={waffoPancakeDefaultValues}
                 values={waffoPancakeValues}
@@ -1921,23 +1889,40 @@ export function PaymentSettingsSection({
               />
             </TabsContent>
 
-          <Separator />
-
-      <WaffoPancakeSettingsSection defaultValues={waffoPancakeDefaultValues} />
-
-      {/* eslint-enable react-hooks/refs */}
-          <WaffoSettingsSection
-            values={waffoValues}
-            onValueChange={setWaffoValue}
-            payMethods={waffoPayMethods}
-            onPayMethodsChange={setWaffoPayMethods}
-          />
             <TabsContent value='waffo' className={paymentTabContentClassName}>
               <WaffoSettingsSection
                 values={waffoValues}
                 onValueChange={setWaffoValue}
                 payMethods={waffoPayMethods}
                 onPayMethodsChange={setWaffoPayMethods}
+              />
+            </TabsContent>
+
+            <TabsContent value='gwiff-pay' className={paymentTabContentClassName}>
+              <SilkroadSettingsSection
+                values={silkroadValues}
+                onValueChange={setSilkroadValue}
+                onPaymentMethodChange={(val) =>
+                  setPaymentValue('pay_silkroad_payment_method', val)
+                }
+                onCategoryChange={(val) =>
+                  setPaymentValue('pay_silkroad_category', val)
+                }
+              />
+            </TabsContent>
+
+            <TabsContent value='usdt' className={paymentTabContentClassName}>
+              <UsdtSettingsSection
+                values={usdtValues}
+                onValueChange={setUsdtValue}
+                wallets={usdtWallets}
+                onWalletsChange={setUsdtWallets}
+              />
+            </TabsContent>
+
+            <TabsContent value='wepay' className={paymentTabContentClassName}>
+              <WepaySettingsSection
+                defaultValues={wepayDefaultValues}
               />
             </TabsContent>
           </Tabs>

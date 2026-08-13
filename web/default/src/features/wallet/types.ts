@@ -299,3 +299,15 @@ export interface BillingHistoryResponse {
 export interface CompleteOrderRequest {
   trade_no: string
 }
+
+/**
+ * Admin manual top-up request
+ */
+export interface AdminManualTopUpRequest {
+  /** Target user ID */
+  user_id: number
+  /** Top-up amount (positive = recharge, negative = reversal). Cannot be 0. */
+  amount: number
+  /** Optional remark */
+  remark?: string
+}

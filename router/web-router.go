@@ -159,14 +159,16 @@ func injectHead(html, code string) string {
 	return strings.Replace(html, "</head>", code+"\n</head>", 1)
 }
 
-// analyticsResponseWriter buffers text/html responses so per-domain analytics
-// can be injected just before the body is written to the client. Non-HTML
-// responses pass through unchanged.
+// analyticsResponseWriter buffers the response body so per-domain analytics
+// can be injected just before the body is written to the client. The decision
+// of whether to inject is deferred to flush(), where the final Content-Type
+// header is available: gin calls WriteHeader() before a handler (e.g.
+// c.Data) sets Content-Type, so inspecting it earlier would miss text/html
+// responses and skip injection entirely.
 type analyticsResponseWriter struct {
 	gin.ResponseWriter
 	host     string
 	status   int
-	html     bool
 	wroteHdr bool
 	buf      bytes.Buffer
 }
@@ -176,35 +178,30 @@ func (w *analyticsResponseWriter) WriteHeader(code int) {
 		return
 	}
 	w.status = code
-	ct := w.Header().Get("Content-Type")
-	if code == http.StatusOK && strings.Contains(ct, "text/html") {
-		w.html = true
-		return // defer writing until flush()
-	}
-	w.ResponseWriter.WriteHeader(code)
 	w.wroteHdr = true
+	// Defer the actual write to flush(), where the final Content-Type is known
+	// and per-domain analytics can be injected if the response is HTML.
 }
 
 func (w *analyticsResponseWriter) Write(b []byte) (int, error) {
-	if w.html {
-		return w.buf.Write(b)
-	}
-	if !w.wroteHdr {
-		w.ResponseWriter.WriteHeader(w.status)
-		w.wroteHdr = true
-	}
-	return w.ResponseWriter.Write(b)
+	return w.buf.Write(b)
 }
 
 // flush injects analytics into a buffered HTML response and writes it out.
+// Non-HTML responses are written through unchanged.
 func (w *analyticsResponseWriter) flush() {
-	if !w.html {
+	if !w.wroteHdr {
+		w.status = http.StatusOK
+	}
+	ct := w.Header().Get("Content-Type")
+	if w.status == http.StatusOK && strings.Contains(ct, "text/html") {
+		body := injectAnalytics(w.buf.Bytes(), w.host)
+		w.ResponseWriter.WriteHeader(w.status)
+		w.ResponseWriter.Write(body)
 		return
 	}
-	body := injectAnalytics(w.buf.Bytes(), w.host)
 	w.ResponseWriter.WriteHeader(w.status)
-	w.ResponseWriter.Write(body)
-	w.wroteHdr = true
+	w.ResponseWriter.Write(w.buf.Bytes())
 }
 
 // analyticsInjector injects per-domain analytics (HeaderAnalytics / BodyAnalytics

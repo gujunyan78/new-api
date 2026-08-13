@@ -66,6 +66,15 @@ func HandleGroupRatio(ctx *gin.Context, relayInfo *relaycommon.RelayInfo) types.
 		groupRatioInfo.GroupRatio = ratio_setting.GetGroupRatio(relayInfo.UsingGroup)
 	}
 
+	// apply user discount multiplier
+	userDiscount := model.GetUserDiscountMultiplier(relayInfo.UserId, relayInfo.UsingGroup, relayInfo.OriginModelName)
+	if userDiscount < 1.0 {
+		groupRatioInfo.GroupRatio *= userDiscount
+		if groupRatioInfo.HasSpecialRatio {
+			groupRatioInfo.GroupSpecialRatio *= userDiscount
+		}
+	}
+
 	return groupRatioInfo
 }
 

@@ -90,6 +90,9 @@ export {
   removeUserId,
   getAffiliateCode,
   saveAffiliateCode,
+  getChannel,
+  saveChannel,
+  handleChannelParam,
 } from './lib/storage'
 
 export {

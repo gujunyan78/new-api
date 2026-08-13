@@ -22,6 +22,7 @@ import {
   createRootRouteWithContext,
   Outlet,
   redirect,
+  useLocation,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { useEffect } from 'react'
@@ -29,9 +30,13 @@ import { useEffect } from 'react'
 import { NavigationProgress } from '@/components/navigation-progress'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeCustomizationProvider } from '@/context/theme-customization-provider'
-import { saveAffiliateCode } from '@/features/auth/lib/storage'
+import {
+  handleChannelParam,
+  saveAffiliateCode,
+} from '@/features/auth/lib/storage'
 import { GeneralError } from '@/features/errors/general-error'
 import { NotFoundError } from '@/features/errors/not-found-error'
+import { usePageMeta } from '@/features/seo/hooks/use-page-meta'
 import { getSetupStatus } from '@/features/setup/api'
 import { useSystemConfig } from '@/hooks/use-system-config'
 
@@ -39,11 +44,18 @@ function RootComponent() {
   // Load system configuration (logo, system name, etc.) from backend
   useSystemConfig({ autoLoad: true })
 
+  // Apply per-page SEO meta tags based on the current route path.
+  // Matches paths like "/", "/about", "/pricing", "/sign-in", etc.
+  const { pathname } = useLocation()
+  usePageMeta(pathname)
+
   useEffect(() => {
     const aff = new URLSearchParams(window.location.search).get('aff')?.trim()
     if (aff) {
       saveAffiliateCode(aff)
     }
+    // Persist channel parameter from URL (registration channel / traffic source)
+    handleChannelParam()
   }, [])
 
   return (

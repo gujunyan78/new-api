@@ -45,6 +45,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
+      //fallbackLng: 'ru',
     supportedLngs: ['en', 'zhCN', 'fr', 'ru', 'ja', 'vi', 'zhTW'],
     load: 'currentOnly',
     nsSeparator: false, // Allow literal colons in keys (e.g., URLs, labels)
