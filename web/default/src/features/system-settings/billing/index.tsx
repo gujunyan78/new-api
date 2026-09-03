@@ -130,6 +130,20 @@ const defaultBillingSettings: BillingSettings = {
   MirSandboxUrl: '',
   MirLogo: '',
 
+  // Paynicorn payment settings
+  PaynicornEnabled: false,
+  PaynicornSandbox: false,
+  PaynicornGatewayUrl: '',
+  PaynicornSandboxUrl: '',
+  PaynicornMerchantId: '',
+  PaynicornAppKey: '',
+  PaynicornAppSecret: '',
+  PaynicornCurrency: 'USD',
+  PaynicornNotifyUrl: '',
+  PaynicornReturnUrl: '',
+  PaynicornMinUnit: 100,
+  PaynicornCountryCode: '',
+
   // Silkroad (Gwiff Pay) payment settings
   pay_silkroad_enable: false,
   pay_silkroad_sandbox: false,

@@ -144,6 +144,16 @@ export const CHANNEL_TYPE_CONFIGS: Record<number, ChannelTypeConfig> = {
       models: 'Models exposed by this channel',
     },
   },
+  60: {
+    id: 60,
+    name: CHANNEL_TYPES[60],
+    icon: 'openai',
+    hints: {
+      baseUrl: 'Upstream Video3 (Wan 3.0 mirror) Base URL',
+      key: 'Upstream API Key',
+      models: 'w3.0-video-special,w3.0-video-pro-special',
+    },
+  },
 }
 
 /**

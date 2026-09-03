@@ -197,6 +197,20 @@ const BILLING_SECTIONS = [
           MirSandboxUrl: settings.MirSandboxUrl ?? '',
           MirLogo: settings.MirLogo ?? '',
         }}
+        paynicornDefaultValues={{
+          PaynicornEnabled: settings.PaynicornEnabled ?? false,
+          PaynicornSandbox: settings.PaynicornSandbox ?? false,
+          PaynicornGatewayUrl: settings.PaynicornGatewayUrl ?? '',
+          PaynicornSandboxUrl: settings.PaynicornSandboxUrl ?? '',
+          PaynicornMerchantId: settings.PaynicornMerchantId ?? '',
+          PaynicornAppKey: settings.PaynicornAppKey ?? '',
+          PaynicornAppSecret: settings.PaynicornAppSecret ?? '',
+          PaynicornCurrency: settings.PaynicornCurrency ?? 'USD',
+          PaynicornNotifyUrl: settings.PaynicornNotifyUrl ?? '',
+          PaynicornReturnUrl: settings.PaynicornReturnUrl ?? '',
+          PaynicornMinUnit: settings.PaynicornMinUnit ?? 100,
+          PaynicornCountryCode: settings.PaynicornCountryCode ?? '',
+        }}
         complianceDefaults={{
           confirmed: settings['payment_setting.compliance_confirmed'] ?? false,
           termsVersion:

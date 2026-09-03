@@ -43,6 +43,7 @@ import {
   useRedemption,
   useCreemPayment,
   useWaffoPayment,
+  usePaynicornPayment,
   useWaffoPancakePayment,
   useWepayPayment,
   useSilkroadPayment,
@@ -110,6 +111,7 @@ export function Wallet(props: WalletProps) {
   const { redeeming, redeemCode } = useRedemption()
   const { processing: creemProcessing, processCreemPayment } = useCreemPayment()
   const { processWaffoPayment } = useWaffoPayment()
+  const { processPaynicornPayment } = usePaynicornPayment()
   const { processing: pancakeProcessing, processWaffoPancakePayment } =
     useWaffoPancakePayment()
   const {
@@ -288,6 +290,15 @@ export function Wallet(props: WalletProps) {
     setUsdtDialogOpen(false)
   }
 
+  const handlePaynicornMethodSelect = async () => {
+    setPaymentLoading('paynicorn')
+    try {
+      await processPaynicornPayment(topupAmount)
+    } finally {
+      setPaymentLoading(null)
+    }
+  }
+
   // Handle payment confirmation
   const handlePaymentConfirm = async () => {
     if (!selectedPaymentMethod) return
@@ -415,6 +426,8 @@ export function Wallet(props: WalletProps) {
                   enableUsdtTopup={topupInfo?.enable_usdt_topup}
                   onUsdtMethodSelect={handleUsdtMethodSelect}
                   usdtMinTopup={topupInfo?.usdt_min_topup || 1}
+                  enablePaynicornTopup={topupInfo?.enable_paynicorn_topup}
+                  onPaynicornMethodSelect={handlePaynicornMethodSelect}
                 />
               </div>
 

@@ -92,6 +92,10 @@ import {
   WepaySettingsSection,
   type WepaySettingsValues,
 } from './wepay-settings-section'
+import {
+  PaynicornSettingsSection,
+  type PaynicornSettingsValues,
+} from './paynicorn-settings-section'
 
 function isHttpOriginUrl(value: string) {
   const trimmed = value.trim()
@@ -237,6 +241,7 @@ type PaymentSettingsSectionProps = {
   waffoDefaultValues: WaffoSettingsValues
   waffoPancakeDefaultValues: WaffoPancakeSettingsValues
   wepayDefaultValues: WepaySettingsValues
+  paynicornDefaultValues: PaynicornSettingsValues
   silkroadDefaultValues: SilkroadSettingsValues
   usdtDefaultValues: UsdtSettingsValues
   usdtDefaultWallets: UsdtWallet[]
@@ -259,6 +264,7 @@ export function PaymentSettingsSection({
   waffoDefaultValues,
   waffoPancakeDefaultValues,
   wepayDefaultValues,
+  paynicornDefaultValues,
   silkroadDefaultValues,
   usdtDefaultValues,
   usdtDefaultWallets,
@@ -1164,7 +1170,7 @@ export function PaymentSettingsSection({
           />
           <Tabs defaultValue='general' className='min-w-0'>
             <div className='overflow-x-auto pb-1'>
-              <TabsList className='grid min-w-[60rem] grid-cols-9'>
+              <TabsList className='grid min-w-[66rem] grid-cols-10'>
                 <TabsTrigger value='general'>{t('General')}</TabsTrigger>
                 <TabsTrigger value='epay'>Epay</TabsTrigger>
                 <TabsTrigger value='stripe'>{t('Stripe')}</TabsTrigger>
@@ -1174,6 +1180,7 @@ export function PaymentSettingsSection({
                 <TabsTrigger value='gwiff-pay'>Gwiff Pay</TabsTrigger>
                 <TabsTrigger value='usdt'>USDT</TabsTrigger>
                 <TabsTrigger value='wepay'>Wepay</TabsTrigger>
+                <TabsTrigger value='paynicorn'>Paynicorn</TabsTrigger>
               </TabsList>
             </div>
 
@@ -1923,6 +1930,12 @@ export function PaymentSettingsSection({
             <TabsContent value='wepay' className={paymentTabContentClassName}>
               <WepaySettingsSection
                 defaultValues={wepayDefaultValues}
+              />
+            </TabsContent>
+
+            <TabsContent value='paynicorn' className={paymentTabContentClassName}>
+              <PaynicornSettingsSection
+                defaultValues={paynicornDefaultValues}
               />
             </TabsContent>
           </Tabs>

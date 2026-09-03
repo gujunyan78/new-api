@@ -38,6 +38,7 @@ export const PAYMENT_TYPES = {
   WAFFO_PANCAKE: 'waffo_pancake',
   SILKROAD: 'silkroad',
   USDT: 'usdt',
+  PAYNICORN: 'paynicorn',
 } as const
 
 /**
@@ -57,6 +58,7 @@ export const PAYMENT_ICON_COLORS = {
   [PAYMENT_TYPES.WAFFO_PANCAKE]: '#F97316',
   [PAYMENT_TYPES.SILKROAD]: '#2563EB',
   [PAYMENT_TYPES.USDT]: '#26A17B',
+  [PAYMENT_TYPES.PAYNICORN]: '#4F46E5',
 } as const
 
 /**

@@ -24,6 +24,7 @@ import { ChatSettingsSection } from './chat-settings-section'
 import { DashboardSection } from './dashboard-section'
 import { DrawingSettingsSection } from './drawing-settings-section'
 import { FAQSection } from './faq-section'
+import { LanguageSettingsSection } from './language-settings-section'
 import { UptimeKumaSection } from './uptime-kuma-section'
 
 /**
@@ -112,6 +113,20 @@ const CONTENT_SECTIONS = [
           MjForwardUrlEnabled: settings.MjForwardUrlEnabled,
           MjModeClearEnabled: settings.MjModeClearEnabled,
           MjActionCheckSuccessEnabled: settings.MjActionCheckSuccessEnabled,
+        }}
+      />
+    ),
+  },
+  {
+    id: 'language',
+    titleKey: 'Language',
+    build: (settings: ContentSettings) => (
+      <LanguageSettingsSection
+        defaultValues={{
+          defaultLanguage: settings['console_setting.default_language'],
+          availableLanguages: settings['console_setting.available_languages'],
+          disableLanguageSwitch:
+            settings['console_setting.disable_language_switch'],
         }}
       />
     ),

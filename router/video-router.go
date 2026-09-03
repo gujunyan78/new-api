@@ -33,6 +33,12 @@ func SetVideoRouter(router *gin.Engine) {
 		videoV1Router.GET("/videos/:task_id", controller.RelayTaskFetch)
 	}
 
+	// Video3 (Wan 3.0 mirror) channel routes
+	{
+		videoV1Router.POST("/generate/video", controller.RelayTask)
+		videoV1Router.GET("/generate/video/:task_id", controller.RelayTaskFetch)
+	}
+
 	klingV1Router := router.Group("/kling/v1")
 	klingV1Router.Use(middleware.RouteTag("relay"))
 	klingV1Router.Use(middleware.KlingRequestConvert(), middleware.TokenAuth(), middleware.Distribute())

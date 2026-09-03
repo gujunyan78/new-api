@@ -16,24 +16,28 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { useQuery } from '@tanstack/react-query'
-import { getSystemOptions } from '@/features/system-settings/api'
+import { useStatus } from '@/hooks/use-status'
 
+const DEFAULT_LANGUAGE = 'en'
+const DEFAULT_AVAILABLE_LANGUAGES = 'en,zh,fr,ru,ja,vi'
+
+function readString(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value : fallback
+}
+
+/**
+ * 语言配置对所有用户公开，随 /api/status 下发，无需管理员权限。
+ */
 export function useLanguageSettings() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['language-settings'],
-    queryFn: getSystemOptions,
-    staleTime: 5 * 60 * 1000,
-  })
+  const { status, loading } = useStatus()
 
-  const defaultLanguage =
-    data?.data?.find((opt) => opt.key === 'DefaultLanguage')?.value || 'en'
-  const availableLanguagesStr =
-    data?.data?.find((opt) => opt.key === 'AvailableLanguages')?.value ||
-    'en,zh,fr,ru,ja,vi'
-  const disableLanguageSwitch =
-    data?.data?.find((opt) => opt.key === 'DisableLanguageSwitch')?.value ===
-    'true'
+  const data = status?.data
+  const defaultLanguage = readString(data?.default_language, DEFAULT_LANGUAGE)
+  const availableLanguagesStr = readString(
+    data?.available_languages,
+    DEFAULT_AVAILABLE_LANGUAGES
+  )
+  const disableLanguageSwitch = data?.disable_language_switch === true
 
   const availableLanguages = availableLanguagesStr
     .split(',')
@@ -44,6 +48,6 @@ export function useLanguageSettings() {
     defaultLanguage,
     availableLanguages,
     disableLanguageSwitch,
-    isLoading,
+    isLoading: loading,
   }
 }

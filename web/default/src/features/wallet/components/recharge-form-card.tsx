@@ -86,6 +86,8 @@ interface RechargeFormCardProps {
   enableUsdtTopup?: boolean
   onUsdtMethodSelect?: () => void
   usdtMinTopup?: number
+  enablePaynicornTopup?: boolean
+  onPaynicornMethodSelect?: () => void
 }
 
 export function RechargeFormCard({
@@ -121,6 +123,8 @@ export function RechargeFormCard({
   enableUsdtTopup,
   onUsdtMethodSelect,
   usdtMinTopup,
+  enablePaynicornTopup,
+  onPaynicornMethodSelect,
 }: RechargeFormCardProps) {
   const { t } = useTranslation()
   const [localAmount, setLocalAmount] = useState(topupAmount.toString())
@@ -143,7 +147,8 @@ export function RechargeFormCard({
     enableWaffoTopup ||
     enableWaffoPancakeTopup ||
     enableSilkroadTopup ||
-    enableUsdtTopup
+    enableUsdtTopup ||
+    enablePaynicornTopup
   const hasAnyTopup = hasConfigurableTopup || enableCreemTopup
   const hasStandardPaymentMethods =
     (topupInfo?.pay_methods?.filter((m) => {
@@ -154,7 +159,8 @@ export function RechargeFormCard({
     !!enableWaffoTopup ||
     !!enableWaffoPancakeTopup ||
     !!enableSilkroadTopup ||
-    !!enableUsdtTopup
+    !!enableUsdtTopup ||
+    !!enablePaynicornTopup
   const hasAnyPaymentMethod = hasStandardPaymentMethods || hasAnyDedicatedPayment
   const hasWaffoPaymentMethods =
     Array.isArray(waffoPayMethods) && waffoPayMethods.length > 0
@@ -564,6 +570,27 @@ export function RechargeFormCard({
                       button
                     )
                   })()}
+                </div>
+              )}
+
+              {enablePaynicornTopup && onPaynicornMethodSelect && (
+                <div className='space-y-2.5 sm:space-y-3'>
+                  <Label className='text-muted-foreground text-xs font-medium tracking-wider uppercase'>
+                    Paynicorn
+                  </Label>
+                  <Button
+                    variant='outline'
+                    onClick={onPaynicornMethodSelect}
+                    disabled={!!paymentLoading}
+                    className='h-9 min-w-0 justify-start gap-2 rounded-lg px-3'
+                  >
+                    {paymentLoading === 'paynicorn' ? (
+                      <Loader2 className='h-4 w-4 animate-spin' />
+                    ) : (
+                      getPaymentIcon('paynicorn')
+                    )}
+                    <span className='truncate'>Paynicorn</span>
+                  </Button>
                 </div>
               )}
             </>

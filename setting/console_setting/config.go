@@ -11,6 +11,10 @@ type ConsoleSetting struct {
 	UptimeKumaEnabled    bool   `json:"uptime_kuma_enabled"`   // 是否启用 Uptime Kuma 面板
 	AnnouncementsEnabled bool   `json:"announcements_enabled"` // 是否启用系统公告面板
 	FAQEnabled           bool   `json:"faq_enabled"`           // 是否启用常见问答面板
+	// 语言配置，对所有用户公开（随 /api/status 下发）
+	DefaultLanguage       string `json:"default_language"`        // 默认语言，如 en / zh
+	AvailableLanguages    string `json:"available_languages"`     // 可选语言，逗号分隔，如 en,zh,fr
+	DisableLanguageSwitch bool   `json:"disable_language_switch"` // 是否禁用前端语言切换
 }
 
 // 默认配置
@@ -23,6 +27,8 @@ var defaultConsoleSetting = ConsoleSetting{
 	UptimeKumaEnabled:    true,
 	AnnouncementsEnabled: true,
 	FAQEnabled:           true,
+	DefaultLanguage:      "en",
+	AvailableLanguages:   "en,zh,fr,ru,ja,vi",
 }
 
 // 全局实例

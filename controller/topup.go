@@ -99,6 +99,9 @@ func GetTopUpInfo(c *gin.Context) {
 	// USDT: enabled when global switch is on AND at least one wallet is enabled
 	enableUsdt := setting.UsdtEnabled && len(service.GetAvailableBlockchainTypes()) > 0
 
+	// Paynicorn: enabled when the PaynicornEnabled option is set to true
+	enablePaynicorn := common.OptionMap["PaynicornEnabled"] == "true"
+
 	// 如果启用了 Wepay 支付，添加到支付方法列表（统一 SBP + MIR）
 	enableWepay := common.OptionMap["WepayEnabled"] == "true"
 	if enableWepay {
@@ -161,6 +164,7 @@ func GetTopUpInfo(c *gin.Context) {
 		"enable_creem_topup":               isCreemTopUpEnabled(),
 		"enable_waffo_topup":               enableWaffo,
 		"enable_waffo_pancake_topup":       enableWaffoPancake,
+		"enable_paynicorn_topup":           enablePaynicorn,
 		"enable_redemption":                complianceConfirmed,
 		"payment_compliance_confirmed":     complianceConfirmed,
 		"payment_compliance_terms_version": operation_setting.CurrentComplianceTermsVersion,

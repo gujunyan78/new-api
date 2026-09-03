@@ -168,6 +168,13 @@ export function getPaymentIcon(
           style={{ color: PAYMENT_ICON_COLORS[PAYMENT_TYPES.USDT] }}
         />
       )
+    case PAYMENT_TYPES.PAYNICORN:
+      return (
+        <CreditCard
+          className={className}
+          style={{ color: PAYMENT_ICON_COLORS[PAYMENT_TYPES.PAYNICORN] }}
+        />
+      )
     default:
       return <CreditCard className={className} />
   }

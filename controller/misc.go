@@ -119,6 +119,11 @@ func GetStatus(c *gin.Context) {
 		"password_register_enabled":     common.PasswordRegisterEnabled,
 		"default_use_auto_group":        setting.DefaultUseAutoGroup,
 
+		// 语言配置，对所有用户可见
+		"default_language":        cs.DefaultLanguage,
+		"available_languages":     cs.AvailableLanguages,
+		"disable_language_switch": cs.DisableLanguageSwitch,
+
 		"usd_exchange_rate": operation_setting.USDExchangeRate,
 		"price":             operation_setting.Price,
 		"stripe_unit_price": setting.StripeUnitPrice,

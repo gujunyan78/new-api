@@ -178,6 +178,9 @@ export type ContentSettings = {
   'console_setting.announcements_enabled': boolean
   'console_setting.faq_enabled': boolean
   'console_setting.uptime_kuma_enabled': boolean
+  'console_setting.default_language': string
+  'console_setting.available_languages': string
+  'console_setting.disable_language_switch': boolean
   DataExportEnabled: boolean
   DataExportDefaultTime: string
   DataExportInterval: number
@@ -355,6 +358,20 @@ export type BillingSettings = {
   MirPlatformUrl: string
   MirSandboxUrl: string
   MirLogo: string
+
+  // Paynicorn payment settings
+  PaynicornEnabled: boolean
+  PaynicornSandbox: boolean
+  PaynicornGatewayUrl: string
+  PaynicornSandboxUrl: string
+  PaynicornMerchantId: string
+  PaynicornAppKey: string
+  PaynicornAppSecret: string
+  PaynicornCurrency: string
+  PaynicornNotifyUrl: string
+  PaynicornReturnUrl: string
+  PaynicornMinUnit: number
+  PaynicornCountryCode: string
 
   // Silkroad (Gwiff Pay) payment settings
   pay_silkroad_enable: boolean

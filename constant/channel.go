@@ -57,6 +57,7 @@ const (
 	ChannelTypeCodex          = 57
 	ChannelTypeDoubaoVideo2   = 58
 	ChannelTypeAdvancedCustom = 59
+	ChannelTypeVideo3         = 60
 	ChannelTypeDummy          // this one is only for count, do not add any channel after this
 
 )
@@ -123,6 +124,7 @@ var ChannelBaseURLs = []string{
 	"https://ark.cn-beijing.volces.com",
 	"", //58
 	"", //59
+	"", //60
 }
 
 var ChannelTypeNames = map[int]string{
@@ -182,6 +184,7 @@ var ChannelTypeNames = map[int]string{
 	ChannelTypeCodex:          "ChatGPT Subscription (Codex)",
 	ChannelTypeDoubaoVideo2:   "DoubaoVideo2",
 	ChannelTypeAdvancedCustom: "Advanced Custom",
+	ChannelTypeVideo3:         "Video3",
 }
 
 func GetChannelTypeName(channelType int) string {
